@@ -1,0 +1,5 @@
+# pyenv
+.python-version
+env/
+venv/
+.env
