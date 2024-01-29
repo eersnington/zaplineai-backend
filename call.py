@@ -143,6 +143,7 @@ def transcribe_buffer(audio_buffer: AudioBuffer):
 
     return transcription
 
+
 async def voice_response(transcription_text: str, call_sid: str):
     call_session = twilio_client.calls(call_sid)
     call_session.update(

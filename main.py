@@ -20,6 +20,20 @@ app.add_middleware(
 )
 
 
+def route_matches(route, name):
+    return route.path_format == f"/dyn/{name}"
+
+
+def add_route(name, func):
+    async def dynamic_controller():
+        return {"message": f"dynamic - {name}"}
+
+    if func:
+        app.add_api_route(f"/dyn/{name}", func, methods=["GET"])
+    else:
+        app.add_api_route(f"/dyn/{name}", dynamic_controller, methods=["GET"])
+
+
 @app.exception_handler(CustomException)
 async def unicorn_exception_handler(request: Request, exc: CustomException):
     return JSONResponse(
@@ -31,6 +45,22 @@ async def unicorn_exception_handler(request: Request, exc: CustomException):
 @app.get("/")
 async def root():
     return {"message": "The answer to life the universe and everything is 42. | ZaplineAI API is running."}
+
+
+@app.get("/bots/add")
+async def add(name: str):
+    add_route(name, None)
+    return {"message": f"Endpoint /dyn/{name} added"}
+
+
+@app.get("/bots/remove")
+async def remove(name: str):
+    for i, r in enumerate(app.router.routes):
+        if route_matches(r, name):
+            del app.router.routes[i]
+            return {"message": f"Endpoint /dyn/{name} removed"}
+
+    return {"message": f"Endpoint /dyn/{name} not found"}
 
 
 if __name__ == "__main__":
