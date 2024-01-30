@@ -34,7 +34,7 @@ def update_phone(public_url: str, phone_number: str) -> None:
     if len(phone) == 0:
         raise Exception("No phone numbers found.")
 
-    phone.update(
+    phone[0].update(
         voice_url=f"{public_url}/{phone_number}/call"
     )
 
