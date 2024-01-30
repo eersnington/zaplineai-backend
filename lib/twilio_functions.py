@@ -43,6 +43,9 @@ async def call_accept(public_url: str, phone_number: str) -> VoiceResponse:
 
 async def voice_response(transcription_text: str, call_sid: str, twilio_client: Client) -> None:
     call_session = twilio_client.calls(call_sid)
+
+    if call_session is None:
+        raise Exception("Call session not found.")
     call_session.update(
         twiml=f'<Response><Say>{transcription_text}</Say><Pause length="60"/></Response>'
     )
@@ -92,3 +95,5 @@ async def call_stream(websocket: WebSocket) -> None:
         print("WebSocket disconnected")
     except HTTPException as e:
         print(f"HTTP Exception: {e}")
+    except Exception as e:
+        print(f"Exception: {e}")
