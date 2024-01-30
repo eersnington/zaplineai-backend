@@ -44,7 +44,7 @@ public_url = ngrok.connect(PORT, bind_tls=True).public_url
 """
 
 
-class BotAddForm(BaseModel):
+class BotForm(BaseModel):
     user_id: str
     phone_number: str
 
@@ -82,7 +82,7 @@ async def root():
 
 
 @app.get("/bots/add")
-async def add(form: BotAddForm):
+async def add(form: BotForm):
     async def call():
         voice_response = call_accept(public_url, form.phone_number)
         return Response(content=str(voice_response), media_type="application/xml")
@@ -101,13 +101,17 @@ async def add(form: BotAddForm):
 
 
 @app.get("/bots/remove")
-async def remove(name: str):
+async def remove(form: BotForm):
+    removed = False
     for i, r in enumerate(app.router.routes):
-        if route_matches(r, name):
+        if route_matches(r, f"{form.phone_number}/call") or route_matches(r, f"{form.phone_number}/stream"):
+            removed = True
             del app.router.routes[i]
-            return {"message": f"Endpoint /dyn/{name} removed"}
 
-    return {"message": f"Endpoint /dyn/{name} not found"}
+    if removed:
+        return {"message": f"Bot is no longer streaming at {form.phone_number}!"}
+
+    return {"message": f"Bot stream not found {form.phone_number}!"}
 
 
 if __name__ == "__main__":
