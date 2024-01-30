@@ -90,9 +90,13 @@ async def add(form: BotAddForm):
     async def stream(websocket: WebSocket):
         call_stream(websocket)
 
-    add_route(f"{form.phone_number}/call", call)
-    add_route(f"{form.phone_number}/stream", stream)
-    update_phone(public_url, form.phone_number)  # TODO: Add try catch
+    try:
+        update_phone(public_url, form.phone_number)
+        add_route(f"{form.phone_number}/call", call)
+        add_route(f"{form.phone_number}/stream", stream)
+    except Exception as e:
+        raise CustomException(status_code=500, detail=str(e))
+
     return {"message": f"Bot is streaming at {form.phone_number}!"}
 
 
