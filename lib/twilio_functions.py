@@ -20,6 +20,15 @@ TWILIO_PHONE_NUMBER = twilio_client.incoming_phone_numbers.list()[0]
 
 
 def update_phone(public_url: str, phone_number: str) -> None:
+    """
+        Updates the voice URL of a specific phone number in Twilio.
+
+        Keyword arguments:
+        public_url -- The public URL where Twilio will send a request when the phone number receives a call.
+        phone_number -- The specific phone number to be updated.
+
+        Return: None. The function performs an update operation and does not return anything.
+    """
     phone = list(
         twilio_client.incoming_phone_numbers.list(phone_number=phone_number))
     if len(phone) == 0:
@@ -30,6 +39,25 @@ def update_phone(public_url: str, phone_number: str) -> None:
     )
 
 
+async def voice_response(transcription_text: str, call_sid: str, twilio_client: Client) -> None:
+    """
+        Updates a call session with a transcribed text.
+
+        Keyword arguments:
+        transcription_text -- The transcribed text to be spoken in the call.
+        call_sid -- The unique identifier of the call session to be updated.
+        twilio_client -- The client instance used to interact with the Twilio API.
+
+        Return: None. The function performs an update operation and does not return anything.
+    """
+    call_session = twilio_client.calls(call_sid)
+
+    if call_session is None:
+        raise Exception("Call session not found.")
+    call_session.update(
+        twiml=f'<Response><Say>{transcription_text}</Say><Pause length="60"/></Response>'
+    )
+
 async def call_accept(public_url: str, phone_number: str) -> VoiceResponse:
     response = VoiceResponse()
     start = Start()
@@ -39,16 +67,6 @@ async def call_accept(public_url: str, phone_number: str) -> VoiceResponse:
     response.say('Hello. How may I help you today?')
     response.pause(length=60)
     return response
-
-
-async def voice_response(transcription_text: str, call_sid: str, twilio_client: Client) -> None:
-    call_session = twilio_client.calls(call_sid)
-
-    if call_session is None:
-        raise Exception("Call session not found.")
-    call_session.update(
-        twiml=f'<Response><Say>{transcription_text}</Say><Pause length="60"/></Response>'
-    )
 
 
 async def call_stream(websocket: WebSocket) -> None:
