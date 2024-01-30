@@ -1,13 +1,14 @@
 import os
 import wave
+import logging
 from lib.audio_buffer import AudioBuffer
 from faster_whisper import WhisperModel
 
 # Initialize faster_whisper model
 model_size = "small"
-print("Loading model...")
+logging.info("Loading model...")
 STTmodel = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
-print("Loading completed!")
+logging.info("Loading completed!")
 
 
 def transcribe_buffer(audio_buffer: AudioBuffer) -> str:
