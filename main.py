@@ -35,7 +35,7 @@ app.add_middleware(
 """
 NGROK_TOKEN = os.getenv("NGROK_TOKEN")
 ngrok.set_auth_token(NGROK_TOKEN)
-PORT = 5051
+PORT = 5000
 public_url = ngrok.connect(PORT, bind_tls=True).public_url
 
 
