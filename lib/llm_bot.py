@@ -21,6 +21,6 @@ class LLMModel:
         sampling_params = SamplingParams(
             temperature=temperature, max_tokens=max_tokens)
 
-        output = self.llm.generate_text(prompt, sampling_params)
+        output = self.llm.generate(prompt, sampling_params)
 
         return output
