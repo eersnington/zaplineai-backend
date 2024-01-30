@@ -1,7 +1,6 @@
-from audio_buffer import AudioBuffer
 import os
 import wave
-
+from lib.audio_buffer import AudioBuffer
 from faster_whisper import WhisperModel
 
 # Initialize faster_whisper model
