@@ -1,3 +1,11 @@
+# Python-specific files
+*.pyc
+*.pyo
+__pycache__/
+
+# Ignore Python pycache files
+**/__pycache__/
+
 # pyenv
 .python-version
 env/
