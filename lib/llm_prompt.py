@@ -8,6 +8,7 @@ def llama_prompt(prompt: str, chat_history: list | None) -> str:
     system_prompt = f"""[INST] <<SYS>>
 You are an AI assistant for a clothing store, addressing customer queries only.
 (If unrelated, respond with a brief apology)
+(If the customer says goodbye, end the conversation and ask them to hang up)
 
 Context:
 ```
