@@ -1,8 +1,10 @@
-from lib.llm_bot import LLMModel
+from lib.llm_bot import LLMModel, LLMChat
 import time
 llm_model = LLMModel()
 
-start = time.time()
-print(llm_model.generate_text("Hello, how are you?"))
+chat = LLMChat(llm_model)
 
-print(f"Time taken: {time.time() - start}s")
+
+while True:
+    start = time.time()
+    print(f"Time taken: {time.time() - start}s")
