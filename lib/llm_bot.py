@@ -21,16 +21,9 @@ class LLMModel:
         sampling_params = SamplingParams(
             temperature=temperature, max_tokens=max_tokens)
 
-        system_prompt = "You are an AI assistant of a clothing store that answers the customers queries. Do not answer unrelated questions (Say sorry, you can't answer that)"
-
-        prompt_template = f"""
-        {system_prompt}
-        Customer's query: {prompt}
-        """
-
         # tqdm is a progress bar
         outputs = self.llm.generate(
-            prompt_template, sampling_params, use_tqdm=False)
+            prompt, sampling_params, use_tqdm=False)
         generated_text = outputs[0].outputs[0].text
 
         return generated_text
@@ -45,12 +38,24 @@ class LLMChat:
         self.chat_history.append(message)
 
     def generate_response(self, prompt: str, temperature=0.8, max_tokens=100):
-        self.add_message(prompt)
-
         # Generate the response using the LLM model and the chat history as context
-        context = ' '.join(self.chat_history)
+        context = '\n'.join(self.chat_history)
+        system_prompt = """You are an AI assistant of a clothing store that answers the customers queries. 
+        Do not answer questions that are not related to the clothing store. (Say sorry, you can't answer that)"""
+
+        prompt_template = f"""
+        {system_prompt}
+
+        Here is the context(previous messages):
+        ```
+        {context}
+        ```
+        Customer's query: {prompt}
+        """
+        self.add_message(f"Customer: {prompt}")
+
         response = self.llm_model.generate_text(
-            context, temperature, max_tokens)
+            prompt_template, temperature, max_tokens)
 
         self.add_message(response)
 
