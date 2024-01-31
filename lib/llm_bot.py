@@ -7,7 +7,7 @@ import functools
 
 
 @functools.cache
-def get_llm_model():
+def get_llm_model() -> LLM:
     logging.info(f"Loading Llama LLM")
     llm = LLM(model="TheBloke/Llama-2-7B-chat-AWQ", quantization="awq")
 
