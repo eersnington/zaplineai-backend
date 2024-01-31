@@ -40,15 +40,14 @@ class LLMChat:
 
     def generate_response(self, prompt: str, temperature=0.8, max_tokens=100):
         # Generate the response using the LLM model and the chat history as context
-        context = '\n'.join(self.chat_history)
 
-        prompt_template = llama_prompt(prompt, context)
+        prompt_template = llama_prompt(prompt, self.chat_history)
         
         self.add_message(f"Customer: {prompt}")
 
         response = self.llm_model.generate_text(
             prompt_template, temperature, max_tokens)
 
-        self.add_message(response)
+        self.add_message(f"AI Assistant: {response}")
 
         return response
