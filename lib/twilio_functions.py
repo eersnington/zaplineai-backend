@@ -60,6 +60,15 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
 
 
 async def call_accept(public_url: str, phone_number: str) -> VoiceResponse:
+    """
+        Handles the initial call session.
+
+        Keyword arguments:
+        public_url -- The public URL where Twilio will send a request when the phone number receives a call.
+        phone_number -- The specific phone number to be updated.
+
+        Return: A VoiceResponse instance containing the TwiML instructions for the call session.
+    """
     response = VoiceResponse()
     start = Start()
     start.stream(
@@ -71,6 +80,12 @@ async def call_accept(public_url: str, phone_number: str) -> VoiceResponse:
 
 
 async def call_stream(websocket: WebSocket) -> None:
+    """
+        Handles the audio stream of a call session.
+
+        Keyword arguments:
+        websocket -- The websocket instance used to receive the audio stream from Twilio.
+    """
     audio_buffer = AudioBuffer()
     buffer_threshold = 16000  # Initial buffer threshold
     call_sid = None
