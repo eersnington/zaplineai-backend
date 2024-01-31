@@ -51,9 +51,9 @@ class LLMChat:
         ```
         {context}
         ```
-        Write an appropriate response while keeping the context in mind.
+        Write an appropriate response to the query below while keeping the context in mind.
         <</SYS>>
-        Customer's query: {prompt}
+        {prompt}
         [/INST]
         """
         self.add_message(f"Customer: {prompt}")
