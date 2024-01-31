@@ -1,6 +1,7 @@
 # type: ignore
 import logging
 from vllm import LLM, SamplingParams
+from lib.llm_prompt import llama_prompt
 import logging
 import functools
 
@@ -40,22 +41,9 @@ class LLMChat:
     def generate_response(self, prompt: str, temperature=0.8, max_tokens=100):
         # Generate the response using the LLM model and the chat history as context
         context = '\n'.join(self.chat_history)
-        system_prompt = """[INST] <<SYS>>
-        You are an AI assistant of a clothing store that answers the customers queries. 
-        Do not answer questions that are not related to the clothing store. (Say sorry, you can't answer that)"""
 
-        prompt_template = f"""
-        {system_prompt}
-
-        Here is the context(previous messages):
-        ```
-        {context}
-        ```
-        Write an *appropriate and brief*~ response to the query below while keeping the context in mind.
-        <</SYS>>
-        {prompt}
-        [/INST]
-        """
+        prompt_template = llama_prompt(prompt, context)
+        
         self.add_message(f"Customer: {prompt}")
 
         response = self.llm_model.generate_text(
