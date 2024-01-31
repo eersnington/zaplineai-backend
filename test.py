@@ -6,5 +6,7 @@ chat = LLMChat(llm_model)
 
 
 while True:
+    inp = input("Enter your prompt: ")
     start = time.time()
-    print(f"Time taken: {time.time() - start}s")
+    output = chat.generate_response(inp)
+    print(f"{output}\n\nTime taken: {time.time() - start}s")
