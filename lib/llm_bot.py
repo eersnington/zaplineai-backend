@@ -39,7 +39,6 @@ class LLMChat:
         self.chat_history.append(message)
 
     def generate_response(self, prompt: str, temperature=0.8, max_tokens=100) -> str:
-        # Generate the response using the LLM model and the chat history as context
 
         prompt_template = llama_prompt(prompt, self.chat_history)
 
