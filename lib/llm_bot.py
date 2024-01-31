@@ -40,7 +40,8 @@ class LLMChat:
     def generate_response(self, prompt: str, temperature=0.8, max_tokens=100):
         # Generate the response using the LLM model and the chat history as context
         context = '\n'.join(self.chat_history)
-        system_prompt = """You are an AI assistant of a clothing store that answers the customers queries. 
+        system_prompt = """[INST] <<SYS>>
+        You are an AI assistant of a clothing store that answers the customers queries. 
         Do not answer questions that are not related to the clothing store. (Say sorry, you can't answer that)"""
 
         prompt_template = f"""
@@ -50,7 +51,10 @@ class LLMChat:
         ```
         {context}
         ```
+        Write an appropriate response while keeping the context in mind.
+        <</SYS>>
         Customer's query: {prompt}
+        [/INST]
         """
         self.add_message(f"Customer: {prompt}")
 
