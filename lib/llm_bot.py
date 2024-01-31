@@ -18,7 +18,7 @@ class LLMModel:
     def __init__(self):
         self.llm = get_llm_model()
 
-    def generate_text(self, prompt: str, temperature: 0.8, max_tokens=100):
+    def generate_text(self, prompt: str, temperature: 0.8, max_tokens=100) -> str:
         sampling_params = SamplingParams(
             temperature=temperature, max_tokens=max_tokens)
 
@@ -35,14 +35,14 @@ class LLMChat:
         self.llm_model = llm_model
         self.chat_history = []
 
-    def add_message(self, message: str):
+    def add_message(self, message: str) -> None:
         self.chat_history.append(message)
 
-    def generate_response(self, prompt: str, temperature=0.8, max_tokens=100):
+    def generate_response(self, prompt: str, temperature=0.8, max_tokens=100) -> str:
         # Generate the response using the LLM model and the chat history as context
 
         prompt_template = llama_prompt(prompt, self.chat_history)
-        
+
         self.add_message(f"Customer: {prompt}")
 
         response = self.llm_model.generate_text(
