@@ -20,17 +20,17 @@ class LLMModel:
     def generate_text(self, prompt: str, temperature: 0.8, max_tokens=100):
         sampling_params = SamplingParams(
             temperature=temperature, max_tokens=max_tokens)
-        
 
         system_prompt = "You are an AI assistant of a clothing store that answers the customers queries. Do not answer unrelated questions (Say sorry, you can't answer that)"
-        
+
         prompt_template = f"""
         {system_prompt}
         Customer's query: {prompt}
-        """rompt
+        """
 
         # tqdm is a progress bar
-        outputs = self.llm.generate(prompt_template, sampling_params, use_tqdm=False)
+        outputs = self.llm.generate(
+            prompt_template, sampling_params, use_tqdm=False)
         generated_text = outputs[0].outputs[0].text
 
         return generated_text
