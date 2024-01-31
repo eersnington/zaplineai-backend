@@ -51,7 +51,7 @@ class LLMChat:
         ```
         {context}
         ```
-        Write an appropriate response to the query below while keeping the context in mind.
+        Write an *appropriate and brief*~ response to the query below while keeping the context in mind.
         <</SYS>>
         {prompt}
         [/INST]
