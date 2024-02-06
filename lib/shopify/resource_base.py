@@ -2,7 +2,7 @@ import requests
 
 
 class ShopifyResource(requests.Session):
-    def __init__(self, token, store, api_version="2024-01") -> None:
+    def __init__(self, token: str, store: str, api_version="2024-01") -> None:
         super().__init__()
         self.token = token
         self.store = store
