@@ -54,7 +54,7 @@ async def available_phones(form: PhoneForm):
     return {"message": "Available phone numbers.", "phone_numbers": phone_numbers}
 
 
-@router.get("/buy")
+@router.post("/buy")
 async def buy_phone(form: PhoneForm):
     try:
         await check_user(form)
