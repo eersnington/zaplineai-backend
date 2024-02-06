@@ -1,6 +1,7 @@
 # Install required packages
 # pip install fastapi twilio pyngrok 'uvicorn[standard]' python-multipart
 from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Request, Response, WebSocket
@@ -22,6 +23,17 @@ load_dotenv()
 """
     FastAPI
 """
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load the ML model
+    await db.connect()
+    logging.info("Connected to the database")
+    yield
+    await db.disconnect()
+    logging.info("Disconnected from the database")
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -69,16 +81,6 @@ def add_route(route_name, func=None):
         app.add_api_route(route_name, func, methods=["GET"])
     else:
         app.add_api_route(route_name, dynamic_controller, methods=["GET"])
-
-
-# @app.lifespan("startup")
-# async def startup():
-#     await db.connect()
-
-
-# @app.lifespan("shutdown")
-# async def shutdown():
-#     await db.disconnect()
 
 
 @app.exception_handler(CustomException)
