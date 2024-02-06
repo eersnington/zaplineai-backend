@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI):
     await db.disconnect()
     logging.info("Disconnected from the database")
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
