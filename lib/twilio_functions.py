@@ -20,13 +20,36 @@ twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 TWILIO_PHONE_NUMBER = twilio_client.incoming_phone_numbers.list()[0]
 
 
-def get_phone_numbers() -> list:
+def get_new_numbers() -> list:
     """
-        Retrieves a list of all phone numbers in Twilio.
+        Retrieves a list of new phone numbers in Twilio.
 
         Return: A list of phone numbers in Twilio.
     """
     return [phone.phone_number for phone in twilio_client.available_phone_numbers('US').local.list()]
+
+
+async def get_available_numbers(get_first:bool) -> list:
+    """
+        Retrieves a list of all available (previously purchased but not used) phone numbers in Twilio Account.
+
+        Return: A list of available phone numbers in Twilio.
+    """
+    twilio_phone_numbers = twilio_client.incoming_phone_numbers.list()
+
+    db_numbers = await db.bot.find_many()
+
+    # Retrieve all phone numbers associated with Bots from the database
+    used_phone_numbers = [bot.phone_no for bot in db_numbers]
+
+    available_numbers = []
+    for phone in twilio_phone_numbers:
+        if phone.phone_number not in used_phone_numbers:
+            available_numbers.append(phone.phone_number)
+            if get_first:
+                return available_numbers
+            
+    return available_numbers
 
 
 def buy_phone_number(phone_number: str) -> None:
@@ -41,27 +64,19 @@ def buy_phone_number(phone_number: str) -> None:
     twilio_client.incoming_phone_numbers.create(phone_number=phone_number)
 
 
-def get_unused_phone_number() -> str:
+async def get_unused_phone_number() -> str:
     """
         Retrieves a list of all unused phone numbers by users in Twilio.
 
-        Return: A list of unused phone numbers in Twilio.
+        Return: A new or unused phone number in Twilio.
     """
-    twilio_phone_numbers = twilio_client.incoming_phone_numbers.list()
+    available_numbers = await get_available_numbers(get_first=True)
+    if available_numbers[0] is not None:
+        return available_numbers[0]
 
-    # Retrieve all phone numbers associated with Bots from the database
-    used_phone_numbers = [bot.phone_no for bot in db.bot.find_many()]
-
-    # Find the first unused phone number
-    for twilio_number in twilio_phone_numbers:
-        if twilio_number.phone_number not in used_phone_numbers:
-            return twilio_number.phone_number
-
-    # new_phone_number = get_phone_numbers()[0]
-    # buy_phone_number(new_phone_number)
-    # return new_phone_number
-    return "none"
-    
+    new_phone_number = get_new_numbers()[0]
+    buy_phone_number(new_phone_number)
+    return new_phone_number
 
 
 def update_phone(public_url: str, phone_number: str) -> None:

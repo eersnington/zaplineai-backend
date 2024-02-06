@@ -27,7 +27,7 @@ load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Load the ML model
+    # TODO: Load all numbers from the database
     await db.connect()
     logging.info("Connected to the database")
     yield
