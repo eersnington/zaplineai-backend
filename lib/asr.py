@@ -3,12 +3,19 @@ import wave
 import logging
 from lib.audio_buffer import AudioBuffer
 from faster_whisper import WhisperModel
+from dotenv import load_dotenv
+load_dotenv()
 
 # Initialize faster_whisper model
-model_size = "small"
-logging.info("Loading model...")
-STTmodel = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
-logging.info("Loading completed!")
+
+if os.getenv("MODE") != "development":
+    model_size = "small"
+    logging.info("Loading model...")
+    STTmodel = WhisperModel(model_size, device="cuda",
+                            compute_type="int8_float16")
+    logging.info("Loading completed!")
+else:
+    print("Skipped Loading Model : Development")
 
 
 def transcribe_buffer(audio_buffer: AudioBuffer) -> str:
@@ -20,6 +27,9 @@ def transcribe_buffer(audio_buffer: AudioBuffer) -> str:
 
         Return: The transcription of the audio in the buffer as a string.
     """
+
+    if STTmodel is None:
+        return "Model not loaded"
 
     temp_audio_file = 'temp_audio.wav'
     temp_audio_path = os.path.join(os.getcwd(), temp_audio_file)
