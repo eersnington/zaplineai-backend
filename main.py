@@ -6,13 +6,14 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Request, Response, WebSocket
 import logging
 import os
+from lib.db import db
 from pydantic import BaseModel
 
-from twilio.rest import Client
 from pyngrok import ngrok
 
 from lib.custom_exception import CustomException
 from lib.twilio_functions import call_accept, call_stream, update_phone
+from routers.phone import router as phone_router
 logging.getLogger().setLevel(logging.INFO)
 
 load_dotenv()
@@ -29,6 +30,8 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
+
+app.include_router(phone_router)
 
 """
     NGROK
@@ -66,6 +69,16 @@ def add_route(route_name, func=None):
         app.add_api_route(route_name, func, methods=["GET"])
     else:
         app.add_api_route(route_name, dynamic_controller, methods=["GET"])
+
+
+# @app.lifespan("startup")
+# async def startup():
+#     await db.connect()
+
+
+# @app.lifespan("shutdown")
+# async def shutdown():
+#     await db.disconnect()
 
 
 @app.exception_handler(CustomException)

@@ -9,6 +9,7 @@ import json
 
 from lib.audio_buffer import AudioBuffer
 from lib.asr import transcribe_buffer
+from lib.db import db
 
 load_dotenv()
 
@@ -17,6 +18,50 @@ TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 
 twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 TWILIO_PHONE_NUMBER = twilio_client.incoming_phone_numbers.list()[0]
+
+
+def get_phone_numbers() -> list:
+    """
+        Retrieves a list of all phone numbers in Twilio.
+
+        Return: A list of phone numbers in Twilio.
+    """
+    return [phone.phone_number for phone in twilio_client.available_phone_numbers('US').local.list()]
+
+
+def buy_phone_number(phone_number: str) -> None:
+    """
+        Purchases a specific phone number in Twilio.
+
+        Keyword arguments:
+        phone_number -- The specific phone number to be purchased.
+
+        Return: None. The function performs a purchase operation and does not return anything.
+    """
+    twilio_client.incoming_phone_numbers.create(phone_number=phone_number)
+
+
+def get_unused_phone_number() -> str:
+    """
+        Retrieves a list of all unused phone numbers by users in Twilio.
+
+        Return: A list of unused phone numbers in Twilio.
+    """
+    twilio_phone_numbers = twilio_client.incoming_phone_numbers.list()
+
+    # Retrieve all phone numbers associated with Bots from the database
+    used_phone_numbers = [bot.phone_no for bot in db.bot.find_many()]
+
+    # Find the first unused phone number
+    for twilio_number in twilio_phone_numbers:
+        if twilio_number.phone_number not in used_phone_numbers:
+            return twilio_number.phone_number
+
+    # new_phone_number = get_phone_numbers()[0]
+    # buy_phone_number(new_phone_number)
+    # return new_phone_number
+    return "none"
+    
 
 
 def update_phone(public_url: str, phone_number: str) -> None:
