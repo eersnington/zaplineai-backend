@@ -8,6 +8,7 @@ from fastapi import FastAPI, Request, Response, WebSocket
 import logging
 import os
 from lib.db import db
+from lib.auth import check_user
 from pydantic import BaseModel
 
 from pyngrok import ngrok
@@ -28,9 +29,23 @@ load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # TODO: Load all numbers from the database
     await db.connect()
     logging.info("Connected to the database")
+    bots = await db.bot.find_many()
+
+    for bot in bots:
+        async def call():
+            voice_response = call_accept(public_url, bot.phone_no)
+            return Response(content=str(voice_response), media_type="application/xml")
+
+        async def stream(websocket: WebSocket):
+            call_stream(websocket)
+
+        add_route(f"{bot.phone_no}/call", call)
+        add_route(f"{bot.phone_no}/stream", stream)
+
+    logging.info("Bots loaded")
+
     yield
     await db.disconnect()
     logging.info("Disconnected from the database")
@@ -63,7 +78,6 @@ public_url = ngrok.connect(PORT, bind_tls=True).public_url
 
 class BotForm(BaseModel):
     user_id: str
-    phone_number: str
 
 
 """
@@ -100,35 +114,42 @@ async def root():
 
 @app.get("/bots/add")
 async def add(form: BotForm):
+    await check_user(form.user_id)
+
+    phone_number = await db.bot.find_first(where={"userId": form.user_id})
+
     async def call():
-        voice_response = call_accept(public_url, form.phone_number)
+        voice_response = call_accept(public_url, phone_number)
         return Response(content=str(voice_response), media_type="application/xml")
 
     async def stream(websocket: WebSocket):
         call_stream(websocket)
 
     try:
-        update_phone(public_url, form.phone_number)
-        add_route(f"{form.phone_number}/call", call)
-        add_route(f"{form.phone_number}/stream", stream)
+        update_phone(public_url, phone_number)
+        add_route(f"{phone_number}/call", call)
+        add_route(f"{phone_number}/stream", stream)
     except Exception as e:
         raise CustomException(status_code=500, detail=str(e))
 
-    return {"message": f"Bot is streaming at {form.phone_number}!"}
+    return {"message": f"Bot is streaming at {phone_number}!"}
 
 
 @app.get("/bots/remove")
 async def remove(form: BotForm):
+    await check_user(form.user_id)
+
+    phone_number = await db.bot.find_first(where={"userId": form.user_id})
     removed = False
     for i, r in enumerate(app.router.routes):
-        if route_matches(r, f"{form.phone_number}/call") or route_matches(r, f"{form.phone_number}/stream"):
+        if route_matches(r, f"{phone_number}/call") or route_matches(r, f"{phone_number}/stream"):
             removed = True
             del app.router.routes[i]
 
     if removed:
-        return {"message": f"Bot is no longer streaming at {form.phone_number}!"}
+        return {"message": f"Bot is no longer streaming at {phone_number}!"}
 
-    return {"message": f"Bot stream not found {form.phone_number}!"}
+    return {"message": f"Bot stream not found {phone_number}!"}
 
 
 if __name__ == "__main__":
