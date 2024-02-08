@@ -7,12 +7,11 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Request, Response, WebSocket
 import logging
 import os
-from lib.db import db
-from lib.auth import check_user
 from pydantic import BaseModel
-
 from pyngrok import ngrok
 
+from lib.db import db
+from lib.auth import check_user
 from lib.custom_exception import CustomException
 from lib.twilio_functions import call_accept, call_stream, update_phone
 from routers.phone import router as phone_router
