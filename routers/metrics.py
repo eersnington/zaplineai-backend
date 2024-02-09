@@ -45,7 +45,7 @@ def add_metrics(form: UserMetrics) -> dict:
         with conn:
             c.execute(sql, data)
         conn.commit()
-        
+
     except sqlite3.Error as e:
         raise CustomException(f"Database error: {e}", 500)
     except Exception as e:
@@ -60,16 +60,7 @@ def total_metrics(form: MetricsForm) -> tuple:
         c.execute('''SELECT SUM(calls), SUM(automated_calls), SUM(transferred_calls), SUM(abandoned_calls) FROM user_metrics WHERE user_id=?''', (form.user_id,))
         total_metrics = c.fetchone()
         if total_metrics[0] is None:
-            # sql = '''INSERT INTO user_metrics (user_id, calls, automated_calls, transferred_calls, abandoned_calls)
-            #         VALUES (?, ?, ?, ?, ?)'''
-            # data = (form.user_id, 0, 0, 0, 0)
-
-            # with conn:
-            #     c.execute(sql, data)
-            # conn.commit()
-
             return (0, 0, 0, 0)
-
         else:
             return total_metrics
 
@@ -78,9 +69,12 @@ def total_metrics(form: MetricsForm) -> tuple:
     except Exception as e:
         raise CustomException(f"An error occurred: {e}", 500)
 
+
 def weekly_metrics(form: MetricsForm) -> dict:
+    """
+        Returns the metrics for a user over the past week.
+    """
     weekly_metrics = {}
-    # Calculate the start date of the week (seven days ago from today)
     for i in range(7):
         date = datetime.now() - timedelta(days=i)
         date_str = date.strftime("%b %d, %Y")
@@ -103,18 +97,24 @@ def weekly_metrics(form: MetricsForm) -> dict:
     return weekly_metrics
 
 
+def recent_metrics(form: MetricsForm) -> list:
+    """
+        Returns a list of tuples containing most recent 7 calls for a given user.
+    """
+    c.execute('''SELECT strftime('%Y-%m-%d %H:%M:%S', timestamp), call_type FROM user_metrics WHERE user_id=? ORDER BY timestamp DESC LIMIT 7''', (form.user_id,))
+    recent_calls = c.fetchall()
+
+    if len(recent_calls) == 0:
+        return [("No recent calls", "N/A")]
+    return recent_calls
+
+
 @router.get("/")
 async def root(form: MetricsForm):
-    week = weekly_metrics(form)
-    return {"result": week}
-
-
-@router.post("/add")
-async def track_metrics(form: UserMetrics):
     await check_user(form.user_id)
 
-    add_metrics(form)
-    return {"message": "Metrics tracked successfully"}
+    week = recent_metrics(form)
+    return {"result": week}
 
 
 @router.get("/get")
@@ -128,6 +128,7 @@ async def get_user_metrics(form: MetricsForm):
     abandoned_call_rate = safe_division(tm[3], tm[0]) * 100
 
     wm = weekly_metrics(form)
+    rm = recent_metrics(form)
 
     # Construct a JSON response
     return {
@@ -140,5 +141,6 @@ async def get_user_metrics(form: MetricsForm):
             "total_abandoned_calls": tm[3],
             "abandoned_call_rate": f"{abandoned_call_rate:.2f}%"
         },
-        "weekly_metrics": wm
+        "weekly_metrics": wm,
+        "recent_metrics": rm
     }
