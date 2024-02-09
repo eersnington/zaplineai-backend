@@ -1,4 +1,4 @@
-from lib.llm_bot import LLMModel, LLMChat
+from lib.llm_model import LLMModel, LLMChat
 import time
 llm_model = LLMModel()
 
