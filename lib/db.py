@@ -7,7 +7,6 @@ db = Prisma()
 conn = sqlite3.connect('user_metrics.db')
 c = conn.cursor()
 
-# Create the user_metrics table if it doesn't exist
 with conn:
     conn.execute('''CREATE TABLE IF NOT EXISTS user_metrics (
                      user_id TEXT,
@@ -18,9 +17,6 @@ with conn:
                      call_type TEXT DEFAULT "automated",
                      timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                      )''')
-
-
-for
 
 
 def track_metrics(user_id: str, call_type: str) -> None:
@@ -45,6 +41,5 @@ def track_metrics(user_id: str, call_type: str) -> None:
     elif call_type == "abandoned":
         data(user_id, 1, 0, 0, 1, "abandoned")
         c.execute(sql, data)
-    
-    conn.commit()
 
+    conn.commit()
