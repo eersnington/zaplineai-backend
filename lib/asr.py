@@ -5,17 +5,20 @@ from lib.audio_buffer import AudioBuffer
 from faster_whisper import WhisperModel
 from dotenv import load_dotenv
 load_dotenv()
+logging.getLogger().setLevel(logging.INFO)
 
 # Initialize faster_whisper model
 
-if os.getenv("MODE") != "development":
+if os.getenv("PRODUCTION_MODE") == "False":
+    logging.info("Skipping model loading in development environment")
+    STTmodel = None
+
+else:
     model_size = "small"
     logging.info("Loading model...")
     STTmodel = WhisperModel(model_size, device="cuda",
                             compute_type="int8_float16")
     logging.info("Loading completed!")
-else:
-    print("Skipped Loading Model : Development")
 
 
 def transcribe_buffer(audio_buffer: AudioBuffer) -> str:
