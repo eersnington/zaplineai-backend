@@ -60,13 +60,13 @@ def total_metrics(form: MetricsForm) -> tuple:
         c.execute('''SELECT SUM(calls), SUM(automated_calls), SUM(transferred_calls), SUM(abandoned_calls) FROM user_metrics WHERE user_id=?''', (form.user_id,))
         total_metrics = c.fetchone()
         if total_metrics[0] is None:
-            sql = '''INSERT INTO user_metrics (user_id, calls, automated_calls, transferred_calls, abandoned_calls)
-                    VALUES (?, ?, ?, ?, ?)'''
-            data = (form.user_id, 0, 0, 0, 0)
+            # sql = '''INSERT INTO user_metrics (user_id, calls, automated_calls, transferred_calls, abandoned_calls)
+            #         VALUES (?, ?, ?, ?, ?)'''
+            # data = (form.user_id, 0, 0, 0, 0)
 
-            with conn:
-                c.execute(sql, data)
-            conn.commit()
+            # with conn:
+            #     c.execute(sql, data)
+            # conn.commit()
 
             return (0, 0, 0, 0)
 
