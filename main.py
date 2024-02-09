@@ -33,15 +33,7 @@ async def lifespan(app: FastAPI):
     bots = await db.bot.find_many()
 
     for bot in bots:
-        async def call():
-            voice_response = call_accept(public_url, bot.phone_no)
-            return Response(content=str(voice_response), media_type="application/xml")
-
-        async def stream(websocket: WebSocket):
-            call_stream(websocket)
-
-        add_route(f"{bot.phone_no}/call", call)
-        add_route(f"{bot.phone_no}/stream", stream)
+        await bot_routes(bot.phone_no, public_url)
 
     logging.info("Bots loaded")
 
@@ -69,6 +61,8 @@ ngrok.set_auth_token(NGROK_TOKEN)
 PORT = 5000
 public_url = ngrok.connect(PORT, bind_tls=True).public_url
 
+logging.info(f"Public URL: {public_url}")
+
 
 """
     PYDANTIC FORMS
@@ -84,18 +78,35 @@ class BotForm(BaseModel):
 """
 
 
+async def bot_routes(phone_no: str, public_url: str):
+    async def call():
+        voice_response = call_accept(
+            public_url=public_url, phone_number=phone_no[1:])
+
+        return Response(content=str(voice_response), media_type="application/xml")
+
+    async def stream(websocket: WebSocket):
+        await call_stream(websocket)
+
+    try:
+        update_phone(public_url,  phone_no[1:])
+        add_route(f"/{phone_no[1:]}/call", call)
+        add_route(f"/{phone_no[1:]}/stream", stream, websock=True)
+
+        return f"Bot is streaming at f{phone_no}!"
+    except Exception as e:
+        raise CustomException(status_code=500, detail=str(e))
+
+
 def route_matches(route, route_name):
     return route.path_format == f"{route_name}"
 
 
-def add_route(route_name, func=None):
-    async def dynamic_controller():
-        return {"message": f"dynamic - {route_name}"}
-
-    if func:
-        app.add_api_route(route_name, func, methods=["GET"])
+def add_route(route_name, func, websock=False):
+    if websock:
+        app.add_websocket_route(route_name, func)
     else:
-        app.add_api_route(route_name, dynamic_controller, methods=["GET"])
+        app.add_api_route(route_name, func, methods=["POST"])
 
 
 @app.exception_handler(CustomException)
@@ -115,23 +126,10 @@ async def root():
 async def add(form: BotForm):
     await check_user(form.user_id)
 
-    phone_number = await db.bot.find_first(where={"userId": form.user_id})
+    bot = await db.bot.find_first(where={"userId": form.user_id})
+    response = await bot_routes(bot.phone_no, public_url)
 
-    async def call():
-        voice_response = call_accept(public_url, phone_number)
-        return Response(content=str(voice_response), media_type="application/xml")
-
-    async def stream(websocket: WebSocket):
-        call_stream(websocket)
-
-    try:
-        update_phone(public_url, phone_number)
-        add_route(f"{phone_number}/call", call)
-        add_route(f"{phone_number}/stream", stream)
-    except Exception as e:
-        raise CustomException(status_code=500, detail=str(e))
-
-    return {"message": f"Bot is streaming at {phone_number}!"}
+    return {"message": response}
 
 
 @app.get("/bots/remove")

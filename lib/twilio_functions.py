@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from twilio.twiml.voice_response import VoiceResponse, Start
 from twilio.rest import Client
-from fastapi import WebSocket, WebSocketDisconnect, HTTPException
+from fastapi import Request, WebSocket, WebSocketDisconnect, HTTPException
 import os
 import audioop
 import base64
@@ -29,7 +29,7 @@ def get_new_numbers() -> list:
     return [phone.phone_number for phone in twilio_client.available_phone_numbers('US').local.list()]
 
 
-async def get_available_numbers(get_first:bool) -> list:
+async def get_available_numbers(get_first: bool) -> list:
     """
         Retrieves a list of all available (previously purchased but not used) phone numbers in Twilio Account.
 
@@ -48,7 +48,7 @@ async def get_available_numbers(get_first:bool) -> list:
             available_numbers.append(phone.phone_number)
             if get_first:
                 return available_numbers
-            
+
     return available_numbers
 
 
@@ -119,7 +119,7 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
     )
 
 
-async def call_accept(public_url: str, phone_number: str) -> VoiceResponse:
+def call_accept(public_url: str, phone_number: str) -> VoiceResponse:
     """
         Handles the initial call session.
 
