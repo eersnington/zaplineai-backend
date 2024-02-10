@@ -24,6 +24,15 @@ class BERTClassifier:
     def classify(self, text: str) -> str:
         outputs = self.llm.generate(text, use_tqdm=False)
         return outputs[0].outputs[0].text
+    
+
+class FalconSummarizer:
+    def __init__(self):
+        self.llm = get_llm_model("Falconsai/text_summarization")
+
+    def summarize(self, text: str) -> str:
+        outputs = self.llm.generate(text, use_tqdm=False)
+        return outputs[0].outputs[0].text
 
 
 class LLMModel:
