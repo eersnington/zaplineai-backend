@@ -1,7 +1,7 @@
 # type: ignore
 import logging
 from vllm import LLM, SamplingParams
-
+from transformers import BertForSequenceClassification, BertTokenizer, TextClassificationPipeline
 from lib.llm_prompt import llama_prompt
 from typing import Union
 import logging
@@ -20,10 +20,10 @@ def get_vllm_model(model: str, quantization: Union[str, None] = None) -> LLM:
 
 
 @functools.cache
-def get_bert_model(model: str) -> BertForSequenceClassification:
+def get_bert_model(model_path: str) -> BertForSequenceClassification:
     logging.info(f"Loading BERT model: {model}")
-    model = BertForSequenceClassification.from_pretrained(model)
-    tokenizer = BertTokenizerFast.from_pretrained(model)
+    tokenizer = BertTokenizer.from_pretrained(model_path)
+    model = BertForSequenceClassification.from_pretrained(model_path)
     return model, tokenizer
 
 
@@ -31,12 +31,14 @@ class BERTClassifier:
     def __init__(self):
         model, tokenizer = get_bert_model(
             "Sreenington/BERT-Ecommerce-Classification")
-        self.model = pipeline("sentiment-analysis",
-                              model=model, tokenizer=tokenizer)
+        self.model = TextClassificationPipeline(model=model, tokenizer=tokenizer)
 
     def classify(self, text: str) -> str:
-        output = self.model(text)
+        output = self.model(text)[0]['label']
         return output
+
+    def get_pipeline_output(self, text: str) -> list:
+        return self.model(text) # [{'label': 'Order Status', 'score': 0.65}]
 
 
 class FalconSummarizer:
