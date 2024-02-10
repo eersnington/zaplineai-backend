@@ -15,7 +15,6 @@ def get_vllm_model(model: str, quantization: Union[str, None] = None) -> LLM:
         llm = LLM(model=model)
     else:
         llm = LLM(model=model, quantization=quantization)
-
     return llm
 
 
