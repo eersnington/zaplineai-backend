@@ -1,7 +1,6 @@
 # type: ignore
 import logging
 from vllm import LLM, SamplingParams
-from langchain
 from transformers import pipeline, BertForSequenceClassification, BertTokenizerFast
 from lib.llm_prompt import llama_prompt
 from typing import Union
