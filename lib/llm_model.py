@@ -21,7 +21,7 @@ def get_vllm_model(model: str, quantization: Union[str, None] = None) -> LLM:
 
 @functools.cache
 def get_bert_model(model_path: str) -> BertForSequenceClassification:
-    logging.info(f"Loading BERT model: {model}")
+    logging.info(f"Loading BERT model: {model_path}")
     tokenizer = BertTokenizer.from_pretrained(model_path)
     model = BertForSequenceClassification.from_pretrained(model_path)
     return model, tokenizer
