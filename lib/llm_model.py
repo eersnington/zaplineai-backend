@@ -1,6 +1,7 @@
 # type: ignore
 import logging
 from vllm import LLM, SamplingParams
+from langchain
 from transformers import pipeline, BertForSequenceClassification, BertTokenizerFast
 from lib.llm_prompt import llama_prompt
 from typing import Union
@@ -17,21 +18,6 @@ def get_vllm_model(model: str, quantization: Union[str, None] = None) -> LLM:
         llm = LLM(model=model, quantization=quantization)
 
     return llm
-
-
-@functools.cache
-def get_langchain_model(model: str) -> LLMChain:
-    logging.info(f"Loading LLM model: {model}")
-    llm = HuggingFaceHub(
-        repo_id=model
-    )
-
-    template = """{question}"""
-
-    prompt = PromptTemplate.from_template(template)
-    llm_chain = LLMChain(prompt=prompt, llm=llm)
-
-    return llm_chain
 
 
 @functools.cache
