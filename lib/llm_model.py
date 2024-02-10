@@ -1,9 +1,7 @@
 # type: ignore
 import logging
 from vllm import LLM, SamplingParams
-from langchain_community.llms import HuggingFaceHub
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
+from transformers import pipeline, BertForSequenceClassification, BertTokenizerFast
 from lib.llm_prompt import llama_prompt
 from typing import Union
 import logging
@@ -36,10 +34,18 @@ def get_langchain_model(model: str) -> LLMChain:
     return llm_chain
 
 
+@functools.cache
+def get_bert_model(model: str) -> BertForSequenceClassification:
+    logging.info(f"Loading BERT model: {model}")
+    model = BertForSequenceClassification.from_pretrained(model)
+    tokenizer = BertTokenizerFast.from_pretrained(model)
+    return model, tokenizer
+
 class BERTClassifier:
     def __init__(self):
-        self.llm = get_langchain_model(
+        model, tokenizer = get_bert_model(
             "Sreenington/BERT-Ecommerce-Classification")
+        self.model = pipeline("text-classification", model=model, tokenizer=tokenizer)
 
     def classify(self, text: str) -> str:
         output = self.llm.run(text)
@@ -48,7 +54,7 @@ class BERTClassifier:
 
 class FalconSummarizer:
     def __init__(self):
-        self.llm = get_llm_model("Falconsai/text_summarization")
+        self.llm = get_vllm_model("Falconsai/text_summarization")
 
     def summarize(self, text: str) -> str:
         outputs = self.llm.generate(text, use_tqdm=False)
