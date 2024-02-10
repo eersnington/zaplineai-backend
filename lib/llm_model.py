@@ -2,17 +2,18 @@
 import logging
 from vllm import LLM, SamplingParams
 from lib.llm_prompt import llama_prompt
+from typing import Union
 import logging
 import functools
 
 
 @functools.cache
-def get_llm_model(model: str, quantization: str | None) -> LLM:
+def get_llm_model(model: str, quantization: Union[str, None] = None) -> LLM:
     logging.info(f"Loading LLM model: {model}")
     if quantization is None:
         llm = LLM(model=model)
     else:
-        llm = LLM(model=model, quantization="awq")
+        llm = LLM(model=model, quantization=quantization)
 
     return llm
 
@@ -24,7 +25,7 @@ class BERTClassifier:
     def classify(self, text: str) -> str:
         outputs = self.llm.generate(text, use_tqdm=False)
         return outputs[0].outputs[0].text
-    
+
 
 class FalconSummarizer:
     def __init__(self):
