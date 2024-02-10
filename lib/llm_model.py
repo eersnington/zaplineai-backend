@@ -41,14 +41,16 @@ def get_bert_model(model: str) -> BertForSequenceClassification:
     tokenizer = BertTokenizerFast.from_pretrained(model)
     return model, tokenizer
 
+
 class BERTClassifier:
     def __init__(self):
         model, tokenizer = get_bert_model(
             "Sreenington/BERT-Ecommerce-Classification")
-        self.model = pipeline("text-classification", model=model, tokenizer=tokenizer)
+        self.model = pipeline("text-classification",
+                              model=model, tokenizer=tokenizer)
 
     def classify(self, text: str) -> str:
-        output = self.llm.run(text)
+        output = self.model(text)
         return output
 
 
