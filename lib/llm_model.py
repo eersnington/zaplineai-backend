@@ -31,7 +31,7 @@ class BERTClassifier:
     def __init__(self):
         model, tokenizer = get_bert_model(
             "Sreenington/BERT-Ecommerce-Classification")
-        self.model = pipeline("text-classification",
+        self.model = pipeline("sentiment-analysis",
                               model=model, tokenizer=tokenizer)
 
     def classify(self, text: str) -> str:
