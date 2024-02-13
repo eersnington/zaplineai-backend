@@ -10,6 +10,10 @@ class ShopifyClient:
         self.resource = resource
         self.Orders = Orders(resource)
         # TODO: Add self.Products = Products(resource)
+    
+    def status(self):
+        status = self.resource.get("/orders.json")
+        return status.status_code
 
 
 if __name__ == "__main__":
