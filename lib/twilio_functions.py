@@ -9,6 +9,7 @@ import json
 
 from lib.audio_buffer import AudioBuffer
 from lib.asr import transcribe_buffer
+from lib.call_chat import CallChatSession
 from lib.db import db
 
 load_dotenv()
@@ -119,27 +120,29 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
     )
 
 
-def call_accept(public_url: str, phone_number: str) -> VoiceResponse:
+def call_accept(public_url: str, phone_number: str, brand_name: str) -> VoiceResponse:
     """
         Handles the initial call session.
 
         Keyword arguments:
         public_url -- The public URL where Twilio will send a request when the phone number receives a call.
         phone_number -- The specific phone number to be updated.
+        brand_name -- The name of the brand for the call session.
 
         Return: A VoiceResponse instance containing the TwiML instructions for the call session.
     """
+    response_text = f"Hi, thanks for calling {brand_name} Phone Support! I'm Zap-line, your AI assistant. How can I help you today?"
     response = VoiceResponse()
     start = Start()
     start.stream(
         url=f'wss://{public_url.split("//")[1]}/{phone_number}/stream')
     response.append(start)
-    response.say('Hello. How may I help you today?')
+    response.say(response_text)
     response.pause(length=60)
     return response
 
 
-async def call_stream(websocket: WebSocket) -> None:
+async def call_stream(websocket: WebSocket, phone_no: str) -> None:
     """
         Handles the audio stream of a call session.
 
@@ -147,7 +150,12 @@ async def call_stream(websocket: WebSocket) -> None:
         websocket -- The websocket instance used to receive the audio stream from Twilio.
     """
     audio_buffer = AudioBuffer()
-    buffer_threshold = 16000  # Initial buffer threshold
+
+    store = await db.bot.find_first(where={"phone_no": phone_no})
+
+    llm_chat = CallChatSession(store.app_token, store.myshopify)
+
+    buffer_threshold = 16000 # Initial buffer threshold
     call_sid = None
 
     await websocket.accept()
@@ -160,6 +168,26 @@ async def call_stream(websocket: WebSocket) -> None:
             if packet['event'] == 'start':
                 print('Media stream started!')
                 call_sid = packet['start']['callSid']
+                customer_phone_no = packet['start']['from']
+
+                if llm_chat.get_shopify_status() != 200:
+                    voice_response(
+                        f"Sorry, we are currently experiencing technical difficulties. Please call again later. ", call_sid, twilio_client)
+                else:
+                    output = llm_chat.client.resource.get(f"/customers.json?phone={customer_phone_no}")
+
+                    for customer in output.json()["customers"]:                        
+                        recent_order = llm_chat.client.resource.get(f"/orders.json?customer_id={customer['id']}").json()["orders"][0]
+                        items = recent_order["line_items"]
+                        item_names = []
+                        for item in items:
+                            item_names.append(item["title"])
+                        date = recent_order["created_at"].split("T")[0]
+
+                        response = f"Are you calling regarding your recent purchase of {', '.join(item_names)} on {date}?"
+                        voice_response(response, call_sid, twilio_client)
+
+
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
 
@@ -183,7 +211,8 @@ async def call_stream(websocket: WebSocket) -> None:
                     # Clear the buffer after transcription
                     audio_buffer.clear()
                     print(f"Call SID: {call_sid}")
-                    await voice_response(transcription_result, call_sid)
+                
+                    await voice_response(response, call_sid)
 
     except WebSocketDisconnect:
         print("WebSocket disconnected")
