@@ -33,7 +33,8 @@ async def lifespan(app: FastAPI):
     bots = await db.bot.find_many()
 
     for bot in bots:
-        await bot_routes(bot.phone_no, public_url)
+        profile = await db.profile.find_first(where={"userId": bots.userId})
+        await bot_routes(bot.phone_no, public_url, profile.brandname)
 
     logging.info("Bots loaded")
 
@@ -78,15 +79,15 @@ class BotForm(BaseModel):
 """
 
 
-async def bot_routes(phone_no: str, public_url: str):
+async def bot_routes(phone_no: str, public_url: str, brand: str):
     async def call():
         voice_response = call_accept(
-            public_url=public_url, phone_number=phone_no[1:])
+            public_url=public_url, phone_number=phone_no[1:], brand_name=brand)
 
         return Response(content=str(voice_response), media_type="application/xml")
 
     async def stream(websocket: WebSocket):
-        await call_stream(websocket)
+        await call_stream(websocket, phone_no)
 
     try:
         update_phone(public_url,  phone_no[1:])
@@ -127,7 +128,16 @@ async def add(form: BotForm):
     await check_user(form.user_id)
 
     bot = await db.bot.find_first(where={"userId": form.user_id})
-    response = await bot_routes(bot.phone_no, public_url)
+
+    if not bot:
+        raise CustomException(status_code=404, detail="Bot not found")
+    
+    profile = await db.profile.find_first(where={"userId": form.user_id})
+
+    if not profile:
+        raise CustomException(status_code=404, detail="Profile not found")
+    
+    response = await bot_routes(bot.phone_no, public_url, profile.brandname)
 
     return {"message": response}
 
