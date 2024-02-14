@@ -170,7 +170,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     
     llm_chat = CallChatSession(store.app_token, store.myshopify)
 
-    buffer_threshold = 250000 # Initial buffer threshold
+    buffer_threshold = 20000 # Initial buffer threshold
     call_sid = None
 
     await websocket.accept()
