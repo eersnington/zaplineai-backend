@@ -11,6 +11,7 @@ from lib.audio_buffer import AudioBuffer
 from lib.asr import transcribe_buffer
 from lib.call_chat import CallChatSession
 from lib.db import db
+from lib.custom_exception import CustomException
 
 load_dotenv()
 
@@ -122,7 +123,7 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
     )
 
 
-def call_accept(request:Request, public_url: str, phone_number: str, brand_name: str) -> VoiceResponse:
+async def call_accept(request:Request, public_url: str, phone_number: str, brand_name: str) -> VoiceResponse:
     """
         Handles the initial call session.
 
@@ -133,10 +134,13 @@ def call_accept(request:Request, public_url: str, phone_number: str, brand_name:
 
         Return: A VoiceResponse instance containing the TwiML instructions for the call session.
     """
-    print(request)
-    print(request.form)
-    call_sid = request.form.get('CallSid')
-    call_from = request.form.get('From')
+    form_data = await request.form()
+    try:
+        print(form_data)
+        call_sid = form_data.get('CallSid')
+        call_from = form_data.get('From')
+    except Exception as e:
+        raise CustomException(status_code=400, detail=str(e))
     active_calls[call_sid] = call_from
 
     response_text = f"Hi, thanks for calling {brand_name} Phone Support! I'm Zap-line, your AI assistant. How can I help you today?"
