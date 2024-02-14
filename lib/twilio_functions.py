@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from twilio.twiml.voice_response import VoiceResponse, Start
 from twilio.rest import Client
 from fastapi import Request, WebSocket, WebSocketDisconnect, HTTPException
+import asyncio
 import os
 import audioop
 import base64
@@ -119,9 +120,12 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
 
     if call_session is None:
         raise Exception("Call session not found.")
+    
     call_session.update(
         twiml=f'<Response><Say>{transcription_text}</Say><Pause length="60"/></Response>'
     )
+
+    await asyncio.sleep(3)
 
 
 async def call_accept(request:Request, public_url: str, phone_number: str) -> VoiceResponse:
@@ -170,7 +174,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     
     llm_chat = CallChatSession(store.app_token, store.myshopify)
 
-    buffer_threshold = 30000 # Initial buffer threshold
+    buffer_threshold = 27000 # Initial buffer threshold
     call_sid = None
 
     await websocket.accept()
