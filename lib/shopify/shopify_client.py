@@ -1,4 +1,4 @@
-from resource_base import ShopifyResource, Orders
+from lib.shopify.resource_base import ShopifyResource, Orders
 from rich import print
 import os
 from dotenv import load_dotenv
