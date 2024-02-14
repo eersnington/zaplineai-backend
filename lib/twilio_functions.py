@@ -2,7 +2,6 @@ from dotenv import load_dotenv
 from twilio.twiml.voice_response import VoiceResponse, Start
 from twilio.rest import Client
 from fastapi import Request, WebSocket, WebSocketDisconnect, HTTPException
-from queue import Queue
 import os
 import audioop
 import base64
@@ -23,7 +22,7 @@ twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 TWILIO_PHONE_NUMBER = twilio_client.incoming_phone_numbers.list()[0]
 
 active_calls = {}
-response_queue = {}
+bot_speaking = {}
 
 
 def get_new_numbers() -> list:
@@ -116,6 +115,7 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
 
         Return: None. The function performs an update operation and does not return anything.
     """
+    bot_speaking[call_sid] = True
     call_session = twilio_client.calls(call_sid)
 
     if call_session is None:
@@ -123,6 +123,7 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
     call_session.update(
         twiml=f'<Response><Say>{transcription_text}</Say><Pause length="60"/></Response>'
     )
+    bot_speaking[call_sid] = False
 
 
 async def call_accept(request:Request, public_url: str, phone_number: str, brand_name: str) -> VoiceResponse:
@@ -142,6 +143,7 @@ async def call_accept(request:Request, public_url: str, phone_number: str, brand
         call_from = form_data.get('From')
     except Exception as e:
         raise CustomException(status_code=400, detail=str(e))
+    
     active_calls[call_sid] = call_from
 
     response_text = f"Hi There!"
@@ -184,7 +186,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 print('Media stream started!')
                 call_sid = packet['start']['callSid']                
                 customer_phone_no = active_calls[call_sid]
-                response_queue[call_sid] = Queue()
+                
                 print(f"Customer Phone No: {customer_phone_no}")
 
                 if llm_chat.get_shopify_status() != 200:
@@ -199,6 +201,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 print('Media stream stopped!')
 
             if packet['event'] == 'media':
+                if bot_speaking.get(call_sid) is not None and bot_speaking[call_sid] is True:
+                    continue
                 chunk = base64.b64decode(packet['media']['payload'])
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
