@@ -81,8 +81,8 @@ class BotForm(BaseModel):
 
 
 async def bot_routes(phone_no: str, public_url: str, brand: str):
-    async def call():
-        voice_response = call_accept(
+    async def call(request: Request):
+        voice_response = call_accept(request=request,
             public_url=public_url, phone_number=phone_no[1:], brand_name=brand)
 
         return Response(content=str(voice_response), media_type="application/xml")

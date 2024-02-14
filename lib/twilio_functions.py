@@ -20,6 +20,8 @@ TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 TWILIO_PHONE_NUMBER = twilio_client.incoming_phone_numbers.list()[0]
 
+active_calls = {}
+
 
 def get_new_numbers() -> list:
     """
@@ -120,7 +122,7 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
     )
 
 
-def call_accept(public_url: str, phone_number: str, brand_name: str) -> VoiceResponse:
+def call_accept(request:Request, public_url: str, phone_number: str, brand_name: str) -> VoiceResponse:
     """
         Handles the initial call session.
 
@@ -131,6 +133,10 @@ def call_accept(public_url: str, phone_number: str, brand_name: str) -> VoiceRes
 
         Return: A VoiceResponse instance containing the TwiML instructions for the call session.
     """
+    call_sid = request.form.get('CallSid')
+    call_from = request.form.get('From')
+    active_calls[call_sid] = call_from
+
     response_text = f"Hi, thanks for calling {brand_name} Phone Support! I'm Zap-line, your AI assistant. How can I help you today?"
     response = VoiceResponse()
     start = Start()
