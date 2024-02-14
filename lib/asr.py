@@ -14,7 +14,7 @@ if os.getenv("PRODUCTION_MODE") == "False":
     STTmodel = None
 
 else:
-    model_size = "small"
+    model_size = "large-v3"
     logging.info(f"Loading Whisper Model | Size: {model_size}")
     STTmodel = WhisperModel(model_size, device="cuda",
                             compute_type="int8_float16")
