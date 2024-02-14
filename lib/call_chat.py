@@ -35,10 +35,10 @@ class CallChatSession:
                 item_names.append(item["title"])
             date = recent_order["created_at"].split("T")[0]
 
-            response = f"Are you calling regarding your recent purchase of {', '.join(item_names)} on {date}?"
+            response = f" Are you calling regarding your recent purchase of {', '.join(item_names)} on {date}?"
             return response
         
-        return "You seem to be new to the store. How can I help you today?"
+        return " You seem to be new to the store. How can I help you today?"
     
     def get_order_status(self, customer_phone_no) -> str:
         """
