@@ -191,7 +191,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     await voice_response(
                         f"Sorry, we are currently experiencing technical difficulties. Please call again later.", call_sid, twilio_client)
                 else:
-                    response = llm_chat.start(call_sid, customer_phone_no)
+                    awaited_response = llm_chat.start(call_sid, customer_phone_no)
+                    response = initial_response + awaited_response
                     await voice_response(response, call_sid, twilio_client)
 
             elif packet['event'] == 'stop':
