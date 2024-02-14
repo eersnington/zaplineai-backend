@@ -211,13 +211,17 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     audio_data, 2, 1, 8000, 16000, None)[0]
                 # Compute audio energy
                 audio_energy = audioop.rms(audio_data, 2)
-                energy_threshold = 1000
+                energy_threshold = 800
 
                 if audio_energy >= energy_threshold:
                     audio_buffer.append(audio_data)
 
                 if len(audio_buffer) >= buffer_threshold:
                     transcription_result = transcribe_buffer(audio_buffer)
+                    # Pre-processing transcription result
+                    if len(transcription_result) == 0:
+                        continue
+
                     print("Transcription:", transcription_result)
                     # Clear the buffer after transcription
                     audio_buffer.clear()
