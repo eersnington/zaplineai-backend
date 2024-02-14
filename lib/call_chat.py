@@ -10,7 +10,7 @@ class CallChatSession:
     def __init__(self, app_token: str, myshopify: str):
         self.sid = None
         self.llm_chat = LLMChat(llm_model)
-        self.resource = ShopifyResource(token=app_token, store=myshopify)
+        self.resource = ShopifyResource(token=app_token, store=myshopify.split(".")[0])
         self.client = ShopifyClient(self.resource)
 
     def start(self, sid: str, customer_phone_no: str) -> str:
