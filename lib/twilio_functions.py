@@ -126,7 +126,7 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
     )
 
 
-async def call_accept(request:Request, public_url: str, phone_number: str, brand_name: str) -> VoiceResponse:
+async def call_accept(request:Request, public_url: str, phone_number: str) -> VoiceResponse:
     """
         Handles the initial call session.
 
