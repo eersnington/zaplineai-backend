@@ -45,8 +45,7 @@ def transcribe_buffer(audio_buffer: AudioBuffer) -> str:
 
     # Pass the audio file to Whisper for transcription
     with open(temp_audio_path, 'rb') as audio_file:
-        segments, info = STTmodel.transcribe(
-            audio_file, beam_size=5, task="transcribe")
+        segments, info = STTmodel.transcribe(audio_file, language="en", beam_size=5, task="translate")
 
         transcription = ''
         for segment in segments:
