@@ -207,7 +207,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     audio_data, 2, 1, 8000, 16000, None)[0]
                 # Compute audio energy
                 audio_energy = audioop.rms(audio_data, 2)
-                energy_threshold = 900
+                energy_threshold = 1000
 
                 if audio_energy >= energy_threshold:
                     audio_buffer.append(audio_data)
