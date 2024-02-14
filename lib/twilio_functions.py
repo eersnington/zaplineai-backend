@@ -168,8 +168,9 @@ async def call_stream(websocket: WebSocket, phone_no: str) -> None:
             if packet['event'] == 'start':
                 print('Media stream started!')
                 call_sid = packet['start']['callSid']
-                ongoing_call = twilio_client.calls(call_sid)
+                ongoing_call = twilio_client.calls(call_sid).fetch()
                 print(ongoing_call)
+                print(ongoing_call.to)
                 print(ongoing_call.from_)
                 customer_phone_no = packet['start']['from']
 
