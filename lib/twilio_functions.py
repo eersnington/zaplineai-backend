@@ -172,21 +172,10 @@ async def call_stream(websocket: WebSocket, phone_no: str) -> None:
 
                 if llm_chat.get_shopify_status() != 200:
                     voice_response(
-                        f"Sorry, we are currently experiencing technical difficulties. Please call again later. ", call_sid, twilio_client)
+                        f"Sorry, we are currently experiencing technical difficulties. Please call again later.", call_sid, twilio_client)
                 else:
-                    output = llm_chat.client.resource.get(f"/customers.json?phone={customer_phone_no}")
-
-                    for customer in output.json()["customers"]:                        
-                        recent_order = llm_chat.client.resource.get(f"/orders.json?customer_id={customer['id']}").json()["orders"][0]
-                        items = recent_order["line_items"]
-                        item_names = []
-                        for item in items:
-                            item_names.append(item["title"])
-                        date = recent_order["created_at"].split("T")[0]
-
-                        response = f"Are you calling regarding your recent purchase of {', '.join(item_names)} on {date}?"
-                        voice_response(response, call_sid, twilio_client)
-
+                    response = llm_chat.start(call_sid, customer_phone_no)
+                    voice_response(response, call_sid, twilio_client)
 
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
@@ -210,8 +199,9 @@ async def call_stream(websocket: WebSocket, phone_no: str) -> None:
                     print("Transcription:", transcription_result)
                     # Clear the buffer after transcription
                     audio_buffer.clear()
+                    
                     print(f"Call SID: {call_sid}")
-                
+                    response = llm_chat.get_response(transcription_result)
                     await voice_response(response, call_sid)
 
     except WebSocketDisconnect:
