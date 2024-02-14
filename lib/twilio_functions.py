@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from twilio.twiml.voice_response import VoiceResponse, Start
 from twilio.rest import Client
 from fastapi import Request, WebSocket, WebSocketDisconnect, HTTPException
+from queue import Queue
 import os
 import audioop
 import base64
@@ -22,6 +23,7 @@ twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 TWILIO_PHONE_NUMBER = twilio_client.incoming_phone_numbers.list()[0]
 
 active_calls = {}
+response_queue = {}
 
 
 def get_new_numbers() -> list:
@@ -136,14 +138,13 @@ async def call_accept(request:Request, public_url: str, phone_number: str, brand
     """
     form_data = await request.form()
     try:
-        print(form_data)
         call_sid = form_data.get('CallSid')
         call_from = form_data.get('From')
     except Exception as e:
         raise CustomException(status_code=400, detail=str(e))
     active_calls[call_sid] = call_from
 
-    response_text = f"Hi, thanks for calling {brand_name} Phone Support! I'm Zap-line, your AI assistant. How can I help you today?"
+    response_text = f"Hi There!"
     response = VoiceResponse()
     start = Start()
     start.stream(
@@ -154,7 +155,7 @@ async def call_accept(request:Request, public_url: str, phone_number: str, brand
     return response
 
 
-async def call_stream(websocket: WebSocket, phone_no: str) -> None:
+async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> None:
     """
         Handles the audio stream of a call session.
 
@@ -165,6 +166,8 @@ async def call_stream(websocket: WebSocket, phone_no: str) -> None:
 
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
+    initial_response = f"Thank you for contacting {brand_name} Support! I'm ZapLine, your virtual assistant."
+    
     llm_chat = CallChatSession(store.app_token, store.myshopify)
 
     buffer_threshold = 16000 # Initial buffer threshold
@@ -181,6 +184,7 @@ async def call_stream(websocket: WebSocket, phone_no: str) -> None:
                 print('Media stream started!')
                 call_sid = packet['start']['callSid']                
                 customer_phone_no = active_calls[call_sid]
+                response_queue[call_sid] = Queue()
                 print(f"Customer Phone No: {customer_phone_no}")
 
                 if llm_chat.get_shopify_status() != 200:
