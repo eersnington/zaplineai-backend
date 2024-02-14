@@ -66,22 +66,24 @@ class LLMModel:
 
 
 class LLMChat:
-    def __init__(self, llm_model: LLMModel):
+    def __init__(self, llm_model: LLMModel, classifier: BERTClassifier):
         self.llm_model = llm_model
+        self.classifier = classifier
         self.chat_history = []
 
     def add_message(self, message: str) -> None:
         self.chat_history.append(message)
 
-    def generate_response(self, prompt: str, temperature=0.8, max_tokens=100) -> str:
+    def generate_response(self, message: str, prompt: str, temperature=0.8, max_tokens=100) -> str:
 
-        prompt_template = llama_prompt(prompt, self.chat_history)
-
-        self.add_message(f"Customer: {prompt}")
+        self.add_message(f"Customer: {message}")
 
         response = self.llm_model.generate_text(
-            prompt_template, temperature, max_tokens)
+            prompt, temperature, max_tokens)
 
         self.add_message(f"AI Assistant: {response}")
 
         return response
+    
+    def get_call_type(self, message: str) -> list:
+        return self.classifier.get_pipeline_output(message)
