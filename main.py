@@ -88,7 +88,7 @@ async def bot_routes(phone_no: str, public_url: str, brand: str):
         return Response(content=str(voice_response), media_type="application/xml")
 
     async def stream(websocket: WebSocket):
-        await call_stream(websocket, phone_no)
+        await call_stream(websocket, phone_no=phone_no, brand_name=brand)
 
     try:
         update_phone(public_url,  phone_no[1:])
