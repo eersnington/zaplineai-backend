@@ -116,6 +116,7 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
         Return: None. The function performs an update operation and does not return anything.
     """
     bot_speaking[call_sid] = True
+    print(f"Bot is speaking: {bot_speaking[call_sid]}")
     call_session = twilio_client.calls(call_sid)
 
     if call_session is None:
@@ -124,6 +125,7 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
         twiml=f'<Response><Say>{transcription_text}</Say><Pause length="60"/></Response>'
     )
     bot_speaking[call_sid] = False
+    print(f"Bot is no longer speaking: {bot_speaking[call_sid]}")
 
 
 async def call_accept(request:Request, public_url: str, phone_number: str, brand_name: str) -> VoiceResponse:
