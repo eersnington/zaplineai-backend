@@ -173,12 +173,9 @@ async def call_stream(websocket: WebSocket, phone_no: str) -> None:
 
             if packet['event'] == 'start':
                 print('Media stream started!')
-                call_sid = packet['start']['callSid']
-                ongoing_call = twilio_client.calls(call_sid).fetch()
-                print(ongoing_call)
-                print(ongoing_call['from'])
-                print(ongoing_call['to'])
-                customer_phone_no = packet['start']['from']
+                call_sid = packet['start']['callSid']                
+                customer_phone_no = active_calls[call_sid]
+                print(f"Customer Phone No: {customer_phone_no}")
 
                 if llm_chat.get_shopify_status() != 200:
                     voice_response(
