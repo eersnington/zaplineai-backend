@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):
     bots = await db.bot.find_many()
 
     for bot in bots:
-        profile = await db.profile.find_first(where={"userId": bots.userId})
+        profile = await db.profile.find_first(where={"userId": bot.userId})
         await bot_routes(bot.phone_no, public_url, profile.brandname)
 
     logging.info("Bots loaded")
@@ -41,6 +41,7 @@ async def lifespan(app: FastAPI):
     yield
     await db.disconnect()
     logging.info("Disconnected from the database")
+    
 
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(
