@@ -23,7 +23,6 @@ twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 TWILIO_PHONE_NUMBER = twilio_client.incoming_phone_numbers.list()[0]
 
 active_calls = {}
-bot_speaking = {}
 
 
 def get_new_numbers() -> list:
@@ -116,7 +115,6 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
 
         Return: None. The function performs an update operation and does not return anything.
     """
-    print(f"Bot is speaking: {bot_speaking[call_sid]}")
     call_session = twilio_client.calls(call_sid)
 
     if call_session is None:
