@@ -133,6 +133,8 @@ def call_accept(request:Request, public_url: str, phone_number: str, brand_name:
 
         Return: A VoiceResponse instance containing the TwiML instructions for the call session.
     """
+    print(request)
+    print(request.form)
     call_sid = request.form.get('CallSid')
     call_from = request.form.get('From')
     active_calls[call_sid] = call_from
