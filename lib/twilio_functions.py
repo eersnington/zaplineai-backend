@@ -168,6 +168,7 @@ async def call_stream(websocket: WebSocket, phone_no: str) -> None:
             if packet['event'] == 'start':
                 print('Media stream started!')
                 call_sid = packet['start']['callSid']
+                print(packet['start'])
                 customer_phone_no = packet['start']['from']
 
                 if llm_chat.get_shopify_status() != 200:
