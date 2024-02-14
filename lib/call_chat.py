@@ -68,7 +68,7 @@ class CallChatSession:
             Returns:
             str -- The response from the LLM model.
         """
-        return self.llm_chat.get_response(message)
+        return self.llm_chat.generate_response(message)
     
     def get_shopify_status(self) -> int:
         """
