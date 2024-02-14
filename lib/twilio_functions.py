@@ -6,7 +6,6 @@ import os
 import audioop
 import base64
 import json
-import logging
 
 from lib.audio_buffer import AudioBuffer
 from lib.asr import transcribe_buffer
