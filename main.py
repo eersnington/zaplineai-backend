@@ -17,6 +17,8 @@ from lib.twilio_functions import call_accept, call_stream, update_phone
 from routers.phone import router as phone_router
 from routers.metrics import router as metrics_router
 logging.getLogger().setLevel(logging.INFO)
+logging.getLogger('twilio').setLevel(logging.WARNING)
+logging.getLogger('pyngrok').setLevel(logging.WARNING)
 
 load_dotenv()
 

@@ -15,7 +15,7 @@ from lib.db import db
 from lib.custom_exception import CustomException
 
 load_dotenv()
-logging.getLogger('twilio').setLevel(logging.WARNING)
+
 
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
@@ -210,7 +210,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     audio_data, 2, 1, 8000, 16000, None)[0]
                 # Compute audio energy
                 audio_energy = audioop.rms(audio_data, 2)
-                energy_threshold = 700
+                energy_threshold = 1000
 
                 if audio_energy >= energy_threshold:
                     audio_buffer.append(audio_data)
