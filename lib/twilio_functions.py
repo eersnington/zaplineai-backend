@@ -184,11 +184,11 @@ async def call_stream(websocket: WebSocket, phone_no: str) -> None:
                 print(f"Customer Phone No: {customer_phone_no}")
 
                 if llm_chat.get_shopify_status() != 200:
-                    voice_response(
+                    await voice_response(
                         f"Sorry, we are currently experiencing technical difficulties. Please call again later.", call_sid, twilio_client)
                 else:
                     response = llm_chat.start(call_sid, customer_phone_no)
-                    voice_response(response, call_sid, twilio_client)
+                    await voice_response(response, call_sid, twilio_client)
 
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
