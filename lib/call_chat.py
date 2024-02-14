@@ -38,7 +38,7 @@ class CallChatSession:
             response = f"Are you calling regarding your recent purchase of {', '.join(item_names)} on {date}?"
             return response
         
-        return "We couldn't find any recent purchases. How can we help you today?"
+        return "You seem to be new to the store. How can I help you today?"
     
     def get_order_status(self, customer_phone_no) -> str:
         """
