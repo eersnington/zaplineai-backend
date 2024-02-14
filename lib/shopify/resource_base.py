@@ -1,4 +1,5 @@
 import requests
+import time
 
 
 class ShopifyResource(requests.Session):
@@ -13,6 +14,15 @@ class ShopifyResource(requests.Session):
             "X-Shopify-Access-Token": self.token,
             "Content-Type": "application/json"
         })
+
+        def rate_hook(r, *args, **kwargs):
+            if "X-Shopify-Shop-Api-Call-Limit" in r.headers:
+                print("rate:", r.headers["X-Shopify-Shop-Api-Call-Limit"])
+            if r.status_code == 429:
+                time.sleep(int(float(r.headers["Retry-After"])))
+                print("rate limit reached, sleeping")
+
+        self.hooks["response"].append(rate_hook)
 
     def request(self, method, url, *args, **kwargs):
         full_url = f"{self.baseurl}{url}"
