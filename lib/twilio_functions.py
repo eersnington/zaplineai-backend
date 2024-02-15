@@ -169,7 +169,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     queue = _QueueStream()
 
     whisper_stream = WhisperTwilioStream(get_model())
-    whisper_stream.stream = queue
 
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
@@ -202,6 +201,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     response = initial_response + awaited_response
                     await voice_response(response, call_sid, twilio_client)
 
+                    whisper_stream.stream = queue
+
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
 
@@ -211,7 +212,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 audio_data = audioop.ulaw2lin(chunk, 2)
                 
                 if whisper_stream.stream is not None:
-                    whisper_stream.write(audio_data)
+                    whisper_stream.stream.write(audio_data)
 
                 
 
