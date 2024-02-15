@@ -8,7 +8,7 @@ import audioop
 import base64
 import json
 
-from lib.audio_buffer import AudioBuffer
+from lib.audio_buffer import AudioBuffer, WhisperTwilioStream
 from lib.asr import transcribe_buffer
 from lib.call_chat import CallChatSession
 from lib.db import db
@@ -166,7 +166,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
         Keyword arguments:
         websocket -- The websocket instance used to receive the audio stream from Twilio.
     """
-    audio_buffer = AudioBuffer()
+    whisper_stream = WhisperTwilioStream()
 
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
@@ -207,29 +207,9 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
                 # Convert audio data from 8kHz to 16kHz for Whisper
-                audio_data = audioop.ratecv(
-                    audio_data, 2, 1, 8000, 16000, None)[0]
-                # Compute audio energy
-                audio_energy = audioop.rms(audio_data, 2)
-                energy_threshold = 800
-
-                if audio_energy >= energy_threshold:
-                    audio_buffer.append(audio_data)
-
-                if len(audio_buffer) >= buffer_threshold:
-                    transcription_result = transcribe_buffer(audio_buffer)
-                    # Pre-processing transcription result
-                    if len(transcription_result) == 0:
-                        continue
-
-                    print("Transcription:", transcription_result)
-                    # Clear the buffer after transcription
-                    audio_buffer.clear()
-                    
-                    print(f"Call SID: {call_sid}")
-                    response = llm_chat.get_response(transcription_result)
-                    print(f"LLM Response: {response}")
-                    await voice_response(response, call_sid, twilio_client)
+                
+                if whisper_stream.stream is not None:
+                    whisper_stream.write(audio_data)
 
     except WebSocketDisconnect:
         print("WebSocket disconnected")
