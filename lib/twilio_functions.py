@@ -1,3 +1,4 @@
+import io
 from dotenv import load_dotenv
 from twilio.twiml.voice_response import VoiceResponse, Start
 from twilio.rest import Client
@@ -8,8 +9,8 @@ import audioop
 import base64
 import json
 
-from lib.audio_buffer import _QueueStream, AudioBuffer, WhisperTwilioStream
-from lib.asr import transcribe_buffer, get_model
+from lib.audio_buffer import AudioBuffer, _QueueStream
+from lib.asr import transcribe_buffer, transcribe_stream
 from lib.call_chat import CallChatSession
 from lib.db import db
 from lib.custom_exception import CustomException
@@ -165,10 +166,10 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
         Keyword arguments:
         websocket -- The websocket instance used to receive the audio stream from Twilio.
+        phone_no -- The phone number of the incoming caller.
+        brand_name -- The name of the brand for the call session.
     """
-    queue = _QueueStream()
-
-    whisper_stream = WhisperTwilioStream(get_model())
+    audio_buffer = _QueueStream()
 
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
@@ -176,7 +177,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     
     llm_chat = CallChatSession(store.app_token, store.myshopify)
 
-    buffer_threshold = 27000 # Initial buffer threshold
     call_sid = None
 
     await websocket.accept()
@@ -201,8 +201,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     response = initial_response + awaited_response
                     await voice_response(response, call_sid, twilio_client)
 
-                    whisper_stream.stream = queue
-
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
 
@@ -211,16 +209,26 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
                 
-                if whisper_stream.stream is not None:
-                    whisper_stream.stream.write(audio_data)
-                    
-                    transcript = whisper_stream.get_transcription()
-                    print(transcript) 
+                if audio_buffer.size() < 1024:
+                    audio_buffer.write(audio_data)
                 else:
-                    whisper_stream.stream = queue
-                    
+                        result = transcribe_stream(audio_buffer)
+                        print(f"Transcription: {result}")
 
                 
+                    # transcription_result = transcribe_buffer(audio_buffer)
+                    # # Pre-processing transcription result
+                    # if len(transcription_result) == 0:
+                    #     continue
+
+                    # print("Transcription:", transcription_result)
+                    # # Clear the buffer after transcription
+                    # audio_buffer.clear()
+                    
+                    # print(f"Call SID: {call_sid}")
+                    # response = llm_chat.get_response(transcription_result)
+                    # print(f"LLM Response: {response}")
+                    # await voice_response(response, call_sid, twilio_client)
 
     except WebSocketDisconnect:
         print("WebSocket disconnected")

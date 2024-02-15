@@ -4,7 +4,6 @@ import tempfile
 import queue
 import logging
 
-from pydub import AudioSegment
 import speech_recognition as sr
 
 class AudioBuffer:
@@ -55,6 +54,10 @@ class _QueueStream:
     def write(self, chunk: bytes):
         self.q.put(chunk)
 
+    def size(self) -> int:
+        return self.q.qsize()
+    
+    
 # nvidia-smi | grep 'python' | awk '{ print $5 }' | xargs -n1 kill -9
 class WhisperTwilioStream:
     def __init__(self, whisper_model):

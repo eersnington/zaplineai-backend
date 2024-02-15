@@ -1,8 +1,13 @@
+import io
 import os
+import tempfile
 import wave
 import logging
-from lib.audio_buffer import AudioBuffer
+from lib.audio_buffer import AudioBuffer, _QueueStream, _TwilioSource
 from faster_whisper import WhisperModel
+import speech_recognition as sr
+from pydub import AudioSegment
+
 from dotenv import load_dotenv
 import functools
 
@@ -28,6 +33,12 @@ else:
     STTmodel = get_model()
     logging.info("Loading completed!")
 
+
+recognizer = sr.Recognizer()
+recognizer = sr.Recognizer()
+recognizer.energy_threshold = 300
+recognizer.pause_threshold = 2.5
+recognizer.dynamic_energy_threshold = False
 
 
 def transcribe_buffer(audio_buffer: AudioBuffer) -> str:
@@ -61,3 +72,30 @@ def transcribe_buffer(audio_buffer: AudioBuffer) -> str:
             transcription += segment.text
 
     return transcription
+
+def transcribe_stream(audio_stream: _QueueStream) -> str:
+    """
+        Transcribes audio from a byte stream into text.
+
+        Keyword arguments:
+        audio_stream -- The byte stream containing audio data to be transcribed.
+    """
+    with _TwilioSource(audio_stream) as source:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = os.path.join(tmp, "mic.wav")
+            audio = recognizer.listen(source, timeout=2, phrase_time_limit=5)
+            data = io.BytesIO(audio.get_wav_data())
+            audio_clip = AudioSegment.from_file(data)
+            audio_clip.export(tmp_path, format="wav")
+
+            if STTmodel is None:
+                return "Model not loaded"
+            
+            segments, info = STTmodel.transcribe(tmp_path, language="en", task="transcribe")
+
+            transcription = ''
+            for segment in segments:
+                transcription += segment.text
+
+            return transcription
+    
