@@ -8,7 +8,7 @@ import audioop
 import base64
 import json
 
-from lib.audio_buffer import AudioBuffer, WhisperTwilioStream
+from lib.audio_buffer import _QueueStream, AudioBuffer, WhisperTwilioStream
 from lib.asr import transcribe_buffer, get_model
 from lib.call_chat import CallChatSession
 from lib.db import db
@@ -166,7 +166,9 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
         Keyword arguments:
         websocket -- The websocket instance used to receive the audio stream from Twilio.
     """
-    whisper_stream = WhisperTwilioStream(get_model())
+    queue = _QueueStream()
+
+    whisper_stream = WhisperTwilioStream(get_model()).stream = queue
 
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
@@ -199,8 +201,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     response = initial_response + awaited_response
                     await voice_response(response, call_sid, twilio_client)
 
-                    whisper_stream.get_transcription()
-
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
 
@@ -211,6 +211,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 
                 if whisper_stream.stream is not None:
                     whisper_stream.write(audio_data)
+
                 
 
     except WebSocketDisconnect:

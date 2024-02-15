@@ -55,7 +55,7 @@ class _QueueStream:
     def write(self, chunk: bytes):
         self.q.put(chunk)
 
-
+# nvidia-smi | grep 'python' | awk '{ print $5 }' | xargs -n1 kill -9
 class WhisperTwilioStream:
     def __init__(self, whisper_model):
         self.audio_model = whisper_model
