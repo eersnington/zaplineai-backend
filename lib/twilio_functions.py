@@ -237,6 +237,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
         print(f"HTTP Exception: {e}")
     except Exception as e:
         print(f"Exception: {e.with_traceback()}")
-        response = f"Sorry, we are currently experiencing technical difficulties. Please call again later."
+        response = f"Sorry, we are currently experiencing technical difficulties. Please call again later. <Hangup/>"
         await voice_response(response, call_sid, twilio_client)
         
