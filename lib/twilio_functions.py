@@ -236,4 +236,4 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     except HTTPException as e:
         print(f"HTTP Exception: {e}")
     except Exception as e:
-        print(f"Exception: {e}")
+        print(f"Exception: {e.with_traceback()}")
