@@ -214,6 +214,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 else:
                         result = transcribe_stream(audio_buffer)
                         print(f"Transcription: {result}")
+                print(audio_buffer.size())
 
                 
                     # transcription_result = transcribe_buffer(audio_buffer)
