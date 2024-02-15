@@ -212,12 +212,13 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 audio_data = audioop.ulaw2lin(chunk, 2)
                 
                 if whisper_stream.stream is not None:
-                    whisper_stream.stream = queue
-                else:
                     whisper_stream.stream.write(audio_data)
                     
                     transcript = whisper_stream.get_transcription()
-                    print(transcript)
+                    print(transcript) 
+                else:
+                    whisper_stream.stream = queue
+                    
 
                 
 
