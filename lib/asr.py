@@ -4,8 +4,18 @@ import logging
 from lib.audio_buffer import AudioBuffer
 from faster_whisper import WhisperModel
 from dotenv import load_dotenv
+import functools
+
 load_dotenv()
 logging.getLogger().setLevel(logging.INFO)
+
+model_size = "large-v3"
+
+@functools.cache
+def get_model():
+    STTmodel = WhisperModel(model_size, device="cuda",
+                            compute_type="int8_float16")
+    return STTmodel
 
 # Initialize faster_whisper model
 
@@ -14,11 +24,10 @@ if os.getenv("PRODUCTION_MODE") == "False":
     STTmodel = None
 
 else:
-    model_size = "large-v3"
     logging.info(f"Loading Whisper Model | Size: {model_size}")
-    STTmodel = WhisperModel(model_size, device="cuda",
-                            compute_type="int8_float16")
+    STTmodel = get_model()
     logging.info("Loading completed!")
+
 
 
 def transcribe_buffer(audio_buffer: AudioBuffer) -> str:
