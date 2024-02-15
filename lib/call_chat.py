@@ -29,7 +29,13 @@ class CallChatSession:
             return "Sorry, we are currently experiencing technical difficulties. Please call again later."
 
         for customer in output.json()["customers"]:                        
-            recent_order = self.client.resource.get(f"/orders.json?customer_id={customer['id']}").json()["orders"][0]
+            recent_orders = self.client.resource.get(f"/orders.json?customer_id={customer['id']}").json()["orders"]
+            
+            print(recent_orders)
+            if len(recent_orders) > 0:
+                recent_order = recent_orders[0]
+            else:
+                recent_order = recent_orders
             items = recent_order["line_items"]
             item_names = []
             for item in items:
