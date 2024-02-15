@@ -31,11 +31,10 @@ class CallChatSession:
         for customer in output.json()["customers"]:                        
             recent_orders = self.client.resource.get(f"/orders.json?customer_id={customer['id']}").json()["orders"]
             
-            print(recent_orders)
-            if len(recent_orders) > 0:
-                recent_order = recent_orders[0]
-            else:
-                recent_order = recent_orders
+            if len(recent_orders) == 0:
+                return " You seem to be new to the store. How can I help you today?"
+            recent_order = recent_orders[0]
+
             items = recent_order["line_items"]
             item_names = []
             for item in items:
