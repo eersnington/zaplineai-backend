@@ -168,7 +168,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     """
     queue = _QueueStream()
 
-    whisper_stream = WhisperTwilioStream(get_model()).stream = queue
+    whisper_stream = WhisperTwilioStream(get_model())
+    whisper_stream.stream = queue
 
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
