@@ -96,7 +96,7 @@ class CallChatSession:
         call_type = self.llm_chat.get_call_type(message)
 
         if call_type[0]["label"] == "Order Status":
-            data =  self.get_order_status(message)
+            data =  self.get_order_status()
         else:
             data = ""
 
