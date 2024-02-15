@@ -9,7 +9,7 @@ import base64
 import json
 
 from lib.audio_buffer import AudioBuffer, WhisperTwilioStream
-from lib.asr import transcribe_buffer
+from lib.asr import transcribe_buffer, get_model
 from lib.call_chat import CallChatSession
 from lib.db import db
 from lib.custom_exception import CustomException
@@ -166,7 +166,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
         Keyword arguments:
         websocket -- The websocket instance used to receive the audio stream from Twilio.
     """
-    whisper_stream = WhisperTwilioStream()
+    whisper_stream = WhisperTwilioStream(get_model())
 
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
@@ -199,6 +199,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     response = initial_response + awaited_response
                     await voice_response(response, call_sid, twilio_client)
 
+                    whisper_stream.get_transcription()
+
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
 
@@ -206,10 +208,10 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 chunk = base64.b64decode(packet['media']['payload'])
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
-                # Convert audio data from 8kHz to 16kHz for Whisper
                 
                 if whisper_stream.stream is not None:
                     whisper_stream.write(audio_data)
+                
 
     except WebSocketDisconnect:
         print("WebSocket disconnected")
