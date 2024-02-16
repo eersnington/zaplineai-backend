@@ -233,14 +233,14 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         first_message = False
                         audio_buffer.clear()
                         continue
+
+                    print(f"Transcription: {transcription_result}")
                     
                     if transcription_result is None:
                         logging.info("Transcription failed")
                         audio_buffer.clear()
                         audio_buffer = _QueueStream()
                         continue
-
-                    print(f"Transcription: {transcription_result}")
 
                     if call_intent is None:
                         call_intent = llm_chat.get_call_intent(transcription_result)
@@ -251,8 +251,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     print(f"Call Type and Intent: {call_type} {call_intent}")
 
                     audio_buffer.clear()
-                    response = llm_chat.get_response(transcription_result)
-                    print(f"LLM Response: {response}")
+                    #response = llm_chat.get_response(transcription_result)
+                    #print(f"LLM Response: {response}")
                     # await voice_response(response, call_sid, twilio_client)
 
 
