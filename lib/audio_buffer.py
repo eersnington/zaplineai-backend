@@ -9,7 +9,7 @@ class AudioBuffer:
     def __init__(self):
         self.buffer = []
 
-    def read(self) -> bytes:
+    def read(self, chunk) -> bytes:
         data = b''.join(self.buffer)
         self.buffer.clear()
         return data
