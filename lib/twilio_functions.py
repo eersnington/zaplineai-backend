@@ -173,7 +173,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
         phone_no -- The phone number of the incoming caller.
         brand_name -- The name of the brand for the call session.
     """
-    audio_buffer = _QueueStream()
+    audio_buffer = AudioBuffer() #_QueueStream()
 
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
@@ -202,7 +202,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                 if llm_chat.get_shopify_status() != 200:
                     await voice_response(
-                        f"Sorry, we are currently experiencing technical difficulties. Please call again later.", call_sid, twilio_client)
+                        f"Sorry, the shopify store isn't connected. Please call again later.", call_sid, twilio_client)
                 else:
                     awaited_response = llm_chat.start(call_sid, customer_phone_no)
                     response = initial_response + awaited_response
@@ -216,7 +216,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                 user_id = store.userId
                 if call_type is not None and call_intent is not None:
-                    llm_chat.track(user_id, call_sid, call_type, call_intent)
+                    # llm_chat.track(user_id, call_sid, call_type, call_intent)
+                    pass
 
             if packet['event'] == 'media':
                 chunk = base64.b64decode(packet['media']['payload'])
