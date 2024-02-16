@@ -84,7 +84,7 @@ def transcribe_stream(audio_stream: _QueueStream) -> str:
         with tempfile.TemporaryDirectory() as tmp:
             logging.info("Waiting for twilio caller...")
             tmp_path = os.path.join(tmp, "mic.wav")
-            audio = recognizer.listen(source)
+            audio = recognizer.listen(source, timeout=5)
             logging.info("Audio received from twilio caller.")
             data = io.BytesIO(audio.get_wav_data())
             audio_clip = AudioSegment.from_file(data)
