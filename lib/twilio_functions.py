@@ -212,7 +212,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 user_id = store.userId
                 if call_type is not None and call_intent is not None:
                     llm_chat.track(user_id, call_sid, call_type, call_intent)
-                    
+
             if packet['event'] == 'media':
                 chunk = base64.b64decode(packet['media']['payload'])
                 # Convert audio data from ulaw to linear PCM
@@ -228,8 +228,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                     audio_buffer.clear()
 
-                    # response = llm_chat.get_response(transcription_result)
-                    # print(f"LLM Response: {response}")
+                    response = llm_chat.get_response(transcription_result)
+                    print(f"LLM Response: {response}")
                     # await voice_response(response, call_sid, twilio_client)
 
     except WebSocketDisconnect:
