@@ -242,7 +242,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         audio_buffer.clear()
                         continue
 
-                    if call_intent is None and len(transcription_result.split(" ") > 4):
+                    if call_intent is None and len(transcription_result.split(" ")) > 4:
                         call_intent = llm_chat.check_call_intent(transcription_result)
                         call_type = llm_chat.get_call_type(call_intent=call_intent)
 
