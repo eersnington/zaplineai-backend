@@ -225,9 +225,9 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     transcription_result = transcribe_stream(audio_buffer)
 
                     print("Transcription:", transcription_result)
-
                     audio_buffer.clear()
-
+                    if transcription_result is None:
+                        continue
                     # response = llm_chat.get_response(transcription_result)
                     # print(f"LLM Response: {response}")
                     # await voice_response(response, call_sid, twilio_client)

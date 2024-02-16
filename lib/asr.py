@@ -84,20 +84,24 @@ def transcribe_stream(audio_stream: _QueueStream) -> str:
         with tempfile.TemporaryDirectory() as tmp:
             logging.info("Waiting for twilio caller...")
             tmp_path = os.path.join(tmp, "mic.wav")
-            audio = recognizer.listen(source, timeout=5)
-            logging.info("Audio received from twilio caller.")
-            data = io.BytesIO(audio.get_wav_data())
-            audio_clip = AudioSegment.from_file(data)
-            audio_clip.export(tmp_path, format="wav")
+            try:
+                audio = recognizer.listen(source)
+                logging.info("Audio received from twilio caller.")
+                data = io.BytesIO(audio.get_wav_data())
+                audio_clip = AudioSegment.from_file(data)
+                audio_clip.export(tmp_path, format="wav")
 
-            if STTmodel is None:
-                return "Model not loaded"
-            
-            segments, info = STTmodel.transcribe(tmp_path, language="en", task="transcribe")
+                if STTmodel is None:
+                    return "Model not loaded"
+                
+                segments, info = STTmodel.transcribe(tmp_path, language="en", task="transcribe")
 
-            transcription = ''
-            for segment in segments:
-                transcription += segment.text
+                transcription = ''
+                for segment in segments:
+                    transcription += segment.text
 
-            return transcription
+                return transcription
+            except Exception as e:
+                logging.error(f"Error in transcribing audio: {e}")
+                return None
     
