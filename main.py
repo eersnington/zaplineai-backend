@@ -20,6 +20,7 @@ from routers.metrics import router as metrics_router
 logging.getLogger().setLevel(logging.INFO)
 logging.getLogger('twilio').setLevel(logging.WARNING)
 logging.getLogger('pyngrok').setLevel(logging.WARNING)
+logging.getLogger('faster_whisper').setLevel(logging.WARNING)
 
 load_dotenv()
 
