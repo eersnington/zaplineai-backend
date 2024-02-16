@@ -219,7 +219,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     # response = llm_chat.get_response(transcription_result)
                     # print(f"LLM Response: {response}")
                     # await voice_response(response, call_sid, twilio_client)
-                
+                print(f"Audio Buffer Size: {audio_buffer.size()}")
 
     except WebSocketDisconnect:
         print("WebSocket disconnected")
