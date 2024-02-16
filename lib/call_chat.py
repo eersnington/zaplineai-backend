@@ -3,6 +3,8 @@ from lib.llm_prompt import llama_prompt
 from lib.shopify.resource_base import ShopifyResource
 from lib.shopify.shopify_client import ShopifyClient
 
+from lib.db import track_metrics
+
 llm_model = LLMModel()
 bert_classifier = BERTClassifier()
 
@@ -117,7 +119,21 @@ class CallChatSession:
             int -- The status code of the Shopify API.
         """
         return self.client.status()
+    
+    def update_call_status(self, user_id: str, call_type: str, call_intent: str) -> str:
+        """
+            Updates the status of the call.
 
+            Keyword arguments:
+            user_id -- The user's ID.
+            call_type -- The type of call to be tracked.
+            call_intent -- The intent of the call.
+        """
+        try:
+            track_metrics(user_id, call_type)
+        except Exception as e:
+            return f"Error occurred: {str(e)}"
+        return "Call status updated successfully."            
     
 
     
