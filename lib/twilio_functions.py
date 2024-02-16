@@ -227,7 +227,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 else:
                     transcription_result = transcribe_stream(audio_buffer)
                     
-                    if transcribe_stream is None:
+                    if transcription_result is None:
                         logging.info("Transcription failed")
                         continue
 
