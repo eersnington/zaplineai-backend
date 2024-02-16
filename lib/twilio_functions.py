@@ -204,14 +204,11 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                 if llm_chat.get_shopify_status() != 200:
                     await voice_response(
-                        f"Sorry, the shopify store isn't connected. Please call again later.", call_sid, twilio_client)
+                        f"Sorry, the shopify store isn't connected. Please call again later.", call_sid, 10, twilio_client)
                 else:
                     awaited_response = llm_chat.start(call_sid, customer_phone_no)
                     response = initial_response + awaited_response
-                    await voice_response(response, call_sid, twilio_client)
-                    logging.info("Awaiting Sleep")
-                    await asyncio.sleep(5)
-                    logging.info("Sleep Over")
+                    await voice_response(response, call_sid, 6, twilio_client)
 
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
@@ -241,9 +238,9 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                     words_per_second = 2.5  # Average speech rate - 150 wpm
                     words = len(transcription_result.split())
-                    estimated_duration_seconds = words / words_per_second
+                    est_duration = words / words_per_second
 
-                    print(f"Estimated Speech Duration: {math.ceil(estimated_duration_seconds)} seconds")
+                    print(f"Estimated Speech Duration: {math.ceil(est_duration)} seconds")
                     
                     if transcription_result is None:
                         logging.info("Transcription failed")
@@ -259,7 +256,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     audio_buffer.clear()
                     #response = llm_chat.get_response(transcription_result)
                     #print(f"LLM Response: {response}")
-                    # await voice_response(response, call_sid, twilio_client)
+                    # await voice_response(response, call_sid, est_duration, twilio_client)
 
 
     except WebSocketDisconnect:
@@ -270,5 +267,5 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
         logging.info(f"Exception: {e}")
         logging.info(f"{e.__traceback__}")
         response = f"Sorry, we are currently experiencing technical difficulties. Please call again later. <Hangup/>"
-        await voice_response(response, call_sid, twilio_client)
+        await voice_response(response, call_sid, 10, twilio_client)
         
