@@ -173,7 +173,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
         phone_no -- The phone number of the incoming caller.
         brand_name -- The name of the brand for the call session.
     """
-    audio_buffer = AudioBuffer() #_QueueStream()
+    audio_buffer = _QueueStream()
 
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
@@ -216,7 +216,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                 user_id = store.userId
                 if call_type is not None and call_intent is not None:
-                    # llm_chat.track(user_id, call_sid, call_type, call_intent)
+                      # llm_chat.track(user_id, call_sid, call_type, call_intent)
                     pass
 
             if packet['event'] == 'media':
@@ -224,7 +224,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
                 
-                print(audio_buffer.size())
                 if audio_buffer.size() < 500:
                     audio_buffer.write(audio_data)
                 else:
