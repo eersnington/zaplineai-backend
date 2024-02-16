@@ -186,6 +186,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     call_sid = None
     call_type = None
     call_intent = None
+    first = True
 
     await websocket.accept()
 
@@ -227,6 +228,11 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 if audio_buffer.size() < 66000:
                     audio_buffer.write(audio_data)
                 else:
+                    if first:
+                        first = False
+                        audio_buffer.clear()
+                        continue
+                    
                     transcription_result = transcribe_stream(audio_buffer)
 
                     print(f"Transcription: {transcription_result}")
