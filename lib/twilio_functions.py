@@ -229,10 +229,11 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     
                     if transcription_result is None:
                         logging.info("Transcription failed")
+                        audio_buffer.clear()
                         continue
 
                     if call_intent is None:
-                        call_intent = llm_chat.get_call_type(transcription_result)
+                        call_intent = llm_chat.get_call_intent(transcription_result)
 
                     if call_type is None:
                         if call_intent == "Sales":
