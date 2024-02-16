@@ -10,7 +10,10 @@ class AudioBuffer:
         self.buffer = b''
 
     def read(self, chunk: int) -> bytes:
-        return self.buffer[:chunk]
+        data = self.buffer
+        self.buffer = b''
+
+        return data
 
     def write(self, chunk: bytes):
         self.buffer += chunk

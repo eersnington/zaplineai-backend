@@ -175,7 +175,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
         phone_no -- The phone number of the incoming caller.
         brand_name -- The name of the brand for the call session.
     """
-    audio_buffer = _QueueStream()
+    audio_buffer = AudioBuffer() #_QueueStream()
 
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
@@ -240,7 +240,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     # est_duration = words / words_per_second
 
                     # print(f"Estimated Speech Duration: {math.ceil(est_duration)} seconds")
-                    
 
                     # if call_intent is None and len(transcription_result.split(" ")) > 4:
                     #     call_intent = llm_chat.check_call_intent(transcription_result)
