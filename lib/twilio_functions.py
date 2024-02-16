@@ -212,23 +212,13 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 if audio_buffer.size() < 700:
                     audio_buffer.write(audio_data)
                 else:
-                        result = transcribe_stream(audio_buffer)
-                        print(f"Transcription: {result}")
+                    transcription_result = transcribe_stream(audio_buffer)
 
-                
-                    # transcription_result = transcribe_buffer(audio_buffer)
-                    # # Pre-processing transcription result
-                    # if len(transcription_result) == 0:
-                    #     continue
+                    print("Transcription:", transcription_result)
 
-                    # print("Transcription:", transcription_result)
-                    # # Clear the buffer after transcription
-                    # audio_buffer.clear()
-                    
-                    # print(f"Call SID: {call_sid}")
-                    # response = llm_chat.get_response(transcription_result)
-                    # print(f"LLM Response: {response}")
-                    # await voice_response(response, call_sid, twilio_client)
+                    response = llm_chat.get_response(transcription_result)
+                    print(f"LLM Response: {response}")
+                    await voice_response(response, call_sid, twilio_client)
 
     except WebSocketDisconnect:
         print("WebSocket disconnected")
