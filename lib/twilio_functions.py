@@ -1,5 +1,5 @@
 import io
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from twilio.twiml.voice_response import VoiceResponse, Start
 from twilio.rest import Client
 from fastapi import Request, WebSocket, WebSocketDisconnect, HTTPException
@@ -17,7 +17,7 @@ from lib.call_chat import CallChatSession
 from lib.db import db
 from lib.custom_exception import CustomException
 
-load_dotenv()
+load_dotenv(find_dotenv(), override=True)
 
 
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")

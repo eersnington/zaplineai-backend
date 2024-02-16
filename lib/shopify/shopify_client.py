@@ -1,8 +1,8 @@
 from lib.shopify.resource_base import ShopifyResource, Orders
 from rich import print
 import os
-from dotenv import load_dotenv
-load_dotenv()
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv(), override=True)
 
 
 class ShopifyClient:

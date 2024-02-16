@@ -1,5 +1,6 @@
 # type: ignore
 import logging
+from dotenv import load_dotenv, find_dotenv
 from vllm import LLM, SamplingParams
 from transformers import BertForSequenceClassification, BertTokenizer, TextClassificationPipeline
 from lib.llm_prompt import llama_prompt
@@ -7,10 +8,14 @@ from typing import Union
 import logging
 import functools
 
+load_dotenv(find_dotenv(), override=True)
 
 @functools.cache
 def get_vllm_model(model: str, quantization: Union[str, None] = None) -> LLM:
     logging.info(f"Loading vLLM model: {model}")
+    if os.getenv("PRODUCTION_MODE") == "False":
+        logging.info("Skipping model loading in development environment")
+        return None
     if quantization is None:
         llm = LLM(model=model)
     else:
@@ -21,6 +26,9 @@ def get_vllm_model(model: str, quantization: Union[str, None] = None) -> LLM:
 @functools.cache
 def get_bert_model(model_path: str) -> BertForSequenceClassification:
     logging.info(f"Loading BERT model: {model_path}")
+    if os.getenv("PRODUCTION_MODE") == "False":
+        logging.info("Skipping model loading in development environment")
+        return None
     tokenizer = BertTokenizer.from_pretrained(model_path)
     model = BertForSequenceClassification.from_pretrained(model_path)
     return model, tokenizer
@@ -40,13 +48,13 @@ class BERTClassifier:
         return self.model(text) # [{'label': 'Order Status', 'score': 0.65}]
 
 
-class FalconSummarizer:
-    def __init__(self):
-        self.llm = get_vllm_model("Falconsai/text_summarization")
+# class FalconSummarizer:
+#     def __init__(self):
+#         self.llm = get_vllm_model("Falconsai/text_summarization")
 
-    def summarize(self, text: str) -> str:
-        outputs = self.llm.generate(text, use_tqdm=False)
-        return outputs[0].outputs[0].text
+#     def summarize(self, text: str) -> str:
+#         outputs = self.llm.generate(text, use_tqdm=False)
+#         return outputs[0].outputs[0].text
 
 
 class LLMModel:

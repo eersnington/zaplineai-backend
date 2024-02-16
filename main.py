@@ -1,7 +1,7 @@
 # Install required packages
 # nvidia-smi | grep 'python' | awk '{ print $5 }' | xargs -n1 kill -9
 # pip install fastapi twilio pyngrok 'uvicorn[standard]' python-multipart
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -22,7 +22,7 @@ logging.getLogger('twilio').setLevel(logging.WARNING)
 logging.getLogger('pyngrok').setLevel(logging.WARNING)
 logging.getLogger('faster_whisper').setLevel(logging.WARNING)
 
-load_dotenv()
+load_dotenv(find_dotenv(), override=True)
 
 
 """
