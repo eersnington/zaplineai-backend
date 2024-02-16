@@ -230,6 +230,10 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                     transcription_result = transcribe_stream(audio_buffer)
 
+                    if transcription_result == "Thank you.":
+                        audio_buffer.clear()
+                        continue
+
                     print(f"Transcription: {transcription_result}")
 
                     # if transcription_result is None:
