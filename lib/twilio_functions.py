@@ -8,6 +8,7 @@ import os
 import audioop
 import base64
 import json
+import logging
 
 from lib.audio_buffer import AudioBuffer, _QueueStream
 from lib.asr import transcribe_buffer, transcribe_stream
@@ -205,6 +206,9 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     awaited_response = llm_chat.start(call_sid, customer_phone_no)
                     response = initial_response + awaited_response
                     await voice_response(response, call_sid, twilio_client)
+                    logging.info("Awaiting Sleep")
+                    await asyncio.sleep(3)
+                    logging.info("Sleep Over")
 
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
@@ -214,7 +218,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     llm_chat.track(user_id, call_sid, call_type, call_intent)
 
             if packet['event'] == 'media':
-                await asyncio.sleep(3)
+
                 chunk = base64.b64decode(packet['media']['payload'])
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
