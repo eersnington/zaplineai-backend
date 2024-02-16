@@ -102,7 +102,7 @@ class CallChatSession:
             str -- The response from the LLM model.
         """
 
-        call_type = self.llm_chat.get_call_type(message)
+        call_type = self.check_call_intent(message)
 
         if call_type[0]["label"] == "Order Status":
             data =  self.get_order_status()
@@ -157,9 +157,9 @@ class CallChatSession:
             Returns:
             str -- The intent of the call.
         """
-        self.call_intent = self.llm_chat.get_call_intent(message)
+        self.call_intent = self.llm_chat.get_call_type(message)[0]["label"]
 
-    def get_call_intent(self, message: str) -> str:
+    def get_call_intent(self) -> str:
         """
             Gets the classified call intent
 
@@ -170,7 +170,7 @@ class CallChatSession:
             str -- The intent of the call.
         """
         return self.call_intent
-    
+        
     def get_call_type(self, call_intent: str) -> str:
         """
             Gets the type of the call.
@@ -182,9 +182,9 @@ class CallChatSession:
             str -- The type of the call.
         """
         call_type = "automated"
-        if self.call_intent == "Sales":
+        if call_intent == "Sales":
             call_type = "transfer"
-        elif self.call_intent == "Transfer":
+        elif call_intent == "Transfer":
             call_type = "transfer"
         
         return call_type
