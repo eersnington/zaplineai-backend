@@ -216,9 +216,10 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                     print("Transcription:", transcription_result)
 
-                    response = llm_chat.get_response(transcription_result)
-                    print(f"LLM Response: {response}")
-                    await voice_response(response, call_sid, twilio_client)
+                    # response = llm_chat.get_response(transcription_result)
+                    # print(f"LLM Response: {response}")
+                    # await voice_response(response, call_sid, twilio_client)
+                
 
     except WebSocketDisconnect:
         print("WebSocket disconnected")
