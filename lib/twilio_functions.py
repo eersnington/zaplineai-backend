@@ -207,7 +207,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     response = initial_response + awaited_response
                     await voice_response(response, call_sid, twilio_client)
                     logging.info("Awaiting Sleep")
-                    await asyncio.sleep(7)
+                    await asyncio.sleep(5)
                     logging.info("Sleep Over")
 
             elif packet['event'] == 'stop':
