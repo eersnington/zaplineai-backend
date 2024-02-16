@@ -1,8 +1,4 @@
-import io
-import os
-import tempfile
 import queue
-import logging
 
 import speech_recognition as sr
 
@@ -56,4 +52,7 @@ class _QueueStream:
 
     def size(self) -> int:
         return self.q.qsize()
+    
+    def clear(self):
+        self.q.queue.clear()
     
