@@ -227,12 +227,13 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 if audio_buffer.size() < 500:
                     audio_buffer.write(audio_data)
                 else:
-                    transcription_result = transcribe_stream(audio_buffer)
 
                     if first_message:
                         first_message = False
                         audio_buffer.clear()
                         continue
+
+                    transcription_result = transcribe_stream(audio_buffer)
 
                     print(f"Transcription: {transcription_result}")
                     
