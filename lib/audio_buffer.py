@@ -7,22 +7,21 @@ class AudioBuffer:
     The AudioBuffer class is used to store audio data.
     """
     def __init__(self):
-        self.buffer = b''
+        self.buffer = []
 
-    def read(self, chunk: int) -> bytes:
-        data = self.buffer
-        self.buffer = b''
-
+    def read(self) -> bytes:
+        data = b''.join(self.buffer)
+        self.buffer.clear()
         return data
 
-    def write(self, chunk: bytes):
-        self.buffer += chunk
+    def write(self, chunk: bytes) -> None:
+        self.buffer.append(chunk)
 
     def size(self) -> int:
         return len(self.buffer)
     
     def clear(self):
-        self.buffer = b''
+        self.buffer = []
     
 
 class _TwilioSource(sr.AudioSource):
