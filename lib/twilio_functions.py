@@ -120,6 +120,7 @@ async def voice_response(transcription_text: str, call_sid: str, duration: int, 
         Return: None. The function performs an update operation and does not return anything.
     """
     try:
+        duration = duration + 3.5
         call_session = twilio_client.calls(call_sid)
 
         if call_session is None:
@@ -186,7 +187,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     call_sid = None
     call_type = None
     call_intent = None
-    first = True
 
     await websocket.accept()
 
@@ -208,7 +208,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 else:
                     awaited_response = llm_chat.start(call_sid, customer_phone_no)
                     response = initial_response + awaited_response
-                    response_duration = math.ceil(len(response.split(" "))/2.5) + 2
+                    response_duration = math.ceil(len(response.split(" "))/2.15)
                     await voice_response(response, call_sid, response_duration, twilio_client)
 
             elif packet['event'] == 'stop':
@@ -220,7 +220,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     pass
 
             if packet['event'] == 'media':
-                print('Media packet received!')
                 chunk = base64.b64decode(packet['media']['payload'])
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
@@ -228,11 +227,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 if audio_buffer.size() < 66000:
                     audio_buffer.write(audio_data)
                 else:
-                    if first:
-                        first = False
-                        audio_buffer.clear()
-                        continue
-                    
+
                     transcription_result = transcribe_stream(audio_buffer)
 
                     print(f"Transcription: {transcription_result}")
