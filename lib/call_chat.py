@@ -15,6 +15,8 @@ class CallChatSession:
         self.llm_chat = LLMChat(llm_model, bert_classifier)
         self.resource = ShopifyResource(token=app_token, store=myshopify.split(".")[0])
         self.client = ShopifyClient(self.resource)
+        self.order_id = None # The ID of the recent order.
+    
 
     def start(self, sid: str, customer_phone_no: str) -> str:
         """
