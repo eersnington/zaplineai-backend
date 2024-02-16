@@ -120,7 +120,7 @@ async def voice_response(transcription_text: str, call_sid: str, duration: int, 
         Return: None. The function performs an update operation and does not return anything.
     """
     try:
-        duration = duration + 2.1
+        duration = duration + 1.75
         call_session = twilio_client.calls(call_sid)
 
         if call_session is None:
