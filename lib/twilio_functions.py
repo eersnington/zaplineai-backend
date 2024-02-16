@@ -242,22 +242,24 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         audio_buffer.clear()
                         continue
 
+                    audio_buffer.clear()
+
                     words_per_second = 2.5  # Average speech rate - 150 wpm
                     words = len(transcription_result.split(" "))
                     est_duration = words / words_per_second
 
                     print(f"Estimated Speech Duration: {math.ceil(est_duration)} seconds")
 
-                    if call_intent is None and len(transcription_result.split(" ")) > 4:
-                        call_intent = llm_chat.check_call_intent(transcription_result)
-                        call_type = llm_chat.get_call_type(call_intent=call_intent)
+                    # if call_intent is None and len(transcription_result.split(" ")) > 4:
+                    #     call_intent = llm_chat.check_call_intent(transcription_result)
+                    #     call_type = llm_chat.get_call_type(call_intent=call_intent)
 
-                        print(f"Call Intent: {call_intent} | Call Type: {call_type}")
+                    #     print(f"Call Intent: {call_intent} | Call Type: {call_type}")
 
-                    audio_buffer.clear()
-                    response = llm_chat.get_response(transcription_result)
-                    print(f"LLM Response: {response}")
-                    await voice_response(response, call_sid, est_duration, twilio_client)
+                    
+                    # response = llm_chat.get_response(transcription_result)
+                    # print(f"LLM Response: {response}")
+                    # await voice_response(response, call_sid, est_duration, twilio_client)
 
 
     except WebSocketDisconnect:
