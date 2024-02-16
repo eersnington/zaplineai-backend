@@ -186,7 +186,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     call_sid = None
     call_type = None
     call_intent = None
-    first_message = True
 
     await websocket.accept()
 
@@ -224,35 +223,30 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
 
-                if audio_buffer.size() < 400:
+                if audio_buffer.size() < 600:
                     audio_buffer.write(audio_data)
                 else:
-                    if first_message:
-                        first_message = False
-                        audio_buffer.clear()
-                        continue
-
                     transcription_result = transcribe_stream(audio_buffer)
 
                     print(f"Transcription: {transcription_result}")
 
-                    if transcription_result is None:
-                        logging.info("Transcription failed")
-                        audio_buffer.clear()
-                        continue
+                    # if transcription_result is None:
+                    #     logging.info("Transcription failed")
+                    #     audio_buffer.clear()
+                    #     continue
 
-                    words_per_second = 2.5  # Average speech rate - 150 wpm
-                    words = len(transcription_result.split(" "))
-                    est_duration = words / words_per_second
+                    # words_per_second = 2.5  # Average speech rate - 150 wpm
+                    # words = len(transcription_result.split(" "))
+                    # est_duration = words / words_per_second
 
-                    print(f"Estimated Speech Duration: {math.ceil(est_duration)} seconds")
+                    # print(f"Estimated Speech Duration: {math.ceil(est_duration)} seconds")
                     
 
-                    if call_intent is None and len(transcription_result.split(" ")) > 4:
-                        call_intent = llm_chat.check_call_intent(transcription_result)
-                        call_type = llm_chat.get_call_type(call_intent=call_intent)
+                    # if call_intent is None and len(transcription_result.split(" ")) > 4:
+                    #     call_intent = llm_chat.check_call_intent(transcription_result)
+                    #     call_type = llm_chat.get_call_type(call_intent=call_intent)
 
-                        print(f"Call Intent: {call_intent} | Call Type: {call_type}")
+                    #     print(f"Call Intent: {call_intent} | Call Type: {call_type}")
 
                     audio_buffer.clear()
                     #response = llm_chat.get_response(transcription_result)
