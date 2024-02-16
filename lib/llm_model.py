@@ -7,6 +7,7 @@ from lib.llm_prompt import llama_prompt
 from typing import Union
 import logging
 import functools
+import os
 
 load_dotenv(find_dotenv(), override=True)
 
