@@ -1,4 +1,5 @@
 # Install required packages
+# nvidia-smi | grep 'python' | awk '{ print $5 }' | xargs -n1 kill -9
 # pip install fastapi twilio pyngrok 'uvicorn[standard]' python-multipart
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
