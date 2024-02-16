@@ -209,12 +209,11 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
                 
-                if audio_buffer.size() < 1024:
+                if audio_buffer.size() < 700:
                     audio_buffer.write(audio_data)
                 else:
                         result = transcribe_stream(audio_buffer)
                         print(f"Transcription: {result}")
-                print(audio_buffer.size())
 
                 
                     # transcription_result = transcribe_buffer(audio_buffer)
