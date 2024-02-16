@@ -219,6 +219,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     pass
 
             if packet['event'] == 'media':
+                print('Media packet received!')
                 chunk = base64.b64decode(packet['media']['payload'])
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
