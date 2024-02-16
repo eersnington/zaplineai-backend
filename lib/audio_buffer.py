@@ -57,28 +57,3 @@ class _QueueStream:
     def size(self) -> int:
         return self.q.qsize()
     
-    
-# nvidia-smi | grep 'python' | awk '{ print $5 }' | xargs -n1 kill -9
-class WhisperTwilioStream:
-    def __init__(self, whisper_model):
-        self.audio_model = whisper_model
-        self.recognizer = sr.Recognizer()
-        self.recognizer.energy_threshold = 300
-        self.recognizer.pause_threshold = 2.5
-        self.recognizer.dynamic_energy_threshold = False
-        self.stream = None
-
-    def get_transcription(self) -> str:
-        self.stream = _QueueStream()
-        with _TwilioSource(self.stream) as source:
-            logging.info("Waiting for twilio caller...")
-            with tempfile.TemporaryDirectory() as tmp:
-                tmp_path = os.path.join(tmp, "mic.wav")
-                audio = self.recognizer.listen(source)
-                data = io.BytesIO(audio.get_wav_data())
-                audio_clip = AudioSegment.from_file(data)
-                audio_clip.export(tmp_path, format="wav")
-                result = self.audio_model.transcribe(tmp_path, language="english")
-        predicted_text = result["text"]
-        self.stream = None
-        return predicted_text
