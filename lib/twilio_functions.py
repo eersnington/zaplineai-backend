@@ -240,16 +240,13 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     if transcription_result is None:
                         logging.info("Transcription failed")
                         audio_buffer.clear()
-                        audio_buffer = _QueueStream()
                         continue
 
-                    if call_intent is None:
-                        call_intent = llm_chat.get_call_intent(transcription_result)
-
-                    if call_type is None:
+                    if call_intent is None and len(transcription_result.split(" ") > 4):
+                        call_intent = llm_chat.check_call_intent(transcription_result)
                         call_type = llm_chat.get_call_type(call_intent=call_intent)
 
-                    print(f"Call Type and Intent: {call_type} {call_intent}")
+                        print(f"Call Intent: {call_intent} | Call Type: {call_type}")
 
                     audio_buffer.clear()
                     #response = llm_chat.get_response(transcription_result)

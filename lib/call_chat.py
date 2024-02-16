@@ -106,6 +106,16 @@ class CallChatSession:
 
         if call_type[0]["label"] == "Order Status":
             data =  self.get_order_status()
+        elif call_type[0]["label"] == "Refund":
+            data = "A notice will be sent to the store owner to initiate the refund."
+        elif call_type[0]["label"] == "Return":
+            data = "A notice will be sent to the store owner to initiate the return."
+        elif call_type[0]["label"] == "Transfer":
+            data = "Transferring to a live agent. Please wait."
+        elif call_type[0]["label"] == "General Inquiry":
+            data = ""
+        elif call_type[0]["label"] == "Sales":
+            data = "Transferring to sales team. Please wait."
         else:
             data = ""
 
@@ -136,10 +146,10 @@ class CallChatSession:
         except Exception as e:
             return f"Error occurred: {str(e)}"
         return "Call status updated successfully."
-
-    def get_call_intent(self, message: str) -> str:
+    
+    def check_call_intent(self, message: str) -> str:
         """
-            Gets the intent of the call.
+            Checks the intent of the call.
 
             Keyword arguments:
             message -- The message to be processed.
@@ -147,7 +157,19 @@ class CallChatSession:
             Returns:
             str -- The intent of the call.
         """
-        return self.llm_chat.get_call_type(message)[0]["label"]
+        self.call_intent = self.llm_chat.get_call_intent(message)
+
+    def get_call_intent(self, message: str) -> str:
+        """
+            Gets the classified call intent
+
+            Keyword arguments:
+            message -- The message to be processed.
+
+            Returns:
+            str -- The intent of the call.
+        """
+        return self.call_intent
     
     def get_call_type(self, call_intent: str) -> str:
         """
@@ -160,9 +182,9 @@ class CallChatSession:
             str -- The type of the call.
         """
         call_type = "automated"
-        if call_intent == "Sales":
+        if self.call_intent == "Sales":
             call_type = "transfer"
-        elif call_type == "Transfer":
+        elif self.call_intent == "Transfer":
             call_type = "transfer"
         
         return call_type

@@ -106,12 +106,27 @@ async def bot_routes(phone_no: str, public_url: str, brand: str):
 def route_matches(route, route_name):
     return route.path_format == f"{route_name}"
 
+    
+def check_route(phone_number: str):
+    for i, r in enumerate(app.router.routes):
+        if route_matches(r, f"{phone_number[1:]}/call") or route_matches(r, f"{phone_number[1:]}/stream"):
+            return True, i
+    return False, None
+
 
 def add_route(route_name, func, websock=False):
     if websock:
         app.add_websocket_route(route_name, func)
     else:
         app.add_api_route(route_name, func, methods=["POST"])
+
+
+def delete_route(phone_number: str, pos: int):
+    try:
+        del app.router.routes[pos]
+        return True
+    except Exception as e:
+        return False
 
 
 @app.exception_handler(CustomException)
@@ -146,18 +161,40 @@ async def add(form: BotForm):
     return {"message": response}
 
 
+@app.get("/bots/status")
+async def status(form: BotForm):
+    await check_user(form.user_id)
+
+    bot = await db.bot.find_first(where={"userId": form.user_id})
+
+    if not bot:
+        raise CustomException(status_code=404, detail="Bot not found")
+    
+    phone_number = bot.phone_no
+    
+    status, _ = check_route(phone_number)
+
+    if status:
+        return {"message": f"Bot is streaming at {phone_number}!"}
+
+    return {"message": f"Bot stream not found {phone_number}!"}
+
+
 @app.get("/bots/remove")
 async def remove(form: BotForm):
     await check_user(form.user_id)
 
-    phone_number = await db.bot.find_first(where={"userId": form.user_id})
-    removed = False
-    for i, r in enumerate(app.router.routes):
-        if route_matches(r, f"{phone_number}/call") or route_matches(r, f"{phone_number}/stream"):
-            removed = True
-            del app.router.routes[i]
+    bot = await db.bot.find_first(where={"userId": form.user_id})
 
-    if removed:
+    if not bot:
+        raise CustomException(status_code=404, detail="Bot not found")
+    
+    phone_number = bot.phone_no
+
+    status, i = check_route(phone_number)
+
+    if status:
+        delete_route(phone_number)    
         return {"message": f"Bot is no longer streaming at {phone_number}!"}
 
     return {"message": f"Bot stream not found {phone_number}!"}
