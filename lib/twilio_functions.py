@@ -233,6 +233,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         audio_buffer = _QueueStream()
                         continue
 
+                    print(f"Transcription: {transcription_result}")
+
                     if call_intent is None:
                         call_intent = llm_chat.get_call_intent(transcription_result)
 
