@@ -208,8 +208,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 else:
                     awaited_response = llm_chat.start(call_sid, customer_phone_no)
                     response = initial_response + awaited_response
-                    print("Response Duration: ", math.ceil(len(response.split(" "))/2.5))
-                    await voice_response(response, call_sid, 7, twilio_client)
+                    response_duration = math.ceil(len(response.split(" "))/2.5)
+                    await voice_response(response, call_sid, response_duration, twilio_client)
 
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
@@ -224,7 +224,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
                 
-                if audio_buffer.size() < 340:
+                if audio_buffer.size() < 400:
                     audio_buffer.write(audio_data)
                 else:
 
