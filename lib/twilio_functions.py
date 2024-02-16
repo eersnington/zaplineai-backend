@@ -9,6 +9,7 @@ import audioop
 import base64
 import json
 import logging
+import math
 
 from lib.audio_buffer import AudioBuffer, _QueueStream
 from lib.asr import transcribe_buffer, transcribe_stream
@@ -107,7 +108,7 @@ def update_phone(public_url: str, phone_number: str) -> None:
     )
 
 
-async def voice_response(transcription_text: str, call_sid: str, twilio_client: Client) -> None:
+async def voice_response(transcription_text: str, call_sid: str, duration: int,  twilio_client: Client) -> None:
     """
         Updates a call session with a transcribed text.
 
@@ -127,8 +128,9 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
         call_session.update(
             twiml=f'<Response><Say>{transcription_text}</Say><Pause length="60"/></Response>'
         )
-
-        await asyncio.sleep(3)
+        print("ASR Paused")
+        await asyncio.sleep(duration)
+        print("ASR Resumed")
     except Exception as e:
         logging.info(f"Exception: {e}")
 
@@ -224,7 +226,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
                 
-                if audio_buffer.size() < 500:
+                if audio_buffer.size() < 340:
                     audio_buffer.write(audio_data)
                 else:
 
@@ -236,6 +238,12 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     transcription_result = transcribe_stream(audio_buffer)
 
                     print(f"Transcription: {transcription_result}")
+
+                    words_per_second = 2.5  # Average speech rate - 150 wpm
+                    words = len(transcription_result.split())
+                    estimated_duration_seconds = words / words_per_second
+
+                    print(f"Estimated Speech Duration: {math.ceil(estimated_duration_seconds)} seconds")
                     
                     if transcription_result is None:
                         logging.info("Transcription failed")
