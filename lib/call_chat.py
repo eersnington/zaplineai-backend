@@ -133,7 +133,19 @@ class CallChatSession:
             track_metrics(user_id, call_type)
         except Exception as e:
             return f"Error occurred: {str(e)}"
-        return "Call status updated successfully."            
+        return "Call status updated successfully."
+
+    def get_call_intent(self, message: str) -> str:
+        """
+            Gets the intent of the call.
+
+            Keyword arguments:
+            message -- The message to be processed.
+
+            Returns:
+            str -- The intent of the call.
+        """
+        return self.llm_chat.get_call_type(message)[0]["label"]
     
 
     

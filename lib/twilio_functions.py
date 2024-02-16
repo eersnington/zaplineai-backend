@@ -130,7 +130,7 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
 
         await asyncio.sleep(3)
     except Exception as e:
-        print(f"Exception: {e}")
+        logging.info(f"Exception: {e}")
 
 
 async def call_accept(request:Request, public_url: str, phone_number: str) -> VoiceResponse:
@@ -221,8 +221,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 chunk = base64.b64decode(packet['media']['payload'])
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
-                
-                if audio_buffer.size() < 450:
+                print(audio_buffer.size())
+                if audio_buffer.size() < 500:
                     audio_buffer.write(audio_data)
                 else:
                     transcription_result = transcribe_stream(audio_buffer)
@@ -231,18 +231,32 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         logging.info("Transcription failed")
                         continue
 
+                    if call_intent is None:
+                        call_intent = llm_chat.get_call_type(transcription_result)
+
+                    if call_type is None:
+                        if call_intent == "Sales":
+                            call_type == "transfer"
+                        elif call_type == "Transfer":
+                            call_type == "transfer"
+                        else:
+                            call_type = "automated"
+
+                    print(f"Call Type and Intent: {call_type} {call_intent}")
+
                     audio_buffer.clear()
                     response = llm_chat.get_response(transcription_result)
                     print(f"LLM Response: {response}")
                     # await voice_response(response, call_sid, twilio_client)
 
+
     except WebSocketDisconnect:
-        print("WebSocket disconnected")
+        logging.info("WebSocket disconnected")
     except HTTPException as e:
-        print(f"HTTP Exception: {e}")
+        logging.info(f"HTTP Exception: {e}")
     except Exception as e:
-        print(f"Exception: {e}")
-        print(f"{e.__traceback__}")
+        logging.info(f"Exception: {e}")
+        logging.info(f"{e.__traceback__}")
         response = f"Sorry, we are currently experiencing technical difficulties. Please call again later. <Hangup/>"
         await voice_response(response, call_sid, twilio_client)
         
