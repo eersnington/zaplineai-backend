@@ -211,8 +211,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 chunk = base64.b64decode(packet['media']['payload'])
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
-
-                print(f"Audio Data: {audio_data}")
                 
                 if audio_buffer.size() < 700:
                     audio_buffer.write(audio_data)
