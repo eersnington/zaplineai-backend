@@ -208,7 +208,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 else:
                     awaited_response = llm_chat.start(call_sid, customer_phone_no)
                     response = initial_response + awaited_response
-                    await voice_response(response, call_sid, math.ceil(len(response)/2.5), twilio_client)
+                    print(f"Response Duration: {math.ceil(len(response)/2.5)}")
+                    await voice_response(response, call_sid, 7, twilio_client)
 
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
