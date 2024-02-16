@@ -147,5 +147,23 @@ class CallChatSession:
         """
         return self.llm_chat.get_call_type(message)[0]["label"]
     
+    def get_call_type(self, call_intent: str) -> str:
+        """
+            Gets the type of the call.
+
+            Keyword arguments:
+            call_intent -- The intent of the call.
+
+            Returns:
+            str -- The type of the call.
+        """
+        call_type = "automated"
+        if call_intent == "Sales":
+            call_type = "transfer"
+        elif call_type == "Transfer":
+            call_type = "transfer"
+        
+        return call_type
+    
 
     

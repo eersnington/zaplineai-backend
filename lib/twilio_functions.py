@@ -221,7 +221,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 chunk = base64.b64decode(packet['media']['payload'])
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
-                print(audio_buffer.size())
+                
                 if audio_buffer.size() < 500:
                     audio_buffer.write(audio_data)
                 else:
@@ -230,18 +230,14 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     if transcription_result is None:
                         logging.info("Transcription failed")
                         audio_buffer.clear()
+                        audio_buffer = _QueueStream()
                         continue
 
                     if call_intent is None:
                         call_intent = llm_chat.get_call_intent(transcription_result)
 
                     if call_type is None:
-                        if call_intent == "Sales":
-                            call_type == "transfer"
-                        elif call_type == "Transfer":
-                            call_type == "transfer"
-                        else:
-                            call_type = "automated"
+                        call_type = llm_chat.get_call_type(call_intent=call_intent)
 
                     print(f"Call Type and Intent: {call_type} {call_intent}")
 
