@@ -36,11 +36,13 @@ async def lifespan(app: FastAPI):
     logging.info("Connected to the database")
     bots = await db.bot.find_many()
 
-    for bot in bots:
-        profile = await db.profile.find_first(where={"userId": bot.userId})
-        await bot_routes(bot.phone_no, public_url, profile.brandname)
-
-    logging.info("Bots loaded")
+    if os.environ.get("PRODUCTION_MODE") == "False":
+        logging.info("Skipped loading bots")
+    else:
+        for bot in bots:
+            profile = await db.profile.find_first(where={"userId": bot.userId})
+            await bot_routes(bot.phone_no, public_url, profile.brandname)
+        logging.info("Bots loaded")
 
     yield
     await db.disconnect()
