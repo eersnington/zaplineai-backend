@@ -66,7 +66,7 @@ app.include_router(metrics_router)
 """
 NGROK_TOKEN = os.getenv("NGROK_TOKEN")
 ngrok.set_auth_token(NGROK_TOKEN)
-PORT = 5000
+PORT = 5005
 public_url = ngrok.connect(PORT, bind_tls=True).public_url
 
 logging.info(f"Public URL: {public_url}")

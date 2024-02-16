@@ -208,7 +208,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 else:
                     awaited_response = llm_chat.start(call_sid, customer_phone_no)
                     response = initial_response + awaited_response
-                    response_duration = math.ceil(len(response.split(" "))/2.15)
+                    response_duration = math.ceil(len(response.split(" "))/2.5)
                     await voice_response(response, call_sid, response_duration, twilio_client)
 
             elif packet['event'] == 'stop':
@@ -242,13 +242,14 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         audio_buffer.clear()
                         continue
 
-                    audio_buffer.clear()
 
                     words_per_second = 2.5  # Average speech rate - 150 wpm
                     words = len(transcription_result.split(" "))
                     est_duration = words / words_per_second
 
                     print(f"Estimated Speech Duration: {math.ceil(est_duration)} seconds")
+
+                    audio_buffer.clear()
 
                     # if call_intent is None and len(transcription_result.split(" ")) > 4:
                     #     call_intent = llm_chat.check_call_intent(transcription_result)
