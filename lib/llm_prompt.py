@@ -9,27 +9,26 @@ order_status_guidelines = """
 Fetched-Order-Status: $
 """
 
-def get_guidelines(call_type: str, data: str) -> str:
-    if call_type[0]["label"] == "Order Status":
+def get_guidelines(call_intent: str, data: str) -> str:
+    if call_intent == "Order Status":
         return order_status_guidelines.replace("$", data)
     else:
         return ""
 
 
-def llama_prompt(prompt: str, call_type: str, data: str, chat_history: list | None) -> str:
+def llama_prompt(prompt: str, call_intent: str, data: str, chat_history: list | None) -> str:
 
     system_prompt = f"""[INST] <<SYS>>
 You are an AI assistant for a clothing store, addressing customer queries only.
 (If unrelated, respond with a brief apology)
 (If the customer says goodbye, end the conversation and ask them to hang up)
 
-Call Type (based on Classification Model):
+Call Intent (based on Classification Model):
 ```
-# Label - The type of call
-# Score - The confidence level of the classification
-{call_type}
+# It is the intent of the call, based on the classification model
+Call Intent: {call_intent}
 ```
-{get_guidelines(call_type, data)}
+{get_guidelines(call_intent, data)}
 
 Context:
 ```
