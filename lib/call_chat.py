@@ -104,6 +104,8 @@ class CallChatSession:
 
         call_intent = self.check_call_intent(message)
 
+        print(f"Call Intent: {call_intent}")
+
         if call_intent == "Order Status":
             data =  self.get_order_status()
         elif call_intent == "Refund":
