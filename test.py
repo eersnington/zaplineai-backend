@@ -1,19 +1,27 @@
-from lib.llm_model import BERTClassifier
-import time
-# llm_model = LLMModel()
+from lib.call_chat import CallChatSession
 
-# chat = LLMChat(llm_model)
+def main():
+    # Initialize the chat session with your Shopify app token and store name
+    app_token = "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"
+    myshopify = "zaplineai.myshopify.com"
+    chat_session = CallChatSession(app_token, myshopify)
 
-# while True:
-#     inp = input("Enter your prompt: ")
-#     start = time.time()
-#     output = chat.generate_response(inp)
-#     print(f"{output}\n\nTime taken: {time.time() - start}s")
+    # Simulate a conversation with the chatbot
+    sid = "session_id_here"
+    customer_phone_no = "+919952062221"
+    chat_session.start(sid, customer_phone_no)
 
-bert = BERTClassifier()
+    while True:
+        # Get user input
+        message = input("You: ")
 
-while True:
-    inp = input("Enter your prompt: ")
-    start = time.time()
-    output = bert.classify(inp)
-    print(f"{output}\n\nTime taken: {time.time() - start}s")
+        # Break the loop if the user enters "exit"
+        if message.lower() == "exit":
+            break
+
+        # Get the bot's response
+        response = chat_session.get_response(message)
+        print("Bot:", response)
+
+if __name__ == "__main__":
+    main()
