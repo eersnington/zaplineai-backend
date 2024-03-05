@@ -5,6 +5,7 @@
 order_status_guidelines = """
 (If a customer asks for Order Status, take the information from the Order-Status and respond with the status of the order)
 (Financial Status is the status of the payment, and Fulfillment Status is the status of the delivery)
+(If the order is "Fulfilled", tell the customer that the order has been delivered, other wise the team is working on shipping the order)
 (Use the information below to formulate your friendly assistant response. Do not ask for any other details)
 (If the order status is not available, respond with an apology)
 
