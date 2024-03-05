@@ -11,6 +11,12 @@ def main():
     customer_phone_no = "+919952062221"
     chat_session.start(sid, customer_phone_no)
 
+    call_intent = None
+
+    awaited_response, order_id = chat_session.start(sid, customer_phone_no)
+    print("Bot:", awaited_response)
+
+
     while True:
         # Get user input
         message = input("You: ")
@@ -18,6 +24,18 @@ def main():
         # Break the loop if the user enters "exit"
         if message.lower() == "exit":
             break
+
+        if order_id is not None:
+            bot_response = "Would you like to know the status of the order, process a return, or something else?"
+            print("Bot:", bot_response)
+            order_id = None
+            continue
+
+        if call_intent is None:
+            call_intent = chat_session.check_call_intent(message)
+            call_type = chat_session.get_call_type(call_intent=call_intent)
+
+            print(f"Call Intent: {call_intent} | Call Type: {call_type}")
 
         # Get the bot's response
         response = chat_session.get_response(message)

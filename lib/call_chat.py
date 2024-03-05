@@ -30,13 +30,13 @@ class CallChatSession:
         output = self.client.resource.get(f"/customers.json?phone={customer_phone_no}")
 
         if output.status_code != 200:
-            return "Sorry, we are currently experiencing technical difficulties. Please call again later."
+            return "Sorry, we are currently experiencing technical difficulties. Please call again later.", None
 
         for customer in output.json()["customers"]:                        
             recent_orders = self.client.resource.get(f"/orders.json?customer_id={customer['id']}").json()["orders"]
             
             if len(recent_orders) == 0:
-                return " You seem to be new to the store. How can I help you today?"
+                return " You seem to be new to the store. How can I help you today?", None
             recent_order = recent_orders[0]
 
             items = recent_order["line_items"]
@@ -49,9 +49,9 @@ class CallChatSession:
             self.order_status = f"Financial Status of Order: {recent_order['financial_status']}. Fulfillment status of Order: {recent_order['fulfillment_status']}"
 
             response = f" Are you calling regarding your recent purchase of {', '.join(item_names)} on {date}?"
-            return response
+            return response, recent_order["id"]
         
-        return " You seem to be new to the store. How can I help you today?"
+        return " You seem to be new to the store. How can I help you today?", None
     
     def get_order_status(self) -> str:
         """
