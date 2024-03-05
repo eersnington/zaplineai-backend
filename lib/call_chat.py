@@ -158,6 +158,7 @@ class CallChatSession:
             str -- The intent of the call.
         """
         self.call_intent = self.llm_chat.get_call_type(message)[0]["label"]
+        return self.call_intent
 
     def get_call_intent(self) -> str:
         """
