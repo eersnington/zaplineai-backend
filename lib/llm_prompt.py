@@ -13,12 +13,12 @@ Order-Status: $
 """
 
 returns_guidelines = """
-(If a customer asks for Return, tell them that a return will be initiated within from your side and they will be contacted soon)
+(If a customer asks for Return, tell them that I will initiate a return ticket and they will be contacted soon)
 
 """
 
 refund_guidelines = """
-(If a customer asks for Refund, tell them that a refund will be initiated within from your side and they will be contacted soon)
+(If a customer asks for Refund, tell them that I will initiate a refund ticket and they will be contacted soon)
 
 """
 
@@ -45,7 +45,7 @@ def get_guidelines(call_intent: str, data: str) -> str:
 def llama_prompt(prompt: str, call_intent: str, data: str, chat_history: list | None) -> str:
 
     system_prompt = f"""[INST] <<SYS>>
-You are an AI assistant for a clothing store, addressing customer queries only.
+You are an AI assistant for a clothing store, and you are having a continuing conversation with a customer with their queries.
 (Do not greet them with a hello, as the call is already connected)
 (If the query is unrelated to the clothing store, you respond with a brief apology)
 
