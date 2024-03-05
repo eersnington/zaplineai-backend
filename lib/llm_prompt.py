@@ -5,15 +5,38 @@
 order_status_guidelines = """
 (If a customer asks for Order Status, take the information from the Fetch-Order-Status and respond with the status of the order)
 (Financial Status is the status of the payment, and Fulfillment Status is the status of the delivery)
-(Only convey the information below. Do not ask for any other details)
+(Only convey the information below in a friendly way. Do not ask for any other details)
 (If the order status is not available, respond with an apology)
 
 Order Status: $
 """
 
+returns_guidelines = """
+(If a customer asks for Return, tell them that a return will be initiated within from your side and they will be contacted soon)
+
+"""
+
+refund_guidelines = """
+(If a customer asks for Refund, tell them that a refund will be initiated within from your side and they will be contacted soon)
+
+"""
+
+sales_or_transfer_guidelines = """
+(If a customer asks for Sales or Transfer, tell them that they will transfer the call to a live respresentative)
+
+"""
+
 def get_guidelines(call_intent: str, data: str) -> str:
     if call_intent == "Order Status":
         return order_status_guidelines.replace("$", data)
+    elif call_intent == "Returns":
+        return returns_guidelines
+    elif call_intent == "Refund":
+        return refund_guidelines
+    elif call_intent in ["Sales", "Transfer"]:
+        return sales_or_transfer_guidelines
+    elif call_intent == "Product Info":
+        return "Provide the customer with the information they are looking for."
     else:
         return ""
 
