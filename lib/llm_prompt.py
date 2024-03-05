@@ -23,8 +23,8 @@ refund_guidelines = """
 """
 
 sales_or_transfer_guidelines = """
-(If a customer asks for Sales or Transfer, tell them that they will transfer the call to a live respresentative)
-
+(If a customer asks for Sales or Transfer, tell them that you will immediately transfer the call to a live respresentative)
+(You must follow this as it is an IMPORTANT Guideline!)
 """
 
 def get_guidelines(call_intent: str, data: str) -> str:
