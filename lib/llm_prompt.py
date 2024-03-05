@@ -5,7 +5,7 @@
 order_status_guidelines = """
 (If a customer asks for Order Status, take the information from the Fetch-Order-Status and respond with the status of the order)
 (Financial Status is the status of the payment, and Fulfillment Status is the status of the delivery)
-(Only convey the information below in a friendly way. Do not ask for any other details)
+(Convey the order status below in a friendly way. Do not ask for any other details)
 (If the order status is not available, respond with an apology)
 
 Order Status: $
