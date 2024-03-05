@@ -102,24 +102,24 @@ class CallChatSession:
             str -- The response from the LLM model.
         """
 
-        call_type = self.check_call_intent(message)
+        call_intent = self.check_call_intent(message)
 
-        if call_type[0]["label"] == "Order Status":
+        if call_intent == "Order Status":
             data =  self.get_order_status()
-        elif call_type[0]["label"] == "Refund":
+        elif call_intent == "Refund":
             data = "A notice will be sent to the store owner to initiate the refund."
-        elif call_type[0]["label"] == "Return":
+        elif call_intent == "Return":
             data = "A notice will be sent to the store owner to initiate the return."
-        elif call_type[0]["label"] == "Transfer":
+        elif call_intent == "Transfer":
             data = "Transferring to a live agent. Please wait."
-        elif call_type[0]["label"] == "General Inquiry":
+        elif call_intent == "General Inquiry":
             data = ""
-        elif call_type[0]["label"] == "Sales":
+        elif call_intent == "Sales":
             data = "Transferring to sales team. Please wait."
         else:
             data = ""
 
-        prompt = llama_prompt(message, call_type, data, self.llm_chat.chat_history)       
+        prompt = llama_prompt(message, call_intent, data, self.llm_chat.chat_history)       
         
         return self.llm_chat.generate_response(message, prompt)
     
