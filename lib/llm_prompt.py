@@ -22,7 +22,6 @@ def llama_prompt(prompt: str, call_intent: str, data: str, chat_history: list | 
 You are an AI assistant for a clothing store, addressing customer queries only.
 (Do not greet them with a hello, as the call is already connected)
 (If the query is unrelated to the clothing store, you respond with a brief apology)
-(If the query is a goodbye or thank you, you respond with a goodbye message, and ask them to hang up. Otherwise do not ask them to hang up the call.)
 
 Call Intent (based on Classification Model):
 ```
