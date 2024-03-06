@@ -23,7 +23,7 @@ refund_guidelines = """
 """
 
 sales_or_transfer_guidelines = """
-(If a customer asks for Sales or Transfer, tell them that you will immediately transfer the call to a live respresentative)
+(If a customer asks for Sales or Transfer, tell to the customer that you (the AI assistant) will immediately transfer the call to a live respresentative right now)
 (You must follow this as it is an IMPORTANT Guideline!)
 """
 
