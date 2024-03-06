@@ -9,7 +9,7 @@ order_status_guidelines = """
 (Use the information below to formulate your friendly assistant response. Do not ask for any other details)
 (If the order status is not available, respond with an apology)
 
-Order-Status: $
+Order-Status (From server): $
 """
 
 returns_guidelines = """
@@ -54,6 +54,7 @@ Call Intent (based on Classification Model):
 # It is the intent of the call, based on the classification model
 Call Intent: {call_intent}
 ```
+
 {get_guidelines(call_intent, data)}
 
 Context:
