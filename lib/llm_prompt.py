@@ -5,8 +5,13 @@
 order_status_guidelines = """
 (If a customer asks for Order Status, take the information from the Order-Status and reply in the format given below)
 (Financial Status is the status of the payment, and Fulfillment Status is the status of the delivery)
-(If the order is "Fulfilled", tell the customer that the order has been delivered, other wise the team is working on shipping the order)
-
+(Fulfillment Staus Descriptions are as follows: 
+"Fulfilled" means the order has been delivered,
+"Unfulfilled" means the team is working on shipping the order,
+"Partially Fulfilled" means part of the order has been delivered,
+"Scheduled" means the order is scheduled for delivery,
+"On hold" means the order is on hold,
+)
 ```
 Order-Status (From server): $
 ```
