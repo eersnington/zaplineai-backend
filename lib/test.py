@@ -11,7 +11,10 @@ class VectorDatabase:
     "Can you tell me the status of my order?": "Of course! I can do that for you. Based on our records, <<explain the current status of your order>>",
     "Where is my order?": "I can help with that! Based on our records, <<explain the current status of your order>>",
     "I want to return a product": "I'd be happy to help with your return! Could you please let me know why you're returning the item?",
-    "I need to return my order": "No problem! Could you please let me know why you're returning the item?",
+    "I need to return my order": "No problem! Could you please let me know why you're returning the order?",
+    "I want to return my order": "I'd be happy to help with your return! Could you please let me know why you're returning your order?",
+    "I want to refund my order": "I'm here to assist you with your refund! Could you please provide me with the reason for the refund?",
+    "I need to refund my order": "I'm here to assist you with your refund! Could you please provide me with the reason for the refund?",
     "I need a refund": "I'm here to assist you with your refund! Could you please provide me with the reason for the refund?",
     "Can I get a refund?": "Absolutely! I just need a bit more information to process your refund. Could you let me know why do you want to refund?",
     "Can I talk to a sales representative?": "Absolutely! I can transfer your call to a live representative right away. Please hold for a moment while I connect you.",
@@ -25,6 +28,10 @@ class VectorDatabase:
     "Can you transfer me to someone in sales?": "Of course! I'll transfer you to a sales representative. Please hold for a moment.",
     "I need to talk to someone about my order": "I can connect you with a representative who can assist you with your order. Please hold on.",
     "Please transfer my call to a representative": "Certainly! I'll transfer your call to a representative. Please wait for a moment.",
+    "Please transfer my call": "Sure! I'll transfer your call to a live representative right away. Please hold for a moment while I connect you.",
+    "I want to talk to someone": "I can connect you with a representative who can assist you. Please hold on.",
+    "I need to speak to someone": "Of course! I'll transfer you to a representative who can assist you. Please hold on.",
+    "I need to speak to a representative": "Sure! I'll transfer you to a representative who can assist you. Please hold on.",
 }
 
 
