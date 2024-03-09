@@ -1,3 +1,4 @@
+from lib.cached_response import VectorDatabase, get_intent_response, get_order_status_response
 from lib.llm_model import LLMModel, LLMChat, BERTClassifier
 from lib.llm_prompt import llama_prompt
 from lib.shopify.resource_base import ShopifyResource
@@ -7,6 +8,7 @@ from lib.db import track_metrics
 
 llm_model = LLMModel()
 bert_classifier = BERTClassifier()
+vector_db = VectorDatabase()
 
 
 class CallChatSession:
@@ -16,6 +18,10 @@ class CallChatSession:
         self.resource = ShopifyResource(token=app_token, store=myshopify.split(".")[0])
         self.client = ShopifyClient(self.resource)
         self.order_id = None # The ID of the recent order.
+        self.vector_db = vector_db
+        self.refund_order = False
+        self.return_order = False
+        self.return_refund_reason = None
     
 
     def start(self, sid: str, customer_phone_no: str) -> str:
@@ -46,7 +52,7 @@ class CallChatSession:
             date = recent_order["created_at"].split("T")[0]
 
             self.order_id = recent_order["id"]
-            self.order_status = f"Financial Status of Order: {recent_order['financial_status']}. Fulfillment status of Order: {recent_order['fulfillment_status']}"
+            self.order_status = f"{recent_order['fulfillment_status']}"
 
             response = f" Are you calling regarding your recent purchase of {', '.join(item_names)} on {date}?"
             return response, recent_order["id"]
@@ -56,35 +62,17 @@ class CallChatSession:
 
     def get_order_status(self) -> str:
         """
-            Gets the status of recent order.
+            Gets the Fulfillment status of recent order.
 
             Returns:
             str -- The status of the order.
         """
         if self.order_status is None:
-            return "I couldn't find any latest orders for you. Please call again later."
+            return "I couldn't find any recent orders for you. If you think this is a mistake, please call again later."
         
         return self.order_status
-        
-        
-    def initiate_refund(self) -> str:
-        """
-            Initiates a refund for the customer.
 
-            Returns:
-            str -- The status of the refund.
-        """
-        if self.order_id is None:
-            return "I couldn't find any latest orders for you. Please call again later."
-        
-        self.client.Orders.update_order(self.order_id, {"order": {"note": "Refund initiated by customer through call."}})
-        return "Server: Refund initiated successfully."
-    
-    def refund_process(self, reason: str) -> str:
 
-        pass
-        
-        
     def initiate_return(self) -> str:
         """
             Initiates a return for the customer.
@@ -95,12 +83,61 @@ class CallChatSession:
         if self.order_id is None:
             return "I couldn't find any latest orders for you. Please call again later."
         
-        self.client.Orders.update_order(self.order_id, {"order": {"note": "Return initiated by customer through call."}})
-        return "Server: Return initiated successfully."
+        self.client.Orders.update_order(self.order_id, {"order": {"note": f"Return initiated by customer through call. Reason: {self.return_refund_reason}"}})
+        return get_intent_response("Returns Step2")
+    
+
+    def initiate_refund(self) -> str:
+        """
+            Initiates a refund for the customer.
+
+            Returns:
+            str -- The status of the refund.
+        """
+        if self.order_id is None:
+            return "I couldn't find any latest orders for you. Please call again later."
         
+        self.client.Orders.update_order(self.order_id, {"order": {"note": f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"}})
+        return get_intent_response("Refund Step2")
+    
+
+    def return_process(self, reason) -> str:
+        if self.return_order is False:
+            self.return_order = True
+            return True
+
+        if reason:
+            self.return_refund_reason = reason
+            return self.initiate_return()
+            
+
+    def refund_process(self, reason) -> str:
+        if self.refund_order is False:
+            self.refund_order = True
+            return True
+
+        if reason:
+            self.return_refund_reason = reason
+            return self.initiate_refund()
+
+
+    def check_call_intent(self, message: str) -> str:
+        """
+            Checks the intent of the call.
+
+            Keyword arguments:
+            message -- The message to be processed.
+
+            Returns:
+            str -- The intent of the call.
+        """
+        self.call_intent = self.llm_chat.get_call_type(message)[0]["label"]
+        return self.call_intent
+        
+
     def get_response(self, message: str) -> str:
         """
-            Gets response from the LLM model.
+            Check the call intent, search the cache for a response and return if found, else call the LLM model.
 
             Keyword arguments:
             message -- The message to be processed by the LLM model.
@@ -109,21 +146,45 @@ class CallChatSession:
             str -- The response from the LLM model.
         """
 
-        call_intent = self.check_call_intent(message)
+        if self.refund_order is True:
+            self.refund_order = False
+            return self.refund_process(message)
+        
+        if self.return_order is True:
+            self.return_order = False
+            return self.return_process(message)
 
+        cached_response = self.vector_db.find_similar_response(message)
+
+        if cached_response is not None:
+            if cached_response.endswith("<<explain the current status of your order>>"):
+                self.call_intent = "Order Status"
+                data = self.get_order_status()
+
+                addon = get_order_status_response(data)
+                if addon is None:
+                    addon = "I couldn't find any recent orders "
+                cached_response = cached_response.replace("<<explain the current status of your order>>", addon)
+
+            elif "return" in cached_response:
+                self.call_intent = "Returns"
+                self.refund_process() # This is a dummy call to set the return_order flag to True (Returns Step 1)
+
+            elif "refund" in cached_response:
+                self.call_intent = "Refund"
+                self.refund_process() # This is a dummy call to set the refund_order flag to True (Refund Step 1)
+
+            print(f"Call Intent: {self.call_intent}")
+            return cached_response
+        
+        call_intent = self.check_call_intent(message)
         print(f"Call Intent: {call_intent}")
 
-        if call_intent == "Order Status":
-            data =  self.get_order_status()
-        elif call_intent == "Refund":
-            self.refund_process(message)
-            data = "A notice will be sent to the store owner to initiate the refund."
-        elif call_intent == "Return":
-            data = "A notice will be sent to the store owner to initiate the return."
-        elif call_intent == "Transfer":
-            data = "Transferring to a live agent. Please wait."
-        elif call_intent == "General Inquiry":
+        
+        if call_intent == "General Inquiry":
             data = ""
+        elif call_intent == "Product Info":
+            data = "Provide the customer with the information they are looking for."
         elif call_intent == "Sales":
             data = "Transferring to sales team. Please wait."
         else:
@@ -156,19 +217,6 @@ class CallChatSession:
         except Exception as e:
             return f"Error occurred: {str(e)}"
         return "Call status updated successfully."
-    
-    def check_call_intent(self, message: str) -> str:
-        """
-            Checks the intent of the call.
-
-            Keyword arguments:
-            message -- The message to be processed.
-
-            Returns:
-            str -- The intent of the call.
-        """
-        self.call_intent = self.llm_chat.get_call_type(message)[0]["label"]
-        return self.call_intent
 
     def get_call_intent(self) -> str:
         """
