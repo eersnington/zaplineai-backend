@@ -56,16 +56,12 @@ Follow this format for your response (Do not add anything extra):
 """
 
 def get_guidelines(call_intent: str, data: str) -> str:
-    if call_intent == "Order Status":
-        return order_status_guidelines.replace("$", data)
-    elif call_intent == "Returns":
-        return returns_guidelines
-    elif call_intent == "Refund":
-        return refund_guidelines
-    elif call_intent in ["Sales", "Transfer"]:
+    if call_intent in ["Sales"]:
         return sales_or_transfer_guidelines
     elif call_intent == "Product Info":
         return "Provide the customer with the information they are looking for."
+    elif call_intent == "General Inquiry":
+        return ""
     else:
         return ""
 
