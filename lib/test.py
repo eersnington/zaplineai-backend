@@ -8,9 +8,13 @@ class VectorDatabase:
         self.dim = self.model.encode(["dummy"]).shape[1]  # Get the dimension of the embeddings
         self.index = faiss.IndexFlatL2(self.dim)
         self.cached_responses = {
-            "How can I track my order?": "You can track your order by logging into your account and checking the order status.",
-            "Do you offer refunds?": "Yes, we offer refunds within 30 days of purchase. Please contact our support team for assistance.",
-            "What payment methods do you accept?": "We accept credit cards, PayPal, and bank transfers for payment."
+            "How can I track my order?": "Of course! I can do that for you. Based on our records, <<explain the current status of your order>>",
+            "I want to return a product": "I'd be happy to help with your return! Could you please let me know why you're returning the item? Once I have this information, I'll start the return process for you and our team will reach out shortly.",
+            "I'm returning a product": "Thank you for sharing the reason for your return. I've started the return process for you, and someone from our team will be in touch soon to assist you further. Is there anything else I can assist you with?",
+            "I need a refund": "I'm here to assist you with your refund! Could you please provide me with the reason for the refund? Once I have this information, I'll initiate the refund process for you, and our team will be in touch shortly.",
+            "I want my money back": "Thanks for letting us know why you're requesting a refund. I've initiated the refund process for you, and our team will reach out soon to assist you further. Is there anything else I can do for you?",
+            "Can I talk to a sales representative?": "Absolutely! I can transfer your call to a live representative right away. Please hold for a moment while I connect you.",
+            "Can I speak to a representative?": "Certainly! Let me connect you with a live representative. Please hold on for a moment."
         }
 
         # Add the stored responses to the index
@@ -34,13 +38,9 @@ if __name__ == "__main__":
     vector_db = VectorDatabase("sentence-transformers/all-MiniLM-L6-v2")
 
     # Search for a similar response
-    new_query = "How do I get a refund?"
-    import time
-    start = time.time()
+    new_query = "I want to return an item"
     similar_response = vector_db.find_similar_response(new_query)
     if similar_response:
         print("Similar past response found:", similar_response)
     else:
         print("No similar past response found.")
-
-    print("Time taken:", time.time() - start)
