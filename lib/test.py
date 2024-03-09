@@ -54,8 +54,12 @@ if __name__ == "__main__":
         new_query = input("Enter your query: ")
         if new_query.lower() == "exit":
             break
+
+        import time
+        start = time.time()
         similar_response = vector_db.find_similar_response(new_query)
         if similar_response:
             print("Similar past response found:", similar_response)
         else:
             print("No similar past response found.")
+        print("Time taken:", time.time() - start)
