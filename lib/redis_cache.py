@@ -50,3 +50,18 @@ import time
 start = time.time()
 print(get_intent_response("Sales"))
 print(get_order_status_response("Fulfilled"))
+redis_time = time.time() - start
+print("Time taken:", redis_time)
+
+
+start = time.time()
+print(cached_intent_responses["Sales"])
+print(cached_order_status_responses["Fulfilled"])
+dict_time = time.time() - start
+print("Time taken:", dict_time)
+
+
+if redis_time < dict_time:
+    print("Redis is faster!")
+else:
+    print("Dictionary is faster!")
