@@ -53,6 +53,7 @@ class CallChatSession:
         
         return " You seem to be new to the store. How can I help you today?", None
     
+
     def get_order_status(self) -> str:
         """
             Gets the status of recent order.
@@ -64,6 +65,7 @@ class CallChatSession:
             return "I couldn't find any latest orders for you. Please call again later."
         
         return self.order_status
+        
         
     def initiate_refund(self) -> str:
         """
@@ -77,6 +79,11 @@ class CallChatSession:
         
         self.client.Orders.update_order(self.order_id, {"order": {"note": "Refund initiated by customer through call."}})
         return "Server: Refund initiated successfully."
+    
+    def refund_process(self, reason: str) -> str:
+
+        pass
+        
         
     def initiate_return(self) -> str:
         """
@@ -109,6 +116,7 @@ class CallChatSession:
         if call_intent == "Order Status":
             data =  self.get_order_status()
         elif call_intent == "Refund":
+            self.refund_process(message)
             data = "A notice will be sent to the store owner to initiate the refund."
         elif call_intent == "Return":
             data = "A notice will be sent to the store owner to initiate the return."
