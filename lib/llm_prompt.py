@@ -20,18 +20,32 @@ Follow this format of your response:
 "Sure! Thank you for checking in on your order. According to our records, <<explain the order status here>>.  If you have any further questions or concerns, please don't hesitate to ask."
 """
 
-returns_guidelines = """
-(If a customer asks for Return, tell them that I will initiate a return ticket and they will be contacted soon)
+returns_guidelines_step1 = """
+(If a customer asks for Return, please ask them for a reason for the return)
 
 Follow this format of your response (Do not add anything extra):
-"If you'd like to initiate a return, I can help you with that. I'll initiate a return ticket for you, and our team will contact you soon to assist further."
+"If you'd like to initiate a return, please provide a reason for the return. I'll then initiate a return ticket for you, and our team will contact you soon to assist further."
 """
 
-refund_guidelines = """
-(If a customer asks for Refund, tell them that I will initiate a refund ticket and they will be contacted soon)
+returns_guidelines_step2 = """
+(Customer has already asked for a refund and stated their reason. Now say the following to the customer)
 
 Follow this format of your response (Do not add anything extra):
-"If you'd like to initiate a refund, I can help you with that. I'll initiate a refund ticket for you, and our team will contact you soon to assist further."
+"Thank you for providing the reason for your return. I've initiated a return ticket for you, and our team will contact you soon to assist further. Is there anything else I can help you with?"
+"""
+
+refund_guidelines_step1 = """
+(If a customer asks for a refund, please ask them for a reason for the refund)
+
+Follow this format of your response (Do not add anything extra):
+"If you'd like to request a refund, please provide a reason for the refund. I'll then initiate a refund ticket for you, and our team will contact you soon to assist further."
+"""
+
+refund_guidelines_step2 = """
+(Customer has already asked for a refund and stated their reason. Now say the following to the customer)
+
+Follow this format of your response (Do not add anything extra):
+"Thank you for providing the reason for your refund. I've initiated a refund ticket for you, and our team will contact you soon to assist further. Is there anything else I can help you with?"
 """
 
 sales_or_transfer_guidelines = """
