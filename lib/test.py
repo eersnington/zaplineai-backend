@@ -8,14 +8,25 @@ class VectorDatabase:
         self.dim = self.model.encode(["dummy"]).shape[1]  # Get the dimension of the embeddings
         self.index = faiss.IndexFlatL2(self.dim)
         self.cached_responses = {
-            "How can I track my order?": "Of course! I can do that for you. Based on our records, <<explain the current status of your order>>",
-            "I want to return a product": "I'd be happy to help with your return! Could you please let me know why you're returning the item? Once I have this information, I'll start the return process for you and our team will reach out shortly.",
-            "I'm returning a product": "Thank you for sharing the reason for your return. I've started the return process for you, and someone from our team will be in touch soon to assist you further. Is there anything else I can assist you with?",
-            "I need a refund": "I'm here to assist you with your refund! Could you please provide me with the reason for the refund? Once I have this information, I'll initiate the refund process for you, and our team will be in touch shortly.",
-            "I want my money back": "Thanks for letting us know why you're requesting a refund. I've initiated the refund process for you, and our team will reach out soon to assist you further. Is there anything else I can do for you?",
-            "Can I talk to a sales representative?": "Absolutely! I can transfer your call to a live representative right away. Please hold for a moment while I connect you.",
-            "Can I speak to a representative?": "Certainly! Let me connect you with a live representative. Please hold on for a moment."
-        }
+    "Can you tell me the status of my order?": "Of course! I can do that for you. Based on our records, <<explain the current status of your order>>",
+    "Where is my order?": "I can help with that! Based on our records, <<explain the current status of your order>>",
+    "I want to return a product": "I'd be happy to help with your return! Could you please let me know why you're returning the item? Once I have this information, I'll start the return process for you and our team will reach out shortly.",
+    "I need to return my order": "No problem! Could you please let me know why you're returning the item? Then I'll start the return process for you and our team will reach out shortly.",
+    "I need a refund": "I'm here to assist you with your refund! Could you please provide me with the reason for the refund? Once I have this information, I'll initiate the refund process for you, and our team will be in touch shortly.",
+    "Can I get a refund?": "Absolutely! I just need a bit more information to process your refund. Could you please provide me with the reason for the refund?",
+    "Can I talk to a sales representative?": "Absolutely! I can transfer your call to a live representative right away. Please hold for a moment while I connect you.",
+    "Can I speak to a representative?": "Certainly! Let me connect you with a live representative. Please hold on for a moment.",
+    "What's the status of my order?": "Sure, I can check that for you. Based on our records, <<explain the current status of your order>>",
+    "Where's my order?": "Let me look into that for you. Based on our records, <<explain the current status of your order>>",
+    "I'd like to return an item": "I'm here to assist you with your return. Can you please provide me with the reason for the return?",
+    "I want to return something": "Sure, I can help with that. Based on our records, <<explain the current status of your order>>",
+    "How do I return my order?": "I'd be happy to help with your return. Could you please provide me with the reason for the refund? I'll then initiate the refund process for you, and our team will be in touch shortly.",
+    "I want to get a refund": "I can assist you with that. Could you please provide me with the reason for the refund? I'll then initiate the refund process for you, and our team will be in touch shortly.",
+    "Can you transfer me to someone in sales?": "Of course! I'll transfer you to a sales representative. Please hold for a moment.",
+    "I need to talk to someone about my order": "I can connect you with a representative who can assist you with your order. Please hold on.",
+    "Please transfer my call to a representative": "Certainly! I'll transfer your call to a representative. Please wait for a moment.",
+}
+
 
         # Add the stored responses to the index
         embeddings = self.model.encode(list(self.cached_responses.keys()))
