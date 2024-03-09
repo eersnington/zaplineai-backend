@@ -3,7 +3,6 @@ import logging
 from dotenv import load_dotenv, find_dotenv
 from vllm import LLM, SamplingParams
 from transformers import BertForSequenceClassification, BertTokenizer, TextClassificationPipeline
-from lib.llm_prompt import llama_prompt
 from typing import Union
 import logging
 import functools
