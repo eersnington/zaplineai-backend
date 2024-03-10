@@ -15,6 +15,8 @@ class CallChatSession:
     def __init__(self, app_token: str, myshopify: str):
         self.sid = None
         self.llm_chat = LLMChat(llm_model, bert_classifier)
+        self.app_token = app_token
+        self.myshopify = myshopify.split(".")[0]
         self.resource = ShopifyResource(token=app_token, store=myshopify.split(".")[0])
         self.client = ShopifyClient(self.resource)
         self.order_id = None # The ID of the recent order.
@@ -87,6 +89,9 @@ class CallChatSession:
         print(type(self.order_id))
 
         note_text = f"Return initiated by customer through call. Reason: {self.return_refund_reason}"
+        
+        self.resource = ShopifyResource(token=self.app_token, store=self.myshopify)
+        self.client = ShopifyClient(self.resource)
         status = self.client.resource.put(f"/orders/{self.order_id}.json", {"order": {"note": note_text}})
         
         print(status.status_code, status.text)
@@ -104,6 +109,8 @@ class CallChatSession:
             return "I couldn't find any latest orders for you. If you think this is a mistake, please call again later."
 
         note_text = f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"
+        self.resource = ShopifyResource(token=self.app_token, store=self.myshopify)
+        self.client = ShopifyClient(self.resource)
         status = self.client.resource.put(f"/orders/{self.order_id}.json", {"order": {"note": note_text}})
 
         print(status.status_code, status.text)
