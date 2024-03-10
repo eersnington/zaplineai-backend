@@ -34,6 +34,8 @@ class CallChatSession:
             sid -- The call session ID.
             customer_phone_no -- The phone number of the customer.
         """
+
+        print("My Shopify Link:", self.myshopify)
         self.sid = sid
         orders = shopify.Order.find()
         recent_order = None
@@ -48,11 +50,6 @@ class CallChatSession:
             return "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again.", None
         
         self.order = recent_order
-
-        if recent_order:
-            recent_order.note = 'Test'
-            recent_order.save()
-            print("Order note updated successfully for order", recent_order.id)
 
         items = recent_order.line_items
         item_names = [item.title for item in items]
