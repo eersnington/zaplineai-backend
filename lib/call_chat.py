@@ -89,9 +89,11 @@ class CallChatSession:
         print(type(self.order_id))
 
         note_text = f"Return initiated by customer through call. Reason: {self.return_refund_reason}"
-        client = ShopifyClient(self.resource)
-        status = client.Orders.update_order(self.order_id, {"order": {"note": "Return initiated by customer through call"}})
+        orders = self.client.Orders.get_orders()
+        print(orders.status_code, orders.text)
         
+        status = self.client.Orders.update_order(self.order_id, {"order": {"note": "Return initiated by customer through call"}})
+
         print(status.status_code, status.text)
         return get_intent_response("Returns Step2")
     
@@ -106,9 +108,14 @@ class CallChatSession:
         if self.order_id is None:
             return "I couldn't find any latest orders for you. If you think this is a mistake, please call again later."
 
+        print(f"Order ID: {self.order_id}")
+        print(type(self.order_id))
+        
         note_text = f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"
-        client = ShopifyClient(self.resource)
-        status = client.Orders.update_order(self.order_id, {"order": {"note": "Return initiated by customer through call"}})
+        orders = self.client.Orders.get_orders()
+        print(orders.status_code, orders.text)
+
+        status = self.client.Orders.update_order(self.order_id, {"order": {"note": "Return initiated by customer through call"}})
 
         print(status.status_code, status.text)
         return get_intent_response("Refund Step2")
