@@ -21,6 +21,9 @@ if __name__ == "__main__":
         "SHOPIFY_API_KEY"), store="b59bb6-2")
     client = ShopifyClient(resource)
     orders = client.Orders.get_orders()
+    for order in orders.json()["orders"]:
+        print(order)
+        client.Orders.update_order(order["id"], {"order": {"note": "New test note"}})
 
     if orders.status_code == 200:
         print("HTTP/1.1 200 OK | API Works!")
