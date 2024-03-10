@@ -38,6 +38,12 @@ class VectorDatabase:
             "I want to get a refund": "I can assist you with that. Could you please provide me with the reason for the refund?",
             "Well I want to refund it now": "I apologize for any inconvenience you've experienced with your order. May I know why you would like to refund it now? Was there any issue with the product or the delivery?",
             "Well I wanna return my order": "I apologize for any inconvenience you've experienced with your order. Could you please let me know why you're returning the item?",
+            "I wanna return my order": "I apologize for any inconvenience you've experienced with your order. Could you please let me know why you're returning the item?",
+            "I wanna return my package": "I apologize for any inconvenience you've experienced with your order. Could you please let me know why you're returning the item?",
+            "I wanna return my shipment": "I apologize for any inconvenience you've experienced with your order. Could you please let me know why you're returning the item?",
+            "I wanna refund my order": "I apologize for any inconvenience you've experienced with your order. Could you please let me know why you're returning the item?",
+            "I wanna refund my package": "I apologize for any inconvenience you've experienced with your order. Could you please let me know why you're returning the item?",
+            "I wanna refund my shipment": "I apologize for any inconvenience you've experienced with your order. Could you please let me know why you're returning the item?",
 
             "Can I talk to a sales representative?": "Absolutely! I can transfer your call to a live representative right away. Please hold for a moment while I connect you.",
             "Can I speak to someone in sales?": "Of course! I'll transfer you to a sales representative. Please hold for a moment.",
