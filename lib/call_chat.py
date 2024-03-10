@@ -45,7 +45,7 @@ class CallChatSession:
 
         recent_orders = shopify.Order.find(customer_id=customer.id)
 
-        if len(recent_order) == 0:
+        if len(recent_orders) == 0:
             return "I noticed you have an account but haven't made any orders yet. Is there anything I can help you with?", None
 
         recent_order = recent_orders[0]
