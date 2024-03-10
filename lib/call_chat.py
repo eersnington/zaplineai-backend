@@ -39,7 +39,6 @@ class CallChatSession:
         self.sid = sid
         orders = shopify.Order.find()
         recent_order = None
-        # Print each order as JSON
 
         for order in orders:
             if order.customer and order.customer.phone == customer_phone_no:
@@ -90,7 +89,6 @@ class CallChatSession:
         print("Order ID:", self.order.id)
         
         try:
-            # Update the order note
             self.order.note = note_text
             self.order.save()
         except Exception as e:
@@ -113,7 +111,6 @@ class CallChatSession:
         print("Order ID:", self.order.id)
 
         try:
-            # Update the order note
             self.order.note = note_text
             self.order.save()
         except Exception as e:
@@ -122,7 +119,6 @@ class CallChatSession:
         return get_intent_response("Refund Step2")
 
     
-
     def return_process(self, reason) -> str:
         if self.return_order is False:
             self.return_order = True
