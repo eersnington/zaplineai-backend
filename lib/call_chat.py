@@ -2,7 +2,7 @@ from lib.cached_response import VectorDatabase, get_intent_response, get_order_s
 from lib.llm_model import LLMModel, LLMChat, BERTClassifier
 from lib.llm_prompt import llama_prompt
 import shopify
-import traceback
+import requests
 
 from lib.db import track_metrics
 
@@ -34,6 +34,7 @@ class CallChatSession:
             sid -- The call session ID.
             customer_phone_no -- The phone number of the customer.
         """
+        print("MyShopify Link:", self.myshopify)
         self.sid = sid
         orders = shopify.Order.find()
         recent_order = None
@@ -48,11 +49,6 @@ class CallChatSession:
             return "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again.", None
         
         self.order = recent_order
-
-        if recent_order:
-            recent_order.note = 'Test'
-            recent_order.save()
-            print("Order note updated successfully for order", recent_order.id)
 
         items = recent_order.line_items
         item_names = [item.title for item in items]
@@ -78,6 +74,23 @@ class CallChatSession:
         
         return self.order_status
 
+    
+    def update_order(self, order_id: str, note: str):
+        url = f"https://{self.myshopify}/admin/api/2024-01/orders/{order_id}.json"
+        headers = {
+            "Content-Type": "application/json",
+            "X-Shopify-Access-Token": self.app_token
+        }
+        payload = {
+            "order": {
+                "id": order_id,
+                "note": note
+            }
+        }
+        response = requests.put(url, headers=headers, json=payload)
+        response.raise_for_status()
+        return response.json()
+
 
     def initiate_return(self) -> str:
         """
@@ -93,9 +106,7 @@ class CallChatSession:
         print("Order ID:", self.order.id)
         
         try:
-            # Update the order note
-            self.order.note = note_text
-            self.order.save()
+            self.update_order(self.order.id, note_text)
         except Exception as e:
             print(e)
         
@@ -116,16 +127,13 @@ class CallChatSession:
         print("Order ID:", self.order.id)
 
         try:
-            # Update the order note
-            self.order.note = note_text
-            self.order.save()
+            self.update_order(self.order.id, note_text)
         except Exception as e:
             print(e)
 
         return get_intent_response("Refund Step2")
 
     
-
     def return_process(self, reason) -> str:
         if self.return_order is False:
             self.return_order = True
