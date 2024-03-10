@@ -101,11 +101,11 @@ def recent_metrics(form: MetricsForm) -> list:
     """
         Returns a list of tuples containing most recent 7 calls for a given user.
     """
-    c.execute('''SELECT strftime('%Y-%m-%d %H:%M:%S', timestamp), call_type FROM user_metrics WHERE user_id=? ORDER BY timestamp DESC LIMIT 7''', (form.user_id,))
+    c.execute('''SELECT strftime('%Y-%m-%d %H:%M:%S', timestamp), call_type, call_intent FROM user_metrics WHERE user_id=? ORDER BY timestamp DESC LIMIT 7''', (form.user_id,))
     recent_calls = c.fetchall()
 
     if len(recent_calls) == 0:
-        return [("No recent calls", "N/A")]
+        return [("No recent calls", "N/A", "N/A")]
     return recent_calls
 
 

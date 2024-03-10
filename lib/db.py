@@ -15,7 +15,7 @@ with conn:
                      transferred_calls INTEGER,
                      abandoned_calls INTEGER,
                      call_type TEXT DEFAULT "automated",
-                     call_intent TEXT,
+                     call_intent TEXT DEFAULT "Order Status",
                      timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                      )''')
 
