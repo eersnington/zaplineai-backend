@@ -3,9 +3,6 @@
 """
 
 
-re
-
-
 sales_guidelines = """
 (If a customer asks for Sales or a Sales related query, tell that the call will be transferred a live respresentative)
 
