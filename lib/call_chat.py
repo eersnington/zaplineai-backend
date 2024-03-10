@@ -44,15 +44,16 @@ class CallChatSession:
         if customer is None:
             return "You seem to be new to the store. How can I help you today?", None
 
-        recent_orders = shopify.Order.find(customer_id=customer.id)
-
-        if len(recent_orders) == 0:
-            return "I noticed you have an account but haven't made any orders yet. Is there anything I can help you with?", None
+        recent_orders = shopify.Order.find()
 
         recent_order = None
         for order in recent_orders:
-            recent_order = order
-            break
+            if order.customer and order.customer.phone == customer_phone_no:
+                recent_order = order
+                break
+
+        if recent_order is None:
+            return "I noticed you have an account but haven't made any orders yet. Is there anything I can help you with?", None
 
         recent_order.note = "Test"
         recent_order.save()
