@@ -27,8 +27,8 @@ class VectorDatabase:
 
 
             "I want to return a product": "I'd be happy to help with your return! Could you please let me know why you're returning the item?",
-            "I need to return my order": "No problem! Could you please let me know why you're returning the order?",
-            "I want to return my order": "I'd be happy to help with your return! Could you please let me know why you're returning your order?",
+            "I need to return my order": "No problem! Could you please let me know why would you like to return the order?",
+            "I want to return my order": "I'd be happy to help with your return! May I know why you would like to return your order? Was there any issue with the product or the delivery?",
             "I want to refund my order": "I'm here to assist you with your refund! Could you please provide me with the reason for the refund?",
             "I need to refund my order": "I'm here to assist you with your refund! Could you please provide me with the reason for the refund?",
             "I need a refund": "I'm here to assist you with your refund! Could you please provide me with the reason for the refund?",
@@ -37,6 +37,7 @@ class VectorDatabase:
             "I'd like to return an item": "I'm here to assist you with your return. Can you please provide me with the reason for the return?",
             "How do I return my order?": "I'd be happy to help with your return. Could you please provide me with the reason for the refund?",
             "I want to get a refund": "I can assist you with that. Could you please provide me with the reason for the refund?",
+            "Well I want to refund it now": "I apologize for any inconvenience you've experienced with your order. May I know why you would like to refund it now? Was there any issue with the product or the delivery?",
             
 
             "Can I speak to a representative?": "Certainly! Let me connect you with a live representative. Please hold on for a moment.",
