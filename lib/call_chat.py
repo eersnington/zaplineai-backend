@@ -109,7 +109,7 @@ class CallChatSession:
             return "I couldn't find any latest orders for you. If you think this is a mistake, please call again later."
 
         note_text = f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"
-        self.resource = ShopifyResource(token=self.app_token, store=self.myshopify)
+        self.resource = ShopifyResource(token=self.app_token, store=self.myshopify) # Reinitializing the resource and client because it times out after a while.
         self.client = ShopifyClient(self.resource)
         status = self.client.resource.put(f"/orders/{self.order_id}.json", {"order": {"note": note_text}})
 
