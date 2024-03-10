@@ -16,7 +16,7 @@ class CallChatSession:
         self.sid = None
         self.llm_chat = LLMChat(llm_model, bert_classifier)
         self.app_token = app_token
-        self.myshopify = myshopify.split(".")[0]
+        self.myshopify = myshopify
         self.client = shopify.Session(myshopify, "2024-01", app_token)
         shopify.ShopifyResource.activate_session(self.client)
         self.order_id = None # The ID of the recent order.
