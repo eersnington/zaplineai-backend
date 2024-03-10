@@ -1,6 +1,7 @@
-from lib.shopify.resource_base import ShopifyResource, Orders
+from resource_base import ShopifyResource, Orders
 from rich import print
 import os
+import time
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv(), override=True)
 
@@ -15,15 +16,22 @@ class ShopifyClient:
         status = self.resource.get("/orders.json")
         return status.status_code
 
-
 if __name__ == "__main__":
     resource = ShopifyResource(token=os.getenv(
         "SHOPIFY_API_KEY"), store="b59bb6-2")
     client = ShopifyClient(resource)
     orders = client.Orders.get_orders()
+
+    order_id = None
     for order in orders.json()["orders"]:
-        print(order)
-        client.Orders.update_order(order["id"], {"order": {"note": "New test note"}})
+        if order["customer"] is not None:
+            if order["customer"]["phone"] == "+919952062221":
+                print(order)
+                print(order["id"])
+                order_id = order["id"]
+            
+    update = client.resource.put(f"/orders/{order_id}.json", {"order": {"note": "Return initiated by customer through call"}}) # client.Orders.update_order(order_id, {"order": {"note": "Test"}}) 
+    print(update.status_code, update.text) 
 
     if orders.status_code == 200:
         print("HTTP/1.1 200 OK | API Works!")
