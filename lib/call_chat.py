@@ -83,9 +83,10 @@ class CallChatSession:
         if self.order_id is None:
             return "I couldn't find any latest orders for you. If you think this is a mistake, please call again later."
         
-        print(f"-----------Order ID-----------------: {self.order_id}")
+        print(f"Order ID: {self.order_id}")
         note_text = f"Return initiated by customer through call. Reason: {self.return_refund_reason}"
-        self.client.Orders.update_order(int(self.order_id), {"order": {"note": note_text}})
+        status = self.client.Orders.update_order(self.order_id, {"order": {"note": note_text}})
+        print(status.status_code)
         return get_intent_response("Returns Step2")
     
 
@@ -101,14 +102,15 @@ class CallChatSession:
         
         print(f"Order ID: {self.order_id}")
         note_text = f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"
-        self.client.Orders.update_order(self.order_id, {"order": {"note": "note_text"}})
+        status = self.client.Orders.update_order(self.order_id, {"order": {"note": note_text}})
+        print(status.status_code)
         return get_intent_response("Refund Step2")
     
 
     def return_process(self, reason) -> str:
         if self.return_order is False:
             self.return_order = True
-            return True
+            return "true"
 
         if reason:
             self.return_refund_reason = reason
@@ -120,7 +122,7 @@ class CallChatSession:
     def refund_process(self, reason) -> str:
         if self.refund_order is False:
             self.refund_order = True
-            return True
+            return "true"
 
         if reason:
             self.return_refund_reason = reason
