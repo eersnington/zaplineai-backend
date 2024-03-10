@@ -68,7 +68,7 @@ class CallChatSession:
             str -- The status of the order.
         """
         if self.order_status is None:
-            return "None"
+            return "none"
         
         return self.order_status
 
@@ -81,7 +81,7 @@ class CallChatSession:
             str -- The status of the return.
         """
         if self.order_id is None:
-            return "I couldn't find any latest orders for you. Please call again later."
+            return "I couldn't find any latest orders for you. If you think this is a mistake, please call again later."
         
         self.client.Orders.update_order(self.order_id, {"order": {"note": f"Return initiated by customer through call. Reason: {self.return_refund_reason}"}})
         return get_intent_response("Returns Step2")
@@ -95,7 +95,7 @@ class CallChatSession:
             str -- The status of the refund.
         """
         if self.order_id is None:
-            return "I couldn't find any latest orders for you. Please call again later."
+            return "I couldn't find any latest orders for you. If you think this is a mistake, please call again later."
         
         self.client.Orders.update_order(self.order_id, {"order": {"note": f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"}})
         return get_intent_response("Refund Step2")
