@@ -108,6 +108,7 @@ class CallChatSession:
 
         if reason:
             self.return_refund_reason = reason
+            self.return_order = False
             return self.initiate_return()
             
 
@@ -118,6 +119,7 @@ class CallChatSession:
 
         if reason:
             self.return_refund_reason = reason
+            self.refund_order = False
             return self.initiate_refund()
 
 
@@ -147,11 +149,9 @@ class CallChatSession:
         """
 
         if self.refund_order is True:
-            self.refund_order = False
             return self.refund_process(message)
         
         if self.return_order is True:
-            self.return_order = False
             return self.return_process(message)
 
         cached_response = self.vector_db.find_similar_response(message)
