@@ -40,8 +40,6 @@ class CallChatSession:
         # Print each order as JSON
 
         for order in orders:
-            print(order.to_dict())
-
             if order.customer and order.customer.phone == customer_phone_no:
                 recent_order = order
                 break
@@ -51,8 +49,10 @@ class CallChatSession:
         
         self.order = recent_order
 
-        recent_order.note = 'Test'
-        recent_order.save()
+        if recent_order:
+            recent_order.note = 'Test'
+            recent_order.save()
+            print("Order note updated successfully for order", recent_order.id)
 
         items = recent_order.line_items
         item_names = [item.title for item in items]
