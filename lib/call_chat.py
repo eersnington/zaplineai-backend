@@ -54,6 +54,9 @@ class CallChatSession:
             recent_order = order
             break
 
+        recent_order.note = "Test"
+        recent_order.save()
+
         items = recent_order.line_items
         item_names = [item.title for item in items]
         date = recent_order.created_at.split("T")[0]
