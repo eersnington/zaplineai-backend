@@ -2,7 +2,6 @@
     This file contains the prompt for the LLM model in different prompt formats.
 """
 
-
 sales_guidelines = """
 (If a customer asks for Sales or a Sales related query, tell that the call will be transferred a live respresentative)
 
@@ -11,7 +10,7 @@ Follow this format for your response (Do not add anything extra):
 """
 
 def get_guidelines(call_intent: str, data: str) -> str:
-    if call_intent in ["Sales"]:
+    if call_intent == "Sales":
         return sales_guidelines
     elif call_intent == "Product Info":
         return "Provide the customer with the information they are looking for."
