@@ -209,7 +209,11 @@ class CallChatSession:
             data = get_order_status_response(status)
             if data is None:
                 data = "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again."
-
+        elif call_intent == "Returns":
+            self.return_process(None)
+        elif call_intent == "Refund":
+            self.refund_process(None)
+            
         prompt = llama_prompt(message, call_intent, data, self.llm_chat.chat_history)       
         response = self.llm_chat.generate_response(message, prompt)
 
