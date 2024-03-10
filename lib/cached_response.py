@@ -33,13 +33,15 @@ class VectorDatabase:
             "I need to refund my order": "I'm here to assist you with your refund! Could you please provide me with the reason for the refund?",
             "I need a refund": "I'm here to assist you with your refund! Could you please provide me with the reason for the refund?",
             "Can I get a refund?": "Absolutely! I just need a bit more information to process your refund. Could you let me know why do you want to refund?",
-            "Can I talk to a sales representative?": "Absolutely! I can transfer your call to a live representative right away. Please hold for a moment while I connect you.",
             "I'd like to return an item": "I'm here to assist you with your return. Can you please provide me with the reason for the return?",
             "How do I return my order?": "I'd be happy to help with your return. Could you please provide me with the reason for the refund?",
             "I want to get a refund": "I can assist you with that. Could you please provide me with the reason for the refund?",
             "Well I want to refund it now": "I apologize for any inconvenience you've experienced with your order. May I know why you would like to refund it now? Was there any issue with the product or the delivery?",
-            
+            "Well I wanna return my order": "I apologize for any inconvenience you've experienced with your order. Could you please let me know why you're returning the item?",
 
+            "Can I talk to a sales representative?": "Absolutely! I can transfer your call to a live representative right away. Please hold for a moment while I connect you.",
+            "Can I speak to someone in sales?": "Of course! I'll transfer you to a sales representative. Please hold for a moment.",
+            "Can I speak with someone in sales?": "Of course! I'll transfer you to a sales representative. Please hold for a moment.",
             "Can I speak to a representative?": "Certainly! Let me connect you with a live representative. Please hold on for a moment.",
             "Can I speak with a representative?": "Certainly! Let me connect you with a live representative. Please hold on for a moment.",           
             "Can I speak to a live agent?": "Certainly! Let me connect you with a live representative. Please hold on for a moment.",
