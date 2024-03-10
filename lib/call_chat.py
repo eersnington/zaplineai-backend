@@ -168,17 +168,21 @@ class CallChatSession:
 
             elif "return" in cached_response:
                 self.call_intent = "Returns"
-                self.refund_process() # This is a dummy call to set the return_order flag to True (Returns Step 1)
+                self.refund_process(None) # This is a dummy call to set the return_order flag to True (Returns Step 1)
 
             elif "refund" in cached_response:
                 self.call_intent = "Refund"
-                self.refund_process() # This is a dummy call to set the refund_order flag to True (Refund Step 1)
+                self.refund_process(None) # This is a dummy call to set the refund_order flag to True (Refund Step 1)
 
             print(f"Call Intent: {self.call_intent}")
             return cached_response
         
         call_intent = self.check_call_intent(message)
         print(f"Call Intent: {call_intent}")
+
+
+        if call_intent == "Returns":
+            pass
 
         
         if call_intent == "General Inquiry":
