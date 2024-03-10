@@ -213,7 +213,7 @@ class CallChatSession:
             self.return_process(None)
         elif call_intent == "Refund":
             self.refund_process(None)
-            
+
         prompt = llama_prompt(message, call_intent, data, self.llm_chat.chat_history)       
         response = self.llm_chat.generate_response(message, prompt)
 
@@ -229,21 +229,6 @@ class CallChatSession:
             int -- The status code of the Shopify API.
         """
         return self.client.status()
-    
-    def update_call_status(self, user_id: str, call_type: str, call_intent: str) -> str:
-        """
-            Updates the status of the call.
-
-            Keyword arguments:
-            user_id -- The user's ID.
-            call_type -- The type of call to be tracked.
-            call_intent -- The intent of the call.
-        """
-        try:
-            track_metrics(user_id, call_type)
-        except Exception as e:
-            return f"Error occurred: {str(e)}"
-        return "Call status updated successfully."
 
     def get_call_intent(self) -> str:
         """
@@ -275,5 +260,20 @@ class CallChatSession:
         
         return call_type
     
+
+    def update_call_status(self, user_id: str, call_type: str, call_intent: str) -> str:
+        """
+            Updates the status of the call.
+
+            Keyword arguments:
+            user_id -- The user's ID.
+            call_type -- The type of call to be tracked.
+            call_intent -- The intent of the call.
+        """
+        try:
+            track_metrics(user_id, call_type, call_intent)
+        except Exception as e:
+            return f"Error occurred: {str(e)}"
+        return "Call status updated successfully."
 
     
