@@ -88,7 +88,7 @@ class CallChatSession:
         note_text = f"Return initiated by customer through call. Reason: {self.return_refund_reason}"
         print("Order ID:", self.order.id)
         
-        try:
+        try: # can crash if the correct myshopify link is not provided
             self.order.note = note_text
             self.order.save()
         except Exception as e:
