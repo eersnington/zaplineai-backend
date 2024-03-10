@@ -18,7 +18,6 @@ refund_guidelines = """
 (If the customer asks anything else related to the refund, then say a general statement)
 """
 
-
 order_status_guidelines = """
 
 (If a customer asks for the status of their order, then say the following)
