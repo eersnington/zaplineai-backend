@@ -2,6 +2,7 @@ from lib.cached_response import VectorDatabase, get_intent_response, get_order_s
 from lib.llm_model import LLMModel, LLMChat, BERTClassifier
 from lib.llm_prompt import llama_prompt
 import shopify
+import traceback
 
 from lib.db import track_metrics
 
@@ -86,10 +87,14 @@ class CallChatSession:
             return "I couldn't find any latest orders for you. If you think this is a mistake, please call again later."
         
         note_text = f"Return initiated by customer through call. Reason: {self.return_refund_reason}"
+        print("Order ID:", self.order.id)
         
-        # Update the order note
-        self.order.note = note_text
-        self.order.save()
+        try:
+            # Update the order note
+            self.order.note = note_text
+            self.order.save()
+        except Exception as e:
+            print(e)
         
         return get_intent_response("Returns Step2")
     
@@ -105,10 +110,14 @@ class CallChatSession:
             return "I couldn't find any latest orders for you. If you think this is a mistake, please call again later."
 
         note_text = f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"
+        print("Order ID:", self.order.id)
 
-        # Update the order note
-        self.order.note = note_text
-        self.order.save()
+        try:
+            # Update the order note
+            self.order.note = note_text
+            self.order.save()
+        except Exception as e:
+            print(e)
 
         return get_intent_response("Refund Step2")
 
