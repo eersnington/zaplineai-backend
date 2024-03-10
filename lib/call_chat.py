@@ -110,10 +110,8 @@ class CallChatSession:
         print(type(self.order_id))
 
         note_text = f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"
-        orders = self.client.Orders.get_orders()
-        print(orders.status_code, orders.text)
 
-        status = self.client.Orders.update_order(self.order_id, {"order": {"note": "Return initiated by customer through call"}})
+        status = self.client.Orders.update_order(self.order_id, {"order": {"id": self.order_id, "note": "Refund initiated by customer through call"}})
 
         print(status.status_code, status.text)
         return get_intent_response("Refund Step2")
