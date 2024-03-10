@@ -34,7 +34,7 @@ class CallChatSession:
             customer_phone_no -- The phone number of the customer.
         """
         self.sid = sid
-        customer = shopify.Customer.find(phone=customer_phone_no).first()
+        customer = shopify.Customer.find(phone=customer_phone_no)
 
         if customer is None:
             return "You seem to be new to the store. How can I help you today?", None
