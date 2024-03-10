@@ -35,27 +35,23 @@ class CallChatSession:
             customer_phone_no -- The phone number of the customer.
         """
         self.sid = sid
-        customers = shopify.Customer.find(phone=customer_phone_no)
-        customer = None
-        for c in customers:
-            customer = c
-            break
-
-        if customer is None:
-            return "You seem to be new to the store. How can I help you today?", None
-
-        recent_orders = shopify.Order.find()
-
+        orders = shopify.Order.find()
         recent_order = None
-        for order in recent_orders:
+        # Print each order as JSON
+
+        for order in orders:
+            print(order.to_dict())
+
             if order.customer and order.customer.phone == customer_phone_no:
                 recent_order = order
                 break
 
         if recent_order is None:
-            return "I noticed you have an account but haven't made any orders yet. Is there anything I can help you with?", None
+            return "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again.", None
+        
+        self.order = recent_order
 
-        recent_order.note = "Test"
+        recent_order.note = 'Test'
         recent_order.save()
 
         items = recent_order.line_items
