@@ -3,7 +3,7 @@ from lib.call_chat import CallChatSession
 def main():
     # Initialize the chat session with your Shopify app token and store name
     app_token = "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"
-    myshopify = "zaplineai.myshopify.com"
+    myshopify = "b59bb6-2.myshopify.com"
     chat_session = CallChatSession(app_token, myshopify)
 
     # Simulate a conversation with the chatbot
