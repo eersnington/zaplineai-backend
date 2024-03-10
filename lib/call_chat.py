@@ -68,7 +68,7 @@ class CallChatSession:
             str -- The status of the order.
         """
         if self.order_status is None:
-            return "I couldn't find any recent orders for you. If you think this is a mistake, please call again later."
+            return "None"
         
         return self.order_status
 
@@ -160,7 +160,7 @@ class CallChatSession:
             if cached_response.endswith("<<explain the current status of your order>>"):
                 self.call_intent = "Order Status"
                 data = self.get_order_status()
-
+                print("Order Status: ", data)
                 addon = get_order_status_response(data)
                 if addon is None:
                     addon = "I couldn't find any recent orders "

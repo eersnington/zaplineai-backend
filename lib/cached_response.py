@@ -38,7 +38,7 @@ class VectorDatabase:
             "How do I return my order?": "I'd be happy to help with your return. Could you please provide me with the reason for the refund?",
             "I want to get a refund": "I can assist you with that. Could you please provide me with the reason for the refund?",
             
-            
+
             "Can I speak to a representative?": "Certainly! Let me connect you with a live representative. Please hold on for a moment.",
             "Can I speak with a representative?": "Certainly! Let me connect you with a live representative. Please hold on for a moment.",           
             "Can I speak to a live agent?": "Certainly! Let me connect you with a live representative. Please hold on for a moment.",
@@ -85,7 +85,8 @@ cached_order_status_responses = {
     "Unfulfilled": "Our team is currently processing and preparing your order for shipping. We'll notify you once it's on its way.",
     "Partially Fulfilled": "Part of your order has been delivered, and we're working diligently to ship the remaining items as soon as possible.",
     "Scheduled": "Your order is scheduled for delivery. You will receive an email with the estimated time of arrival shortly.",
-    "On hold": "Your order is currently on hold. Please reach out to our team via email so we can assist you in resolving this matter."
+    "On hold": "Your order is currently on hold. Please reach out to our team via email so we can assist you in resolving this matter.",
+    "None": "I couldn't find any recent orders for you. If you think this is a mistake, please call again later."
 }
 
 def get_intent_response(intent):
