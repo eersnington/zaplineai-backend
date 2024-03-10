@@ -173,11 +173,11 @@ class CallChatSession:
                     addon = "I couldn't find any recent orders "
                 cached_response = cached_response.replace("<<explain the current status of your order>>", addon)
 
-            elif ["return", "returning"] in cached_response:
+            elif "return" in cached_response or "returning" in cached_response:
                 self.call_intent = "Returns"
                 self.return_process(None) # This is a dummy call to set the return_order flag to True (Returns Step 1)
 
-            elif ["refund", "refunding"] in cached_response:
+            elif "refund" in cached_response or "refunding" in cached_response:
                 self.call_intent = "Refund"
                 self.refund_process(None) # This is a dummy call to set the refund_order flag to True (Refund Step 1)
 
