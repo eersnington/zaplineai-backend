@@ -1,8 +1,7 @@
 from lib.cached_response import VectorDatabase, get_intent_response, get_order_status_response
 from lib.llm_model import LLMModel, LLMChat, BERTClassifier
 from lib.llm_prompt import llama_prompt
-from lib.shopify.resource_base import ShopifyResource
-from lib.shopify.shopify_client import ShopifyClient
+import shopify
 
 from lib.db import track_metrics
 
@@ -17,8 +16,8 @@ class CallChatSession:
         self.llm_chat = LLMChat(llm_model, bert_classifier)
         self.app_token = app_token
         self.myshopify = myshopify.split(".")[0]
-        self.resource = ShopifyResource(token=app_token, store=myshopify.split(".")[0])
-        self.client = ShopifyClient(self.resource)
+        self.client = shopify.Session(myshopify, "2024-01", app_token)
+        shopify.ShopifyResource.activate_session(self.client)
         self.order_id = None # The ID of the recent order.
         self.vector_db = vector_db
         self.refund_order = False
@@ -35,31 +34,28 @@ class CallChatSession:
             customer_phone_no -- The phone number of the customer.
         """
         self.sid = sid
-        output = self.client.resource.get(f"/customers.json?phone={customer_phone_no}")
+        customer = shopify.Customer.find(phone=customer_phone_no).first()
 
-        if output.status_code != 200:
-            return "Sorry, we are currently experiencing technical difficulties. Please call again later.", None
+        if customer is None:
+            return "You seem to be new to the store. How can I help you today?", None
 
-        for customer in output.json()["customers"]:                        
-            recent_orders = self.client.resource.get(f"/orders.json?customer_id={customer['id']}").json()["orders"]
-            
-            if len(recent_orders) == 0:
-                return " You seem to be new to the store. How can I help you today?", None
-            recent_order = recent_orders[0]
+        recent_orders = shopify.Order.find(customer_id=customer.id)
 
-            items = recent_order["line_items"]
-            item_names = []
-            for item in items:
-                item_names.append(item["title"])
-            date = recent_order["created_at"].split("T")[0]
+        if len(recent_orders.to_dict()) == 0:
+            return "You seem to be new to the store. How can I help you today?", None
 
-            self.order_id = recent_order["id"]
-            self.order_status = f"{recent_order['fulfillment_status']}"
+        recent_order = recent_orders[0]
 
-            response = f" Are you calling regarding your recent purchase of {', '.join(item_names)} on {date}?"
-            return response, recent_order["id"]
-        
-        return " You seem to be new to the store. How can I help you today?", None
+        items = recent_order.line_items
+        item_names = [item.title for item in items]
+        date = recent_order.created_at.split("T")[0]
+
+        self.order_id = recent_order.id
+        self.order_status = recent_order.fulfillment_status
+        self.order = recent_order
+
+        response = f"Are you calling regarding your recent purchase of {', '.join(item_names)} on {date}?"
+        return response, self.order_id
     
 
     def get_order_status(self) -> str:
@@ -77,44 +73,41 @@ class CallChatSession:
 
     def initiate_return(self) -> str:
         """
-            Initiates a return for the customer.
+        Initiates a return for the customer.
 
-            Returns:
-            str -- The status of the return.
+        Returns:
+        str -- The status of the return.
         """
-        if self.order_id is None:
+        if self.order is None:
             return "I couldn't find any latest orders for you. If you think this is a mistake, please call again later."
         
-        print(f"Order ID: {self.order_id}")
-        print(type(self.order_id))
-
         note_text = f"Return initiated by customer through call. Reason: {self.return_refund_reason}"
         
-        status = self.client.Orders.update_order(self.order_id, {"order": {"id": self.order_id, "note": "Return initiated by customer through call"}})
-
-        print(status.status_code, status.text)
+        # Update the order note
+        self.order.note = note_text
+        self.order.save()
+        
         return get_intent_response("Returns Step2")
     
 
     def initiate_refund(self) -> str:
         """
-            Initiates a refund for the customer.
+        Initiates a refund for the customer.
 
-            Returns:
-            str -- The status of the refund.
+        Returns:
+        str -- The status of the refund.
         """
-        if self.order_id is None:
+        if self.order is None:
             return "I couldn't find any latest orders for you. If you think this is a mistake, please call again later."
-
-        print(f"Order ID: {self.order_id}")
-        print(type(self.order_id))
 
         note_text = f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"
 
-        status = self.client.Orders.update_order(self.order_id, {"order": {"id": self.order_id, "note": "Refund initiated by customer through call"}})
+        # Update the order note
+        self.order.note = note_text
+        self.order.save()
 
-        print(status.status_code, status.text)
         return get_intent_response("Refund Step2")
+
     
 
     def return_process(self, reason) -> str:
