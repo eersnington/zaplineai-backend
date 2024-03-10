@@ -90,7 +90,7 @@ class CallChatSession:
 
         note_text = f"Return initiated by customer through call. Reason: {self.return_refund_reason}"
         
-        status = self.client.Orders.update_order(self.order_id, '{"order":{"id":5951600885924,"note":"Customer contacted us about a custom engraving on this iPod"}}')
+        status = self.client.Orders.update_order(self.order_id, {"order": {"id": self.order_id, "note": "Return initiated by customer through call"}})
 
         print(status.status_code, status.text)
         return get_intent_response("Returns Step2")
@@ -111,7 +111,7 @@ class CallChatSession:
 
         note_text = f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"
 
-        status = self.client.Orders.update_order(self.order_id, '{"order":{"id":5951600885924,"note":"Customer contacted us about a custom engraving on this iPod"}}')
+        status = self.client.Orders.update_order(self.order_id, {"order": {"id": self.order_id, "note": "Refund initiated by customer through call"}})
 
         print(status.status_code, status.text)
         return get_intent_response("Refund Step2")
