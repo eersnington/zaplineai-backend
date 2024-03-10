@@ -172,6 +172,8 @@ class CallChatSession:
         
         if self.return_order is True:
             return self.return_process(message)
+        
+        self.llm_chat.add_message(f"Customer: {message}")
 
         cached_response = self.vector_db.find_similar_response(message)
 
@@ -182,7 +184,7 @@ class CallChatSession:
                 print("Order Status: ", data)
                 addon = get_order_status_response(data)
                 if addon is None:
-                    addon = "I couldn't find any recent orders "
+                    addon = "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again."
                 cached_response = cached_response.replace("<<explain the current status of your order>>", addon)
 
             elif "return" in cached_response or "returning" in cached_response:
@@ -194,28 +196,26 @@ class CallChatSession:
                 self.refund_process(None) # This is a dummy call to set the refund_order flag to True (Refund Step 1)
 
             print(f"Call Intent: {self.call_intent}")
+
+            self.llm_chat.add_message(f"AI Assistant: {cached_response}")
             return cached_response
         
         call_intent = self.check_call_intent(message)
         print(f"Call Intent: {call_intent}")
 
-
-        if call_intent == "Returns":
-            pass
-
-        
-        if call_intent == "General Inquiry":
-            data = ""
-        elif call_intent == "Product Info":
-            data = "Provide the customer with the information they are looking for."
-        elif call_intent == "Sales":
-            data = "Transferring to sales team. Please wait."
-        else:
-            data = ""
+        data = None
+        if call_intent == "Order Status":
+            status = self.get_order_status()
+            data = get_order_status_response(status)
+            if data is None:
+                data = "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again."
 
         prompt = llama_prompt(message, call_intent, data, self.llm_chat.chat_history)       
-        
-        return self.llm_chat.generate_response(message, prompt)
+        response = self.llm_chat.generate_response(message, prompt)
+
+        # self.vector_db.add_response(message, response) # WORK IN PROGRESS
+        self.llm_chat.add_message(f"AI Assistant: {response}")
+        return response
     
     def get_shopify_status(self) -> int:
         """
