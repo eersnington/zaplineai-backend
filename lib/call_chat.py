@@ -85,7 +85,7 @@ class CallChatSession:
         
         print(f"-----------Order ID-----------------: {self.order_id}")
         note_text = f"Return initiated by customer through call. Reason: {self.return_refund_reason}"
-        self.client.Orders.update_order(self.order_id, {"order": {"note": note_text}})
+        self.client.Orders.update_order(int(self.order_id), {"order": {"note": note_text}})
         return get_intent_response("Returns Step2")
     
 
@@ -101,7 +101,7 @@ class CallChatSession:
         
         print(f"Order ID: {self.order_id}")
         note_text = f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"
-        self.client.Orders.update_order(self.order_id, {"order": {"note": note_text}})
+        self.client.Orders.update_order(self.order_id, {"order": {"note": "note_text"}})
         return get_intent_response("Refund Step2")
     
 
