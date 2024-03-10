@@ -138,6 +138,11 @@ class VectorDatabase:
             return bot_response
         else:
             return None
+        
+    def add_response(self, query, response):
+        self.cached_responses[query] = response
+        new_embedding = self.model.encode([query])[0]
+        self.index.add(np.array([new_embedding]))
 
 
 # Cached responses for different intents
