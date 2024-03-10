@@ -125,6 +125,8 @@ class VectorDatabase:
         D, I = self.index.search(np.array([new_embedding]), k=1)  # Search for the most similar past response
         similarity = 1 / (1 + D[0][0])  # Calculate similarity score
 
+        print("Similarity Score:", similarity)
+
         if similarity > threshold:
             similar_past_query = list(self.cached_responses.keys())[I[0][0]]
             bot_response = self.cached_responses[similar_past_query]
