@@ -41,7 +41,7 @@ class ShopifyResourceBase:
         return self.resource.post(url, json=data)
 
     def put(self, url, data):
-        return self.resource.put(url, json=data, headers={"Content-Type": "application/json"})
+        return self.resource.put(url, json=data)
 
     def delete(self, url):
         return self.resource.delete(url)
