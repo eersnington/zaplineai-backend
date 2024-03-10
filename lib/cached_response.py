@@ -157,7 +157,7 @@ cached_order_status_responses = {
     "partially fulfilled": "Part of your order has been delivered, and we're working diligently to ship the remaining items as soon as possible.",
     "scheduled": "Your order is scheduled for delivery. You will receive an email with the estimated time of arrival shortly.",
     "on hold": "Your order is currently on hold. Please reach out to our team via email so we can assist you in resolving this matter.",
-    "none": "I couldn't find any recent orders for you. If you think this is a mistake, please call again later."
+    "none": "I couldn't find any recent orders for this phone number. If you think this is a mistake, please call again later."
 }
 
 def get_intent_response(intent):
