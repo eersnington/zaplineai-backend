@@ -173,7 +173,7 @@ class CallChatSession:
 
             elif "return" in cached_response:
                 self.call_intent = "Returns"
-                self.refund_process(None) # This is a dummy call to set the return_order flag to True (Returns Step 1)
+                self.return_process(None) # This is a dummy call to set the return_order flag to True (Returns Step 1)
 
             elif "refund" in cached_response:
                 self.call_intent = "Refund"
