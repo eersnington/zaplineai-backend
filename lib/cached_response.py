@@ -81,12 +81,12 @@ cached_intent_responses = {
 }
 
 cached_order_status_responses = {
-    "Fulfilled": "Your order has been successfully delivered to your shipping address.",
-    "Unfulfilled": "Our team is currently processing and preparing your order for shipping. We'll notify you once it's on its way.",
-    "Partially Fulfilled": "Part of your order has been delivered, and we're working diligently to ship the remaining items as soon as possible.",
-    "Scheduled": "Your order is scheduled for delivery. You will receive an email with the estimated time of arrival shortly.",
-    "On hold": "Your order is currently on hold. Please reach out to our team via email so we can assist you in resolving this matter.",
-    "None": "I couldn't find any recent orders for you. If you think this is a mistake, please call again later."
+    "fulfilled": "Your order has been successfully delivered to your shipping address.",
+    "unfulfilled": "Our team is currently processing and preparing your order for shipping. We'll notify you once it's on its way.",
+    "partially fulfilled": "Part of your order has been delivered, and we're working diligently to ship the remaining items as soon as possible.",
+    "scheduled": "Your order is scheduled for delivery. You will receive an email with the estimated time of arrival shortly.",
+    "on hold": "Your order is currently on hold. Please reach out to our team via email so we can assist you in resolving this matter.",
+    "none": "I couldn't find any recent orders for you. If you think this is a mistake, please call again later."
 }
 
 def get_intent_response(intent):
