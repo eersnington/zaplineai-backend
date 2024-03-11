@@ -2,7 +2,6 @@ from lib.cached_response import VectorDatabase, get_intent_response, get_order_s
 from lib.llm_model import LLMModel, LLMChat, BERTClassifier
 from lib.llm_prompt import llama_prompt
 import shopify
-import traceback
 
 from lib.db import track_metrics
 
