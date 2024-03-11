@@ -28,7 +28,7 @@ def get_bert_model(model_path: str) -> BertForSequenceClassification:
     logging.info(f"Loading BERT model: {model_path}")
     if os.getenv("PRODUCTION_MODE") == "False":
         logging.info("Skipping model loading in development environment")
-        return None
+        return None, None
     tokenizer = BertTokenizer.from_pretrained(model_path)
     model = BertForSequenceClassification.from_pretrained(model_path)
     return model, tokenizer
