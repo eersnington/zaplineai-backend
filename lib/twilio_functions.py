@@ -204,7 +204,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 
                 print(f"Customer Phone No: {customer_phone_no}")
 
-                if llm_chat.get_shopify_status() != 200:
+                if llm_chat.get_shopify_status() == False:
                     await voice_response(
                         f"Sorry, the shopify store isn't connected. Please call again later.", call_sid, 10, twilio_client)
                 else:
