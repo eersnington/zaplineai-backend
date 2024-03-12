@@ -8,6 +8,7 @@ class VectorDatabase:
         self.dim = self.model.encode(["dummy"]).shape[1]  # Get the dimension of the embeddings
         self.index = faiss.IndexFlatL2(self.dim)
         self.cached_responses = {
+            "I wanna know the status": "I can help with that! Based on our records, <<explain the current status of your order>>",
             "Can you tell me the status of my order?": "Of course! I can do that for you. Based on our records, <<explain the current status of your order>>",
             "Where is my order?": "I can help with that! Based on our records, <<explain the current status of your order>>",
             "What's the status of my order?": "I can check that for you. Based on our records, <<explain the current status of your order>>",
@@ -56,7 +57,8 @@ class VectorDatabase:
             "I'm trying to find out when my order will be delivered.": "I'll check on that for you. Based on our records, <<explain the current status of your order>>",
             "I need to know when to expect my order.": "I'll find out for you. Based on our records, <<explain the current status of your order>>",
 
-
+            "I wanna return it": "I'd be happy to help with your return! Could you please let me know why you're returning the order?",
+            "I wanna refund it": "I apologize for any inconvenience you've experienced with your order. Could you please let me know why you're refunding the order?",
             "I want to return a product": "I'd be happy to help with your return! Could you please let me know why you're returning the item?",
             "I need to return my order": "No problem! Could you please let me know why would you like to return the order?",
             "I want to return my order": "I'd be happy to help with your return! May I know why you would like to return your order? Was there any issue with the product or the delivery?",
@@ -146,7 +148,7 @@ class VectorDatabase:
         embeddings = self.model.encode(list(self.cached_responses.keys()))
         self.index.add(np.array(embeddings))
 
-    def find_similar_response(self, new_query, threshold=0.7):
+    def find_similar_response(self, new_query, threshold=0.6):
         new_embedding = self.model.encode([new_query])[0]
         D, I = self.index.search(np.array([new_embedding]), k=1)  # Search for the most similar past response
         similarity = 1 / (1 + D[0][0])  # Calculate similarity score
