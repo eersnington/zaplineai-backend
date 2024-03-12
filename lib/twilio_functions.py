@@ -226,14 +226,15 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
 
-                print(f"Buffer Size: {audio_buffer.size()}")
                 if audio_buffer.size() < 420:
                     audio_buffer.write(audio_data)
                 else:
+                    logging.info("Transcribing audio...")
 
                     transcription_result = transcribe_stream(audio_buffer)
 
                     if transcription_result == "Thank you.":
+                        logging.info("Transcription failed")
                         audio_buffer.clear()
                         continue
 
@@ -243,7 +244,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         logging.info("Transcription failed")
                         audio_buffer.clear()
                         continue
-
 
                     words_per_second = 2.5  # Average speech rate - 150 wpm
                     words = len(transcription_result.split(" "))
