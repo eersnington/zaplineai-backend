@@ -45,7 +45,7 @@ class CallChatSession:
                 break
 
         if recent_order is None:
-            return "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again.", None
+            return "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again."
         
         self.order = recent_order
 
@@ -58,7 +58,7 @@ class CallChatSession:
         self.order = recent_order
 
         response = f"Are you calling regarding your recent purchase of {', '.join(item_names)} on {date}?"
-        return response, self.order_id
+        return response
     
 
     def get_order_status(self) -> str:
