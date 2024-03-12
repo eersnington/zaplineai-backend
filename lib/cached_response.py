@@ -140,12 +140,13 @@ class VectorDatabase:
             "Nope, that's all. Thanks.": "You're welcome! Have a good one! You can hang up the call if you don't need any more help.",
             "I think I'm good for now, thanks.": "You're welcome! If you need anything else, just give us a shout. Have a great day! You can hang up the call if you don't need any more help."
 
+
         }
         # Add the stored responses to the index
         embeddings = self.model.encode(list(self.cached_responses.keys()))
         self.index.add(np.array(embeddings))
 
-    def find_similar_response(self, new_query, threshold=0.8):
+    def find_similar_response(self, new_query, threshold=0.7):
         new_embedding = self.model.encode([new_query])[0]
         D, I = self.index.search(np.array([new_embedding]), k=1)  # Search for the most similar past response
         similarity = 1 / (1 + D[0][0])  # Calculate similarity score
