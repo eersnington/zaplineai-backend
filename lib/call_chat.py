@@ -227,7 +227,14 @@ class CallChatSession:
             Returns:
             int -- The status code of the Shopify API.
         """
-        return self.client.status()
+        try:
+            shop = shopify.Shop.current()
+            # If we reach this point, the connection was successful
+            return True
+        except Exception as e:
+            # If any exception occurs, the connection failed
+            print(f"Failed to connect to Shopify: {e}")
+            return False
 
     def get_call_intent(self) -> str:
         """
