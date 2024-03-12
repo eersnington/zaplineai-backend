@@ -14,7 +14,7 @@ import functools
 load_dotenv()
 logging.getLogger().setLevel(logging.INFO)
 
-model_size = "large-v3"
+model_size = "small"
 
 @functools.cache
 def get_model():
