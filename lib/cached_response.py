@@ -120,6 +120,26 @@ class VectorDatabase:
             "I need to speak with a live agent": "Sure! I'll transfer you to a live representative who can assist you. Please hold on.",   
             "I need to speak to a live agent": "Sure! I'll transfer you to a live representative who can assist you. Please hold on.",
             "I need to speak with a sales representative": "Of course! I'll transfer you to a sales representative. Please hold for a moment.",
+        
+
+            "No, that's all. Thank you.": "You're welcome! If you have any more questions later, feel free to reach out. You can hang up the call if you don't need any more help.",
+            "I don't need any more assistance. Thank you.": "You're welcome! If you need help in the future, don't hesitate to contact us. Have a wonderful day! You can hang up the call if you don't need any more help.",
+            "That's everything. Thank you.": "You're welcome! We're glad we could assist you. If you need help in the future, don't hesitate to reach out. You can hang up the call if you don't need any more help.",
+            "I'm all set. Thank you.": "You're welcome! If you have any more questions, feel free to contact us again. You can hang up the call if you don't need any more help.",
+            "No, I'm good. Thank you.": "You're welcome! We're here to help whenever you need us. Have a wonderful day! You can hang up the call if you don't need any more help.",
+            "That's all for now, thanks.": "You're welcome! If you have any more questions, feel free to contact us. Have a great day! You can hang up the call if you don't need any more help.",
+            "I think I'm good, thanks.": "You're welcome! If you need further assistance, feel free to reach out. Have a wonderful day! You can hang up the call if you don't need any more help.",
+            "I'm all set, thank you.": "You're welcome! If you have any more questions, feel free to contact us. You can hang up the call if you don't need any more help.",
+            "No, that'll be all. Thank you.": "You're welcome! If you need help in the future, don't hesitate to reach out. Have a great day! You can hang up the call if you don't need any more help.",
+            "I don't need anything else, thanks.": "You're welcome! If you have any more questions, feel free to contact us. Have a wonderful day! You can hang up the call if you don't need any more help.",
+            "I'm good for now, thank you.": "You're welcome! We're here to help whenever you need us. Have a wonderful day! You can hang up the call if you don't need any more help.",
+            "That's it, thanks.": "You're welcome! Have a great day! You can hang up the call if you don't need any more help.",
+            "I'm good, thank you.": "You're welcome! If you need anything else, just let us know. Have a great day! You can hang up the call if you don't need any more help.",
+            "I'm good, thanks.": "You're welcome! Have a great day! You can hang up the call if you don't need any more help.",
+            "I think I'm all set, thanks.": "You're welcome! If you have more questions later, don't hesitate to ask. Have a great day! You can hang up the call if you don't need any more help.",
+            "Nope, that's all. Thanks.": "You're welcome! Have a good one! You can hang up the call if you don't need any more help.",
+            "I think I'm good for now, thanks.": "You're welcome! If you need anything else, just give us a shout. Have a great day! You can hang up the call if you don't need any more help."
+
         }
         # Add the stored responses to the index
         embeddings = self.model.encode(list(self.cached_responses.keys()))
