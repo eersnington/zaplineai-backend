@@ -18,5 +18,5 @@ outputs = pipe(
     return_timestamps=True,
 )
 
-print(outputs)
+print(outputs.text)
 print(f"Time taken: {time.time() - start} seconds")
