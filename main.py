@@ -21,12 +21,7 @@ logging.getLogger().setLevel(logging.INFO)
 logging.getLogger('twilio').setLevel(logging.WARNING)
 logging.getLogger('pyngrok').setLevel(logging.WARNING)
 logging.getLogger('faster_whisper').setLevel(logging.WARNING)
-def call_accept():
-    pass
-def call_stream():
-    pass
-def update_phone():
-    pass
+
 
 load_dotenv(find_dotenv(), override=True)
 
