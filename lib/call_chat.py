@@ -24,6 +24,9 @@ class CallChatSession:
         self.refund_order = False
         self.return_order = False
         self.return_refund_reason = None
+        self.call_intent = None
+        self.order = None
+        self.order_status = None
     
 
     def start(self, sid: str, customer_phone_no: str) -> str:
@@ -201,6 +204,7 @@ class CallChatSession:
             return cached_response
         
         call_intent = self.check_call_intent(message)
+        self.call_intent = call_intent
         print(f"Call Intent: {call_intent}")
 
         data = None
