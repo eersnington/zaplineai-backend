@@ -4,7 +4,6 @@ import tempfile
 import wave
 import logging
 from lib.audio_buffer import AudioBuffer, _QueueStream, _TwilioSource
-from faster_whisper import WhisperModel
 import torch
 from transformers import pipeline
 from transformers.utils import is_flash_attn_2_available
@@ -17,7 +16,7 @@ import functools
 load_dotenv()
 logging.getLogger().setLevel(logging.INFO)
 
-model_size = "small"
+model_name = "openai/whisper-large-v3"
 
 @functools.cache
 def get_model():
@@ -25,7 +24,7 @@ def get_model():
     #                         compute_type="int8_float16")
     pipe = pipeline(
         "automatic-speech-recognition",
-        model="openai/whisper-large-v3", # select checkpoint from https://huggingface.co/openai/whisper-large-v3#model-details
+        model=model_name, # select checkpoint from https://huggingface.co/openai/whisper-large-v3#model-details
         torch_dtype=torch.bfloat16,
         device="cuda:0", # or mps for Mac devices
         model_kwargs={"attn_implementation": "flash_attention_2"} if is_flash_attn_2_available() else {"attn_implementation": "sdpa"},
@@ -39,7 +38,7 @@ if os.getenv("PRODUCTION_MODE") == "False":
     STTmodel = None
 
 else:
-    logging.info(f"Loading Whisper Model | Size: {model_size}")
+    logging.info(f"Loading Whisper Model | Model Name: {model_name}")
     STTmodel = get_model()
     logging.info("Loading completed!")
 
