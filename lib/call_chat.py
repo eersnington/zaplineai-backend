@@ -1,9 +1,18 @@
 from lib.cached_response import VectorDatabase, get_intent_response, get_order_status_response
-from lib.llm_model import LLMModel, LLMChat, BERTClassifier
+#from lib.llm_model import LLMModel, LLMChat, BERTClassifier
 from lib.llm_prompt import llama_prompt
 import shopify
 
 from lib.db import track_metrics
+
+class LLMChat:
+    pass
+
+class LLMModel:
+    pass
+
+class BERTClassifier:
+    pass
 
 llm_model = LLMModel()
 bert_classifier = BERTClassifier()
