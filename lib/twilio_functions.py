@@ -180,8 +180,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
-    user_id = store.userId
-
     initial_response = f" Thank you for contacting {brand_name} Support!."
     
     llm_chat = CallChatSession(store.app_token, store.myshopify)
@@ -189,6 +187,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     call_sid = None
     call_type = None
     call_intent = None
+
+    first_question = True
 
     await websocket.accept()
 
@@ -209,6 +209,9 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         f"Sorry, the shopify store isn't connected. Please call again later.", call_sid, 10, twilio_client)
                 else:
                     awaited_response = llm_chat.start(call_sid, customer_phone_no)
+                    if awaited_response == " I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again.":
+                        first_question = False
+
                     response = initial_response + awaited_response
                     response_duration = math.ceil(len(response.split(" "))/2.5)
                     await voice_response(response, call_sid, response_duration, twilio_client)
@@ -231,38 +234,43 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 else:
                     logging.info("Transcribing audio...")
 
-                    transcription_result = transcribe_stream(audio_buffer)
+                    if first_question:
+                        logging.info("First Question")
+                        first_question = False
+                        response = "Would you like to know the status of the order, process a return, or do you have a different question?"
+                        await voice_response(response, call_sid, 8, twilio_client)
+                    else:
+                        transcription_result = transcribe_stream(audio_buffer)
 
-                    if transcription_result == "Thank you.":
-                        logging.info("Transcription failed")
+                        if transcription_result == "Thank you.":
+                            logging.info("Transcription failed")
+                            audio_buffer.clear()
+                            continue
+
+                        print(f"Transcription: {transcription_result}")
+
+                        if transcription_result is None:
+                            logging.info("Transcription failed")
+                            audio_buffer.clear()
+                            continue
+
+                        words_per_second = 2.5  # Average speech rate - 150 wpm
+                        words = len(transcription_result.split(" "))
+                        est_duration = words / words_per_second
+
+                        print(f"Estimated Speech Duration: {math.ceil(est_duration)} seconds")
+
                         audio_buffer.clear()
-                        continue
 
-                    print(f"Transcription: {transcription_result}")
+                        call_intent = llm_chat.get_call_intent(transcription_result)
+                        call_type = llm_chat.get_call_type(call_intent=call_intent)
 
-                    if transcription_result is None:
-                        logging.info("Transcription failed")
-                        audio_buffer.clear()
-                        continue
-
-                    words_per_second = 2.5  # Average speech rate - 150 wpm
-                    words = len(transcription_result.split(" "))
-                    est_duration = words / words_per_second
-
-                    print(f"Estimated Speech Duration: {math.ceil(est_duration)} seconds")
-
-                    audio_buffer.clear()
-
-                    # if call_intent is None and len(transcription_result.split(" ")) > 4:
-                    #     call_intent = llm_chat.check_call_intent(transcription_result)
-                    #     call_type = llm_chat.get_call_type(call_intent=call_intent)
-
-                    #     print(f"Call Intent: {call_intent} | Call Type: {call_type}")
-
-                    
-                    # response = llm_chat.get_response(transcription_result)
-                    # print(f"LLM Response: {response}")
-                    # await voice_response(response, call_sid, est_duration, twilio_client)
+                        print(f"Call Intent: {call_intent} | Call Type: {call_type}")
+    
+                        
+                        response = llm_chat.get_response(transcription_result)
+                        print(f"LLM Response: {response}")
+                        await voice_response(response, call_sid, est_duration, twilio_client)
 
 
     except WebSocketDisconnect:
