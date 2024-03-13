@@ -19,7 +19,8 @@ def get_vllm_model(model: str, quantization: Union[str, None] = None) -> LLM:
     if quantization is None:
         llm = LLM(model=model)
     else:
-        llm = LLM(model=model, quantization=quantization)
+        print("Quantization: ", quantization)
+        llm = LLM(model=model, quantization=quantization, dtype="bfloat16")
     return llm
 
 
