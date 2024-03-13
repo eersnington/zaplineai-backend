@@ -46,7 +46,7 @@ class CallChatSession:
                 break
 
         if recent_order is None:
-            return " I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again."
+            return " You seem to be a new customer. How can I help you today?"
         
         self.order = recent_order
 
