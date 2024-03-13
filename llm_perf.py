@@ -9,7 +9,7 @@ while True:
     if text == "exit":
         break
     start = time.time()
-    llm_model.generate_text(text)
+    print(llm_model.generate_text(text))
     end = time.time()
     print(f"Time taken: {end - start} seconds")
 
