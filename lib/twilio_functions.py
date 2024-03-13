@@ -188,8 +188,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     call_type = None
     call_intent = None
 
-    first_question = True
-
     await websocket.accept()
 
     try:
@@ -209,8 +207,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         f"Sorry, the shopify store isn't connected. Please call again later.", call_sid, 10, twilio_client)
                 else:
                     awaited_response = llm_chat.start(call_sid, customer_phone_no)
-                    if awaited_response == " You seem to be a new customer. How can I help you today?":
-                        first_question = False
 
                     response = initial_response + awaited_response
                     response_duration = math.ceil(len(response.split(" "))/2.5)
@@ -232,14 +228,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 if audio_buffer.size() < 420:
                     audio_buffer.write(audio_data)
                 else:
-                    if first_question:
-                        logging.info("First Question")
-                        first_question = False
-                        response = "Would you like to know the status of the order, process a return, or do you have a different question?"
-                        await voice_response(response, call_sid, 8, twilio_client)
-                        audio_buffer.clear()
-                        continue
-               
                     logging.info("Transcribing audio...")
                     transcription_result = transcribe_stream(audio_buffer)
 

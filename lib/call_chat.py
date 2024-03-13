@@ -58,7 +58,7 @@ class CallChatSession:
         self.order_status = recent_order.fulfillment_status
         self.order = recent_order
 
-        response = f" Are you calling regarding your recent purchase of {', '.join(item_names)} on {date}?"
+        response = f" Regarding the your order of {', '.join(item_names)} on {date}, would you like to know the order status, process a return, or do you need help with something else?"
         return response
     
 
