@@ -16,12 +16,10 @@ import functools
 load_dotenv()
 logging.getLogger().setLevel(logging.INFO)
 
-model_name = "openai/whisper-large-v3"
+model_name = "openai/whisper-small" #"openai/whisper-large-v3"
 
 @functools.cache
 def get_model():
-    # STTmodel = WhisperModel(model_size, device="cuda",
-    #                         compute_type="int8_float16")
     pipe = pipeline(
         "automatic-speech-recognition",
         model=model_name, # select checkpoint from https://huggingface.co/openai/whisper-large-v3#model-details
@@ -31,7 +29,7 @@ def get_model():
     )   
     return pipe
 
-# Initialize faster_whisper model
+# Initialize whisper model
 
 if os.getenv("PRODUCTION_MODE") == "False":
     logging.info("Skipping model loading in development environment")
@@ -73,11 +71,15 @@ def transcribe_buffer(audio_buffer: AudioBuffer) -> str:
 
     # Pass the audio file to Whisper for transcription
     with open(temp_audio_path, 'rb') as audio_file:
-        segments, info = STTmodel.transcribe(audio_file, language="en", beam_size=5, task="transcribe")
 
-        transcription = ''
-        for segment in segments:
-            transcription += segment.text
+        outputs = STTmodel(
+            audio_file,
+            chunk_length_s=30,
+            batch_size=24,
+            return_timestamps=False,
+        )
+
+        transcription = outputs["text"]
 
     return transcription
 
@@ -101,15 +103,9 @@ def transcribe_stream(audio_stream: _QueueStream) -> str:
 
                 if STTmodel is None:
                     return "Model not loaded"
-                
-                # segments, info = STTmodel.transcribe(tmp_path, language="en", task="transcribe")
-
-                # transcription = ''
-                # for segment in segments:
-                #     transcription += segment.text
 
                 outputs = STTmodel(
-                    "audio.wav",
+                    tmp_path,
                     chunk_length_s=30,
                     batch_size=24,
                     return_timestamps=False,
