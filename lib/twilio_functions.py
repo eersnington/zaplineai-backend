@@ -186,15 +186,28 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     phone_no -- The phone number of the incoming caller.
     brand_name -- The name of the brand for the call session.
     """
-    audio_buffer = AudioBuffer() #_QueueStream()
+    audio_buffer = AudioBuffer()
 
     await websocket.accept()
 
     is_customer_speaking = False
     silence_duration = 0
+    ignore_duration = 0
 
     vad = webrtcvad.Vad()
     vad.set_mode(1)
+
+    store = await db.bot.find_first(where={"phone_no": phone_no})
+
+    initial_response = f" Thank you for contacting {brand_name} Support!."
+    
+    llm_chat = CallChatSession(store.app_token, store.myshopify)
+
+    call_sid = None
+    call_type = None
+    call_intent = None
+
+    await websocket.accept()
 
     try:
         while True:
@@ -210,8 +223,11 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
             if packet['event'] == 'media':
                 chunk = base64.b64decode(packet['media']['payload'])
-                # Convert audio data from ulaw to linear PCM
                 audio_data = audioop.ulaw2lin(chunk, 2)
+
+                if ignore_duration > 0:
+                    ignore_duration -= VAD_FRAME_DURATION
+                    continue
 
                 is_speech = vad_is_speech(audio_data, vad)
 
@@ -233,7 +249,18 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                             continue
 
                         print(f"Transcription: {transcription_result}")
-                        silence_duration = 0
+
+                        response = llm_chat.get_response(transcription_result)
+
+                        print(f"LLM Response: {response}")
+                        
+                        # Calculate ignore duration based on the length of the bot's response
+                        words_per_minute = 150  # Average speech rate
+                        words_in_response = len(response.split())
+                        response_duration = words_in_response / words_per_minute * 60  # in seconds
+                        ignore_duration = response_duration * 1000 / VAD_FRAME_DURATION  # Convert seconds to frames
+                        
+                        audio_buffer.clear()
 
     except WebSocketDisconnect:
         logging.info("WebSocket disconnected")
@@ -245,7 +272,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
         response = f"Sorry, we are currently experiencing technical difficulties. Please call again later. <Hangup/>"
         await voice_response(response, call_sid, 10, twilio_client)
 
-    audio_buffer = AudioBuffer() #_QueueStream()
+
+    #audio_buffer = AudioBuffer() #_QueueStream()
 
     # store = await db.bot.find_first(where={"phone_no": phone_no})
 
