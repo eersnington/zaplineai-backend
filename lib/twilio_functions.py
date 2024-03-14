@@ -186,7 +186,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     phone_no -- The phone number of the incoming caller.
     brand_name -- The name of the brand for the call session.
     """
-    audio_buffer = _QueueStream()
+    audio_buffer = AudioBuffer() #_QueueStream()
 
     await websocket.accept()
 
