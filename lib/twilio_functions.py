@@ -129,9 +129,9 @@ async def voice_response(transcription_text: str, call_sid: str, duration: int, 
         call_session.update(
             twiml=f'<Response><Say>{transcription_text}</Say><Pause length="60"/></Response>'
         )
-        print("ASR Paused")
+        print("---ASR Paused---")
         await asyncio.sleep(duration)
-        print("ASR Resumed")
+        print("---ASR Resumed---")
     except Exception as e:
         logging.info(f"Exception: {e}")
 
@@ -190,12 +190,23 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
     await websocket.accept()
 
+    store = await db.bot.find_first(where={"phone_no": phone_no})
+
     is_customer_speaking = False
     silence_duration = 0
     ignore_duration = 0
 
     vad = webrtcvad.Vad()
     vad.set_mode(1)
+
+    initial_response = f" Thank you for contacting {brand_name} Support!."
+    
+    llm_chat = CallChatSession(store.app_token, store.myshopify)
+
+    call_sid = None
+    call_type = None
+    call_intent = None
+
 
     try:
         while True:
@@ -213,10 +224,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 chunk = base64.b64decode(packet['media']['payload'])
                 audio_data = audioop.ulaw2lin(chunk, 2)
 
-                if ignore_duration > 0:
-                    ignore_duration -= VAD_FRAME_DURATION
-                    continue
-
                 is_speech = vad_is_speech(audio_data, vad)
 
                 if is_speech:
@@ -231,14 +238,20 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         print("Customer stopped speaking, processing audio...")
                         transcription_result = transcribe_stream(audio_buffer)
 
-                        if transcription_result == "Thank you.":
-                            logging.info("Transcription failed")
-                            audio_buffer.clear()
-                            continue
+                        audio_buffer.clear()
 
                         print(f"Transcription: {transcription_result}")
-                        ignore_duration = IGNORE_DURATION * 1000 / VAD_FRAME_DURATION  # Convert seconds to frames
                         silence_duration = 0
+
+                        if transcription_result is not None:
+                            response = llm_chat.get_response(transcription_result)
+                            print(f"LLM Response: {response}")
+
+                            words_per_second = 2.5  # Average speech rate - 150 wpm
+                            words = len(transcription_result.split(" "))
+                            est_duration = words / words_per_second
+
+                            await voice_response(response, call_sid, est_duration, twilio_client)
 
     except WebSocketDisconnect:
         logging.info("WebSocket disconnected")
