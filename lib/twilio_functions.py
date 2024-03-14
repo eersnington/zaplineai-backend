@@ -166,12 +166,12 @@ async def call_accept(request:Request, public_url: str, phone_number: str) -> Vo
     response.pause(length=60)
     return response
 
-
 import webrtcvad
 
 # Constants
 VAD_SAMPLERATE = 8000 # Hz
 VAD_FRAME_DURATION = 30  # ms
+IGNORE_DURATION = 2  # seconds to ignore customer audio after bot response
 
 def vad_is_speech(data, vad):
     is_speech = vad.is_speech(data, VAD_SAMPLERATE)
@@ -196,18 +196,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
     vad = webrtcvad.Vad()
     vad.set_mode(1)
-
-    store = await db.bot.find_first(where={"phone_no": phone_no})
-
-    initial_response = f" Thank you for contacting {brand_name} Support!."
-    
-    llm_chat = CallChatSession(store.app_token, store.myshopify)
-
-    call_sid = None
-    call_type = None
-    call_intent = None
-
-    await websocket.accept()
 
     try:
         while True:
@@ -249,18 +237,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                             continue
 
                         print(f"Transcription: {transcription_result}")
-
-                        response = llm_chat.get_response(transcription_result)
-
-                        print(f"LLM Response: {response}")
-                        
-                        # Calculate ignore duration based on the length of the bot's response
-                        words_per_minute = 150  # Average speech rate
-                        words_in_response = len(response.split())
-                        response_duration = words_in_response / words_per_minute * 60  # in seconds
-                        ignore_duration = response_duration * 1000 / VAD_FRAME_DURATION  # Convert seconds to frames
-                        
-                        audio_buffer.clear()
+                        ignore_duration = IGNORE_DURATION * 1000 / VAD_FRAME_DURATION  # Convert seconds to frames
+                        silence_duration = 0
 
     except WebSocketDisconnect:
         logging.info("WebSocket disconnected")
