@@ -112,7 +112,7 @@ def transcribe_stream(audio_stream: _QueueStream) -> str:
                 )
 
                 transcription = outputs["text"]
-                if transcription == " you" or transcription == " Thank you.":
+                if transcription == " you" or transcription == " Thank you." or len(transcription) < 2:
                     return None
 
                 return transcription
