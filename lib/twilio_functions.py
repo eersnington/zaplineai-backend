@@ -221,17 +221,19 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         transcription_result = transcribe_stream(audio_buffer)
                         print(f"Transcription: {transcription_result}")
 
-                        is_bot_speaking = True
-                        response = llm_chat.get_response(transcription_result)
-                        #await voice_response(response, call_sid, twilio_client)
+                        if transcription_result is not None:
+                            is_bot_speaking = True
+                            response = llm_chat.get_response(transcription_result)
+                            print(f"LLM Response: {response}")
+                            #await voice_response(response, call_sid, twilio_client)
 
-                        speech_duration = len(transcription_result.split()) / 3  # Assuming 3 words per second
-                        print(f"Speech Duration: {speech_duration} s")
+                            speech_duration = len(transcription_result.split()) / 2.15  # Assuming 3 words per second
+                            print(f"Speech Duration: {speech_duration} s")
 
-                        await asyncio.sleep(speech_duration)
-                        is_bot_speaking = False
-                        audio_buffer.clear()
-                        print("Bot response completed")
+                            await asyncio.sleep((int(speech_duration)+1))
+                            is_bot_speaking = False
+                            audio_buffer.clear()
+                            print("Bot response completed")
 
     except WebSocketDisconnect:
         logging.info("WebSocket disconnected")
