@@ -199,7 +199,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     await websocket.accept()
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
-    vad = webrtcvad.Vad(1) # 3 is the aggressiveness mode
+    vad = webrtcvad.Vad(3) # 3 is the aggressiveness mode
 
     initial_response = f" Thank you for contacting {brand_name} Support!."
 
@@ -236,6 +236,15 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         print("Processing buffered audio...")
                         transcription_result = transcribe_stream(audio_buffer)
                         print(f"Transcription: {transcription_result}")
+
+                        llm_response = llm_chat.get_response(transcription_result)
+                        print(f"LLM Response: {llm_response}")
+
+                        delay = speech_delay(llm_response)
+                        print(f"Speech Delay: {delay}s")
+                        is_bot_speaking = True
+                        await asyncio.sleep(delay)
+                        is_bot_speaking = False
                         audio_buffer.clear()
         
                     # if not is_bot_speaking:
