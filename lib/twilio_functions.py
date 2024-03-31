@@ -213,13 +213,13 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                 if is_speech:
                     print("Speaking...")
-                    asyncio.sleep(0.3)
-                    
+                    asyncio.sleep(0.2)
+
                     # if not is_bot_speaking:
                     #     audio_buffer.write(audio_data)
                 else:
                     print("Not Speaking...")
-                    asyncio.sleep(0.3)   
+                    asyncio.sleep(0.2)   
         
                     # if not is_bot_speaking:
                     #     print("Customer stopped speaking, processing buffered audio...")
