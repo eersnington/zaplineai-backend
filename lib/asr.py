@@ -92,11 +92,11 @@ def transcribe_stream(audio_stream: _QueueStream) -> str:
     """
     with _TwilioSource(audio_stream) as source:
         with tempfile.TemporaryDirectory() as tmp:
-            logging.info("Waiting for twilio caller...")
+            #logging.info("Waiting for twilio caller...")
             tmp_path = os.path.join(tmp, "mic.wav")
             try:
                 audio = recognizer.listen(source, timeout=10)
-                logging.info("Audio received from twilio caller.")
+                #logging.info("Audio received from twilio caller.")
                 data = io.BytesIO(audio.get_wav_data())
                 audio_clip = AudioSegment.from_file(data)
                 audio_clip.export(tmp_path, format="wav")
