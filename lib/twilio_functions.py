@@ -192,6 +192,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     brand_name -- The name of the brand for the call session.
     """
     is_bot_speaking = False
+    is_speech_started = False
 
     audio_buffer = AudioBuffer()
 
@@ -227,9 +228,11 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                 if is_speech:
                     if not is_bot_speaking:
+                        is_speech_started = True
                         audio_buffer.write(audio_data)
                 else:
-                    if is_bot_speaking and len(audio_buffer) > 0:
+                    if is_speech_started:
+                        is_speech_started = False
                         print("Processing buffered audio...")
                         transcription_result = transcribe_stream(audio_buffer)
                         print(f"Transcription: {transcription_result}")
