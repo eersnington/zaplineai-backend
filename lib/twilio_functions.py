@@ -217,6 +217,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 delay = speech_delay("Hi my name is Zappy.")
                 print(f"Speech Delay: {delay}s")
                 await asyncio.sleep(delay)
+                print("Bot response completed")
 
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')

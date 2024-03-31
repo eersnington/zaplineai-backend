@@ -230,7 +230,7 @@ class CallChatSession:
             Gets the status of the Shopify API.
 
             Returns:
-            int -- The status code of the Shopify API.
+            Bool -- The status of the Shopify API.
         """
         try:
             shop = shopify.Shop.current()
