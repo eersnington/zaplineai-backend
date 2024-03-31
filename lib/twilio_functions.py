@@ -10,9 +10,11 @@ import base64
 import json
 import logging
 import math
+import webrtcvad
 
-from lib.audio_buffer import AudioBuffer
-from lib.asr import transcribe_stream
+
+from lib.audio_buffer import AudioBuffer, _QueueStream
+from lib.asr import transcribe_buffer, transcribe_stream
 from lib.call_chat import CallChatSession
 from lib.db import db
 from lib.custom_exception import CustomException
@@ -22,6 +24,11 @@ load_dotenv(find_dotenv(), override=True)
 
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+
+# Constants
+VAD_SAMPLERATE = 8000 # Hz
+IGNORE_DURATION = 2  # seconds to ignore customer audio after bot response
+
 
 twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 TWILIO_PHONE_NUMBER = twilio_client.incoming_phone_numbers.list()[0]
@@ -152,7 +159,7 @@ async def call_accept(request:Request, public_url: str, phone_number: str) -> Vo
     
     active_calls[call_sid] = call_from
 
-    response_text = f"Hi There!"
+    response_text = f"Hi There! Welcome to ZaplineAI."
     response = VoiceResponse()
     start = Start()
     start.stream(
@@ -162,16 +169,6 @@ async def call_accept(request:Request, public_url: str, phone_number: str) -> Vo
     response.pause(length=60)
     return response
 
-import webrtcvad
-
-# Constants
-VAD_SAMPLERATE = 8000 # Hz
-VAD_FRAME_DURATION = 30  # ms
-IGNORE_DURATION = 2  # seconds to ignore customer audio after bot response
-
-def vad_is_speech(data, vad):
-    is_speech = vad.is_speech(data, VAD_SAMPLERATE)
-    return is_speech
 
 async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> None:
     """
@@ -182,27 +179,20 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     phone_no -- The phone number of the incoming caller.
     brand_name -- The name of the brand for the call session.
     """
+    is_bot_speaking = False
+
     audio_buffer = AudioBuffer()
 
     await websocket.accept()
-
     store = await db.bot.find_first(where={"phone_no": phone_no})
-
-    is_customer_speaking = False
-    silence_duration = 0
-    ignore_duration = 0
 
     vad = webrtcvad.Vad()
     vad.set_mode(1)
 
     initial_response = f" Thank you for contacting {brand_name} Support!."
-    
+
     llm_chat = CallChatSession(store.app_token, store.myshopify)
-
     call_sid = None
-    call_type = None
-    call_intent = None
-
 
     try:
         while True:
@@ -212,42 +202,36 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
             if packet['event'] == 'start':
                 print('Media stream started!')
                 call_sid = packet['start']['callSid']
-                
+
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
 
-            if packet['event'] == 'media':
+            elif packet['event'] == 'media':
                 chunk = base64.b64decode(packet['media']['payload'])
                 audio_data = audioop.ulaw2lin(chunk, 2)
-
-                is_speech = vad_is_speech(audio_data, vad)
+                is_speech = vad.is_speech(audio_data, VAD_SAMPLERATE)
 
                 if is_speech:
-                    is_customer_speaking = True
-                    silence_duration = 0
-                    audio_buffer.write(audio_data)
+                    if not is_bot_speaking:
+                        audio_buffer.write(audio_data)
+                        
                 else:
-                    silence_duration += VAD_FRAME_DURATION
-
-                    if is_customer_speaking and silence_duration > 1000:
-                        # Customer has stopped speaking, process the buffered audio
-                        print("Customer stopped speaking, processing audio...")
+                    if not is_bot_speaking:
+                        print("Customer stopped speaking, processing buffered audio...")
                         transcription_result = transcribe_stream(audio_buffer)
-
-                        audio_buffer.clear()
-
                         print(f"Transcription: {transcription_result}")
-                        silence_duration = 0
 
-                        if transcription_result is not None:
-                            response = llm_chat.get_response(transcription_result)
-                            print(f"LLM Response: {response}")
+                        is_bot_speaking = True
+                        response = llm_chat.get_response(transcription_result)
+                        await voice_response(response, call_sid, twilio_client)
 
-                            words_per_second = 2.5  # Average speech rate - 150 wpm
-                            words = len(transcription_result.split(" "))
-                            est_duration = words / words_per_second
+                        speech_duration = len(transcription_result.split()) / 3  # Assuming 3 words per second
+                        print(f"Speech Duration: {speech_duration} s")
 
-                            await voice_response(response, call_sid, twilio_client)
+                        await asyncio.sleep(speech_duration)
+                        is_bot_speaking = False
+                        audio_buffer.clear()
+                        print("Bot response completed")
 
     except WebSocketDisconnect:
         logging.info("WebSocket disconnected")
@@ -257,7 +241,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
         logging.info(f"Exception: {e}")
         logging.info(f"{e.__traceback__}")
         response = f"Sorry, we are currently experiencing technical difficulties. Please call again later. <Hangup/>"
-        await voice_response(response, call_sid, 10, twilio_client)
+        await voice_response(response, call_sid, twilio_client)
 
 
     #audio_buffer = AudioBuffer() #_QueueStream()
