@@ -187,7 +187,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
     vad = webrtcvad.Vad()
-    vad.set_mode(1)
+    vad.set_mode(2)
 
     initial_response = f" Thank you for contacting {brand_name} Support!."
 
@@ -213,13 +213,13 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                 if is_speech:
                     print("Speaking...")
-                    asyncio.sleep(0.2)
+                    asyncio.sleep(0.1)
 
                     # if not is_bot_speaking:
                     #     audio_buffer.write(audio_data)
                 else:
                     print("Not Speaking...")
-                    asyncio.sleep(0.2)   
+                    asyncio.sleep(0.1)   
         
                     # if not is_bot_speaking:
                     #     print("Customer stopped speaking, processing buffered audio...")
