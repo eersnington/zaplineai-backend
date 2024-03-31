@@ -95,6 +95,18 @@ async def get_unused_phone_number() -> str:
     return new_phone_number
 
 
+def speech_delay(transcription_text: str) -> int:
+    """
+        Estimates the duration of a speech based on the number of words in the transcription.
+
+        Keyword arguments:
+        transcription_text -- The transcribed text to be spoken in the call.
+
+        Return: The estimated duration of the speech in seconds.
+    """
+    return math.ceil(len(transcription_text.split(" ")) / 2.15) + 0.5
+
+
 def update_phone(public_url: str, phone_number: str) -> None:
     """
         Updates the voice URL of a specific phone number in Twilio.
@@ -201,6 +213,9 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
             if packet['event'] == 'start':
                 print('Media stream started!')
                 call_sid = packet['start']['callSid']
+                delay = speech_delay("Hi There! Welcome to ZaplineAI.")
+                print(f"Speech Delay: {delay}s")
+                await asyncio.sleep(delay)
 
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
