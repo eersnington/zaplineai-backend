@@ -212,28 +212,33 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 is_speech = vad.is_speech(audio_data, VAD_SAMPLERATE)
 
                 if is_speech:
-                    if not is_bot_speaking:
-                        audio_buffer.write(audio_data)
-                        
+                    print("Speaking...")
+                    asyncio.sleep(0.3)
+                    
+                    # if not is_bot_speaking:
+                    #     audio_buffer.write(audio_data)
                 else:
-                    if not is_bot_speaking:
-                        print("Customer stopped speaking, processing buffered audio...")
-                        transcription_result = transcribe_stream(audio_buffer)
-                        print(f"Transcription: {transcription_result}")
+                    print("Not Speaking...")
+                    asyncio.sleep(0.3)   
+        
+                    # if not is_bot_speaking:
+                    #     print("Customer stopped speaking, processing buffered audio...")
+                    #     transcription_result = transcribe_stream(audio_buffer)
+                    #     print(f"Transcription: {transcription_result}")
 
-                        if transcription_result is not None:
-                            is_bot_speaking = True
-                            response = llm_chat.get_response(transcription_result)
-                            print(f"LLM Response: {response}")
-                            #await voice_response(response, call_sid, twilio_client)
+                    #     if transcription_result is not None:
+                    #         is_bot_speaking = True
+                    #         response = llm_chat.get_response(transcription_result)
+                    #         print(f"LLM Response: {response}")
+                    #         #await voice_response(response, call_sid, twilio_client)
 
-                            speech_duration = len(transcription_result.split()) / 2.15  # Assuming 3 words per second
-                            print(f"Speech Duration: {speech_duration} s")
+                    #         speech_duration = len(transcription_result.split()) / 2.15  # Assuming 3 words per second
+                    #         print(f"Speech Duration: {speech_duration} s")
 
-                            await asyncio.sleep((int(speech_duration)+1))
-                            is_bot_speaking = False
-                            audio_buffer.clear()
-                            print("Bot response completed")
+                    #         await asyncio.sleep((int(speech_duration)+1))
+                    #         is_bot_speaking = False
+                    #         audio_buffer.clear()
+                    #         print("Bot response completed")
 
     except WebSocketDisconnect:
         logging.info("WebSocket disconnected")
