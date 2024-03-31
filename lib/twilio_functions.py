@@ -104,7 +104,7 @@ def speech_delay(transcription_text: str) -> int:
 
         Return: The estimated duration of the speech in seconds.
     """
-    return math.ceil(len(transcription_text.split(" ")) / 2.15) + 0.5
+    return math.ceil(len(transcription_text.split(" ")) / 2.5)
 
 
 def update_phone(public_url: str, phone_number: str) -> None:
@@ -242,6 +242,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                         delay = speech_delay(llm_response)
                         print(f"Speech Delay: {delay}s")
+
                         await voice_response(llm_response, call_sid, twilio_client)
                         is_bot_speaking = True
                         await asyncio.sleep(delay)
