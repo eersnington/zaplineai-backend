@@ -104,7 +104,7 @@ def speech_delay(transcription_text: str) -> int:
 
         Return: The estimated duration of the speech in seconds.
     """
-    return math.ceil(len(transcription_text.split(" ")) / 2.5)
+    return (len(transcription_text.split(" ")) / 2.5)
 
 
 def update_phone(public_url: str, phone_number: str) -> None:
@@ -171,7 +171,7 @@ async def call_accept(request:Request, public_url: str, phone_number: str) -> Vo
     
     active_calls[call_sid] = call_from
 
-    response_text = f"Hi There! Welcome to ZaplineAI."
+    response_text = f"Hi my name is Zappy."
     response = VoiceResponse()
     start = Start()
     start.stream(
@@ -214,7 +214,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
             if packet['event'] == 'start':
                 print('Media stream started!')
                 call_sid = packet['start']['callSid']
-                delay = speech_delay("Hi There! Welcome to ZaplineAI.")
+                delay = speech_delay("Hi my name is Zappy.")
                 print(f"Speech Delay: {delay}s")
                 await asyncio.sleep(delay)
 
