@@ -16,7 +16,7 @@ import functools
 load_dotenv()
 logging.getLogger().setLevel(logging.INFO)
 
-model_name = "openai/whisper-small" #"openai/whisper-large-v3"
+model_name = "openai/whisper-large-v3" #"openai/whisper-large-v3"
 
 @functools.cache
 def get_model():
