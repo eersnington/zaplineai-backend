@@ -223,7 +223,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                         is_bot_speaking = True
                         response = llm_chat.get_response(transcription_result)
-                        await voice_response(response, call_sid, twilio_client)
+                        #await voice_response(response, call_sid, twilio_client)
 
                         speech_duration = len(transcription_result.split()) / 3  # Assuming 3 words per second
                         print(f"Speech Duration: {speech_duration} s")
