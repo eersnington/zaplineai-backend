@@ -186,8 +186,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     await websocket.accept()
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
-    vad = webrtcvad.Vad()
-    vad.set_mode(2)
+    vad = webrtcvad.Vad(3) # 3 is the aggressiveness mode
 
     initial_response = f" Thank you for contacting {brand_name} Support!."
 
