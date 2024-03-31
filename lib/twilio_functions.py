@@ -242,9 +242,11 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
                         delay = speech_delay(llm_response)
                         print(f"Speech Delay: {delay}s")
+                        await voice_response(llm_response, call_sid, twilio_client)
                         is_bot_speaking = True
                         await asyncio.sleep(delay)
                         is_bot_speaking = False
+                        print("Bot response completed")
                         audio_buffer.clear()
         
                     # if not is_bot_speaking:
