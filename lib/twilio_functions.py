@@ -237,19 +237,32 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         transcription_result = transcribe_stream(audio_buffer)
                         print(f"Transcription: {transcription_result}")
 
-                        llm_response = llm_chat.get_response(transcription_result)
-                        print(f"LLM Response: {llm_response}")
+                        if transcription_result is not None:
 
-                        delay = speech_delay(llm_response)
-                        print(f"Speech Delay: {delay}s")
+                            llm_response = llm_chat.get_response(transcription_result)
+                            print(f"LLM Response: {llm_response}")
 
-                        await voice_response(llm_response, call_sid, twilio_client)
-                        is_bot_speaking = True
-                        await asyncio.sleep(delay)
-                        is_bot_speaking = False
-                        print("Bot response completed")
-                        audio_buffer.clear()
-        
+                            delay = speech_delay(llm_response)
+                            print(f"Speech Delay: {delay}s")
+
+                            await voice_response(llm_response, call_sid, twilio_client)
+                            is_bot_speaking = True
+                            await asyncio.sleep(delay)
+                            is_bot_speaking = False
+                            print("Bot response completed")
+                            audio_buffer.clear()
+                        else:
+                            response = "I'm sorry, I didn't get that. Could you please repeat?"
+                            delay = speech_delay(response)
+                            print(f"Speech Delay: {delay}s")
+
+                            await voice_response(response, call_sid, twilio_client)
+                            is_bot_speaking = True
+                            await asyncio.sleep(delay)
+                            is_bot_speaking = False
+                            print("Bot response completed")
+                            audio_buffer.clear()
+
                     # if not is_bot_speaking:
                     #     print("Customer stopped speaking, processing buffered audio...")
                     #     transcription_result = transcribe_stream(audio_buffer)

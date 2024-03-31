@@ -112,10 +112,7 @@ def transcribe_stream(audio_stream: _QueueStream) -> str:
                 )
 
                 transcription = outputs["text"]
-                print("Transcription from ASR:")
-                print(transcription)
-
-                if transcription == " you":
+                if transcription == " you" or transcription == " Thank you.":
                     return None
 
                 return transcription
