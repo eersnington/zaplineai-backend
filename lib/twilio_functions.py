@@ -1,4 +1,3 @@
-import io
 from dotenv import load_dotenv, find_dotenv
 from twilio.twiml.voice_response import VoiceResponse, Start
 from twilio.rest import Client
