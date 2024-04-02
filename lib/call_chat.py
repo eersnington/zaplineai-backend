@@ -49,7 +49,7 @@ class CallChatSession:
                 break
 
         if recent_order is None:
-            return " You seem to be a new customer. How can I help you today?"
+            return " You seem to be a new customer based on my records. How can I help you today?"
         
         self.order = recent_order
 
@@ -61,7 +61,7 @@ class CallChatSession:
         self.order_status = recent_order.fulfillment_status
         self.order = recent_order
 
-        response = f" Regarding the your order of {', '.join(item_names)} on {date}, would you like to know the order status, process a return, or do you need help with something else?"
+        response = f" I noticed your recent order of {', '.join(item_names)}. How can I help? Would you like to know your order status, start a return, or anything else?"
         return response
     
 

@@ -171,7 +171,7 @@ async def call_accept(request:Request, public_url: str, phone_number: str) -> Vo
     
     active_calls[call_sid] = call_from
 
-    response_text = f"Hi my name is Zappy."
+    response_text = f"Hi! My name is Zappy."
     response = VoiceResponse()
     start = Start()
     start.stream(
@@ -201,7 +201,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
     vad = webrtcvad.Vad(3) # 3 is the aggressiveness mode
 
-    initial_response = f" Thank you for contacting {brand_name} Support!."
+    initial_response = f" Thank you for contacting {brand_name}!."
 
     llm_chat = CallChatSession(store.app_token, store.myshopify)
     call_sid = None
@@ -214,6 +214,12 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
             if packet['event'] == 'start':
                 print('Media stream started!')
                 call_sid = packet['start']['callSid']
+
+                customer_phone_no = active_calls[call_sid]
+                additional_response = llm_chat.start(call_sid, customer_phone_no)
+
+                new_response = initial_response + additional_response
+
                 delay = speech_delay("Hi my name is Zappy.")
                 print(f"Speech Delay: {delay}s")
                 await asyncio.sleep(delay)
