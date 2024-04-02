@@ -20,7 +20,7 @@ def get_vllm_model(model: str, quantization: Union[str, None] = None) -> LLM:
         llm = LLM(model=model)
     else:
         print("Quantization: ", quantization)
-        llm = LLM(model=model, quantization=quantization, gpu_memory_utilization=0.8)
+        llm = LLM(model=model, quantization=quantization, gpu_memory_utilization=0.75)
     return llm
 
 
