@@ -57,6 +57,7 @@ class VectorDatabase:
             "I'm trying to find out when my order will be delivered.": "I'll check on that for you. Based on our records, <<explain the current status of your order>>",
             "I need to know when to expect my order.": "I'll find out for you. Based on our records, <<explain the current status of your order>>",
 
+
             "I wanna return it": "I'd be happy to help with your return! Could you please let me know why you're returning the order?",
             "I wanna refund it": "I apologize for any inconvenience you've experienced with your order. Could you please let me know why you're refunding the order?",
             "I want to return a product": "I'd be happy to help with your return! Could you please let me know why you're returning the item?",
