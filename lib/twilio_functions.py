@@ -225,7 +225,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 print(f"time: {time.time() - start}s")
                 print(f"New Response: {new_response}")
 
-                delay = speech_delay("Hey, my name is Zappy.")
+                delay = speech_delay("Hey, my name is Zappy.") - 0.3
                 print(f"Speech Delay: {delay}s")
                 await asyncio.sleep(delay)
                 print("Bot response completed")
