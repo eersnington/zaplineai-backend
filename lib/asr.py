@@ -47,42 +47,6 @@ recognizer.pause_threshold = 2.5
 recognizer.dynamic_energy_threshold = False
 
 
-def transcribe_buffer(audio_buffer: AudioBuffer) -> str:
-    """
-        Transcribes audio from an AudioBuffer into text.
-
-        Keyword arguments:
-        audio_buffer -- The buffer containing audio data to be transcribed.
-
-        Return: The transcription of the audio in the buffer as a string.
-    """
-
-    if STTmodel is None:
-        return "Model not loaded"
-
-    temp_audio_file = 'temp_audio.wav'
-    temp_audio_path = os.path.join(os.getcwd(), temp_audio_file)
-
-    with wave.open(temp_audio_path, 'wb') as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(16000)
-        wf.writeframes(audio_buffer.read())
-
-    # Pass the audio file to Whisper for transcription
-    with open(temp_audio_path, 'rb') as audio_file:
-
-        outputs = STTmodel(
-            audio_file,
-            chunk_length_s=30,
-            batch_size=24,
-            return_timestamps=False,
-        )
-
-        transcription = outputs["text"]
-
-    return transcription
-
 def transcribe_stream(audio_stream: _QueueStream) -> str:
     """
         Transcribes audio from a byte stream into text.
