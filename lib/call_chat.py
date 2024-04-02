@@ -86,7 +86,7 @@ class CallChatSession:
         str -- The status of the return.
         """
         if self.order is None:
-            return "I couldn't find any latest order for this number. If you think this is a mistake, please call again later."
+            return "I couldn't find any latest order for this number. If you think this is a mistake, I can transfer the call for you."
         
         note_text = f"Return initiated by customer through call. Reason: {self.return_refund_reason}"
         print("Order ID:", self.order.id)
@@ -108,7 +108,7 @@ class CallChatSession:
         str -- The status of the refund.
         """
         if self.order is None:
-            return "I couldn't find any latest orders for this number. If you think this is a mistake, please call again later."
+            return "I couldn't find any latest orders for this number. If you think this is a mistake, I can transfer the call for you."
 
         note_text = f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"
         print("Order ID:", self.order.id)
@@ -187,7 +187,7 @@ class CallChatSession:
                 print("Order Status: ", data)
                 addon = get_order_status_response(data)
                 if addon is None:
-                    addon = "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again."
+                    addon = "I couldn't find any recent orders for this phone number. If you think this is a mistake, I can transfer the call for you."
                 cached_response = cached_response.replace("<<explain the current status of your order>>", addon)
 
             elif "return" in cached_response or "returning" in cached_response:
