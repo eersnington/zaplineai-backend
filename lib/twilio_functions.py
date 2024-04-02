@@ -248,12 +248,13 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 else:
                     if is_speech_started:
                         is_speech_started = False
+                        
                         print("Processing buffered audio...")
                         transcription_result = transcribe_stream(audio_buffer)
                         print(f"Transcription: {transcription_result}")
+                        audio_buffer.clear()
 
                         if transcription_result is not None:
-
                             llm_response = llm_chat.get_response(transcription_result)
                             print(f"LLM Response: {llm_response}")
 
@@ -265,10 +266,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                             await asyncio.sleep(delay)
                             is_bot_speaking = False
                             print("Bot response completed")
-                            audio_buffer.clear()
                         else:
                             await asyncio.sleep(0.2)
-                            audio_buffer.clear()
 
     except WebSocketDisconnect:
         logging.info("WebSocket disconnected")
