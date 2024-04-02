@@ -171,7 +171,7 @@ async def call_accept(request:Request, public_url: str, phone_number: str) -> Vo
     
     active_calls[call_sid] = call_from
 
-    response_text = f"Hi! My name is Zappy."
+    response_text = f"Hey, my name is Zappy."
     response = VoiceResponse()
     start = Start()
     start.stream(
@@ -224,8 +224,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 new_response = initial_response + additional_response
                 print(f"time: {time.time() - start}s")
                 print(f"New Response: {new_response}")
-                 
-                delay = speech_delay("Hi my name is Zappy.")
+
+                delay = speech_delay("Hey, my name is Zappy.")
                 print(f"Speech Delay: {delay}s")
                 await asyncio.sleep(delay)
                 print("Bot response completed")
