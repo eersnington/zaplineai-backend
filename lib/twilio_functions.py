@@ -216,13 +216,10 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 call_sid = packet['start']['callSid']
 
                 customer_phone_no = active_calls[call_sid]
-                import time
 
-                start = time.time()
                 additional_response = llm_chat.start(call_sid, customer_phone_no)
 
                 new_response = initial_response + additional_response
-                print(f"time: {time.time() - start}s")
                 print(f"New Response: {new_response}")
 
                 delay = speech_delay("Hey, my name is Zappy.") - 0.3
@@ -280,7 +277,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     except Exception as e:
         logging.info(f"Exception: {e}")
         logging.info(f"{e.__traceback__}")
-        response = f"Sorry, we are currently experiencing technical difficulties. Please call again later. <Hangup/>"
+        response = f"Sorry, we are currently experiencing technical difficulties. Please call again later."
         await voice_response(response, call_sid, twilio_client)
 
 
