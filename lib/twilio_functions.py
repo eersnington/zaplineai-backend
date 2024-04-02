@@ -14,7 +14,7 @@ import webrtcvad
 
 
 from lib.audio_buffer import AudioBuffer, _QueueStream
-from lib.asr import transcribe_buffer, transcribe_stream
+from lib.asr import transcribe_stream
 from lib.call_chat import CallChatSession
 from lib.db import db
 from lib.custom_exception import CustomException
@@ -248,7 +248,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 else:
                     if is_speech_started:
                         is_speech_started = False
-                        
+
                         print("Processing buffered audio...")
                         transcription_result = transcribe_stream(audio_buffer)
                         print(f"Transcription: {transcription_result}")
@@ -278,92 +278,3 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
         logging.info(f"{e.__traceback__}")
         response = f"Sorry, we are currently experiencing technical difficulties. Please call again later."
         await voice_response(response, call_sid, twilio_client)
-
-
-    #audio_buffer = AudioBuffer() #_QueueStream()
-
-    # store = await db.bot.find_first(where={"phone_no": phone_no})
-
-    # initial_response = f" Thank you for contacting {brand_name} Support!."
-    
-    # llm_chat = CallChatSession(store.app_token, store.myshopify)
-
-    # call_sid = None
-    # call_type = None
-    # call_intent = None
-
-    # await websocket.accept()
-
-    # try:
-    #     while True:
-    #         message = await websocket.receive_text()
-    #         packet = json.loads(message)
-
-    #         if packet['event'] == 'start':
-    #             print('Media stream started!')
-    #             call_sid = packet['start']['callSid']                
-    #             customer_phone_no = active_calls[call_sid]
-                
-    #             print(f"Customer Phone No: {customer_phone_no}")
-
-    #             if llm_chat.get_shopify_status() == False:
-    #                 await voice_response(
-    #                     f"Sorry, the shopify store isn't connected. Please call again later.", call_sid, 10, twilio_client)
-    #             else:
-    #                 awaited_response = llm_chat.start(call_sid, customer_phone_no)
-
-    #                 response = initial_response + awaited_response
-    #                 response_duration = math.ceil(len(response.split(" "))/2.5)
-    #                 await voice_response(response, call_sid, response_duration, twilio_client)
-
-    #         elif packet['event'] == 'stop':
-    #             print('Media stream stopped!')
-
-    #             user_id = store.userId
-    #             if call_type is not None and call_intent is not None:
-    #                   # llm_chat.track(user_id, call_sid, call_type, call_intent)
-    #                 pass
-
-    #         if packet['event'] == 'media':
-    #             chunk = base64.b64decode(packet['media']['payload'])
-    #             # Convert audio data from ulaw to linear PCM
-    #             audio_data = audioop.ulaw2lin(chunk, 2)
-
-    #             if audio_buffer.size() < 420:
-    #                 audio_buffer.write(audio_data)
-    #             else:
-    #                 logging.info("Transcribing audio...")
-    #                 transcription_result = transcribe_stream(audio_buffer)
-
-    #                 if transcription_result == "Thank you.":
-    #                     logging.info("Transcription failed")
-    #                     audio_buffer.clear()
-    #                     continue
-
-    #                 print(f"Transcription: {transcription_result}")
-
-    #                 if transcription_result is None:
-    #                     logging.info("Transcription failed")
-    #                     audio_buffer.clear()
-    #                     continue
-
-    #                 words_per_second = 2.5  # Average speech rate - 150 wpm
-    #                 words = len(transcription_result.split(" "))
-    #                 est_duration = words / words_per_second
-
-    #                 print(f"Estimated Speech Duration: {math.ceil(est_duration)} seconds")
-
-    #                 audio_buffer.clear()
-
-    #                 call_intent = llm_chat.get_call_intent()
-    #                 call_type = llm_chat.get_call_type(call_intent)
-
-    #                 print(f"Call Intent: {call_intent} | Call Type: {call_type}")
-
-                    
-    #                 response = llm_chat.get_response(transcription_result)
-    #                 print(f"LLM Response: {response}")
-    #                 await voice_response(response, call_sid, est_duration, twilio_client)
-
-
-        
