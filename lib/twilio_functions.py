@@ -216,10 +216,15 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 call_sid = packet['start']['callSid']
 
                 customer_phone_no = active_calls[call_sid]
+                import time
+
+                start = time.time()
                 additional_response = llm_chat.start(call_sid, customer_phone_no)
 
                 new_response = initial_response + additional_response
-
+                print(f"time: {time.time() - start}s")
+                print(f"New Response: {new_response}")
+                 
                 delay = speech_delay("Hi my name is Zappy.")
                 print(f"Speech Delay: {delay}s")
                 await asyncio.sleep(delay)
