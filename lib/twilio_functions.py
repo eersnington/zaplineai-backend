@@ -12,7 +12,7 @@ import math
 import webrtcvad
 
 
-from lib.audio_buffer import AudioBuffer
+from lib.audio_buffer import AudioBuffer, _QueueStream
 from lib.asr import transcribe_stream
 from lib.call_chat import CallChatSession
 from lib.db import db
@@ -193,7 +193,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     is_bot_speaking = False
     is_speech_started = False
 
-    audio_buffer = AudioBuffer()
+    audio_buffer = _QueueStream()
 
     await websocket.accept()
     store = await db.bot.find_first(where={"phone_no": phone_no})
