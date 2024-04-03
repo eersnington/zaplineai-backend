@@ -42,12 +42,12 @@ else:
 
 
 recognizer = sr.Recognizer()
-recognizer.energy_threshold = 600  
+recognizer.energy_threshold = 700  
 recognizer.pause_threshold = 0.8
 recognizer.dynamic_energy_threshold = False
 
 
-def transcribe_stream(audio_stream: _QueueStream) -> str:
+def transcribe_stream(audio_stream: AudioBuffer) -> str:
     """
         Transcribes audio from a byte stream into text.
 
