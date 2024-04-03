@@ -193,7 +193,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     is_bot_speaking = False
     is_speech_started = False
 
-    audio_buffer = _QueueStream()
+    audio_buffer = AudioBuffer() # _QueueStream() makes ASR unresponsive (bug)
 
     await websocket.accept()
     store = await db.bot.find_first(where={"phone_no": phone_no})
