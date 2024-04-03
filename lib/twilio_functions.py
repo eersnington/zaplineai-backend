@@ -12,7 +12,7 @@ import math
 import webrtcvad
 
 
-from lib.audio_buffer import AudioBuffer, _QueueStream
+from lib.audio_buffer import AudioBuffer
 from lib.asr import transcribe_stream
 from lib.call_chat import CallChatSession
 from lib.db import db
@@ -103,7 +103,7 @@ def speech_delay(transcription_text: str) -> int:
 
         Return: The estimated duration of the speech in seconds.
     """
-    return (len(transcription_text.split(" ")) / 2.5)
+    return math.ceil(len(transcription_text.split(" ")) / 2.5)
 
 
 def update_phone(public_url: str, phone_number: str) -> None:
@@ -244,6 +244,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                     if not is_bot_speaking:
                         is_speech_started = True
                         audio_buffer.write(audio_data)
+                    else:
+                        audio_buffer.clear()
                 else:
                     if is_speech_started:
                         is_speech_started = False
@@ -261,11 +263,14 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                             print(f"Speech Delay: {delay}s")
 
                             await voice_response(llm_response, call_sid, twilio_client)
+                            print("Audio Buffer Size: ", audio_buffer.size())
                             is_bot_speaking = True
                             await asyncio.sleep(delay)
                             is_bot_speaking = False
                             print("Bot response completed")
+                            print("Audio Buffer Size: ", audio_buffer.size())
                         else:
+                            print("Audio Buffer Size (No Transcription): ", audio_buffer.size())
                             await asyncio.sleep(0.2)
 
     except WebSocketDisconnect:
