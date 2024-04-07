@@ -10,7 +10,7 @@ import json
 import logging
 import math
 import webrtcvad
-from pysilero_vad import SileroVoiceActivityDetector
+#from pysilero_vad import SileroVoiceActivityDetector
 
 
 from lib.audio_buffer import AudioBuffer, _QueueStream
