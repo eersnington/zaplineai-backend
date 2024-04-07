@@ -13,3 +13,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+
+# Custom Files
+db_new.py
+testLocal.py
