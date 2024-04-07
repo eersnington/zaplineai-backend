@@ -134,7 +134,7 @@ class VectorDatabase:
             "That's all for now, thanks.": "You're welcome! If you have any more questions, feel free to contact us. Have a great day! You can hangup the call now.",
             "I think I'm good, thanks.": "You're welcome! If you need further assistance, feel free to reach out. Have a wonderful day! You can hangup the call now.",
             "I'm all set, thank you.": "You're welcome! If you have any more questions, feel free to contact us. Have a lovely day! You can hangup the call now.",
-            "No, that'll be all. Thank you.": "You're welcome! If you need help in the future, don't hesitate to reach out. Have a great day! Have a lovely day! You can hangup the call now.",
+            "No, that'll be all. Thank you.": "You're welcome! If you need help in the future, don't hesitate to reach out. Have a lovely day! You can hangup the call now.",
             "I don't need anything else, thanks.": "You're welcome! If you have any more questions, feel free to contact us. Have a wonderful day! You can hangup the call now.",
             "I'm good for now, thank you.": "You're welcome! We're here to help whenever you need us. Have a wonderful day! Have a lovely day! You can hangup the call now.",
             "That's it, thanks.": "You're welcome! Have a great day! You can hangup the call now.",
