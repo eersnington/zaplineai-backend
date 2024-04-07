@@ -42,7 +42,7 @@ else:
 
 
 recognizer = sr.Recognizer()
-recognizer.energy_threshold = 800  
+recognizer.energy_threshold = 700  
 recognizer.pause_threshold = 0.8
 recognizer.dynamic_energy_threshold = False
 
