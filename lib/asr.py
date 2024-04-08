@@ -27,6 +27,7 @@ def get_model():
         torch_dtype=torch.bfloat16,
         device="cuda:0", # or mps for Mac devices
         model_kwargs={"attn_implementation": "flash_attention_2"} if is_flash_attn_2_available() else {"attn_implementation": "sdpa"},
+        generate_kwargs={"language": "english"},
     )
     return pipe
 
