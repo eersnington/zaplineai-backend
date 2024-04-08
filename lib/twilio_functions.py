@@ -27,7 +27,7 @@ twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 TWILIO_PHONE_NUMBER = twilio_client.incoming_phone_numbers.list()[0]
 
 vad = SileroVoiceActivityDetector()
-VAD_ENERGY_THRESHOLD = 0.5
+VAD_ENERGY_THRESHOLD = 0.22
 
 active_calls = {}
 
