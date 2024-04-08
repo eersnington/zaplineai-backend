@@ -9,6 +9,7 @@ from transformers import pipeline
 from transformers.utils import is_flash_attn_2_available
 import speech_recognition as sr
 from pydub import AudioSegment
+from pysilero_vad import SileroVoiceActivityDetector
 
 from dotenv import load_dotenv
 import functools
@@ -42,9 +43,12 @@ else:
 
 
 recognizer = sr.Recognizer()
-recognizer.energy_threshold = 700  
+recognizer.energy_threshold = 500  
 recognizer.pause_threshold = 0.8
 recognizer.dynamic_energy_threshold = False
+
+vad = SileroVoiceActivityDetector()
+energy_threshold = 0.3
 
 
 def transcribe_stream(audio_stream: AudioBuffer) -> str:
@@ -60,6 +64,13 @@ def transcribe_stream(audio_stream: AudioBuffer) -> str:
             tmp_path = os.path.join(tmp, "mic.wav")
             try:
                 audio = recognizer.listen(source, timeout=10)
+                vad_output = vad(audio.frame_data)
+
+                print("VAD: ", vad_output)
+
+                if vad_output < energy_threshold:
+                    return None
+
                 #logging.info("Audio received from twilio caller.")
                 data = io.BytesIO(audio.get_wav_data())
                 audio_clip = AudioSegment.from_file(data)
