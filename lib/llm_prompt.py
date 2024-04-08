@@ -63,7 +63,7 @@ Chat History (Use this to provide context):
 ```
 
 Provide a concise response, considering the context.
-Keep it direct and to the point.
+Keep it direct and to the point. Be casual in the way you respond. No need to be overly formal.
 <</SYS>>
 {prompt}
 [/INST]
