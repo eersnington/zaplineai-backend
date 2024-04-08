@@ -10,10 +10,9 @@ import json
 import logging
 import math
 import webrtcvad
-#from pysilero_vad import SileroVoiceActivityDetector
+from pysilero_vad import SileroVoiceActivityDetector
 
-
-from lib.audio_buffer import AudioBuffer, _QueueStream
+from lib.audio_buffer import AudioBuffer
 from lib.asr import transcribe_stream
 from lib.call_chat import CallChatSession
 from lib.db import db
@@ -21,17 +20,14 @@ from lib.custom_exception import CustomException
 
 load_dotenv(find_dotenv(), override=True)
 
-
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 
-# Constants
-VAD_SAMPLERATE = 8000 # Hz
-IGNORE_DURATION = 2  # seconds to ignore customer audio after bot response
-
-
 twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 TWILIO_PHONE_NUMBER = twilio_client.incoming_phone_numbers.list()[0]
+
+vad = SileroVoiceActivityDetector()
+VAD_ENERGY_THRESHOLD = 0.5
 
 active_calls = {}
 
@@ -199,8 +195,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     await websocket.accept()
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
-    vad = webrtcvad.Vad(3) # 3 is the aggressiveness mode
-
     initial_response = f" Thank you for contacting {brand_name}!."
 
     llm_chat = CallChatSession(store.app_token, store.myshopify)
@@ -239,40 +233,46 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
             elif packet['event'] == 'media':
                 chunk = base64.b64decode(packet['media']['payload'])
                 audio_data = audioop.ulaw2lin(chunk, 2)
-                is_speech = vad.is_speech(audio_data, VAD_SAMPLERATE)
+                audio_data = audioop.ratecv(audio_data, 2, 1, 8000, 16000, None)[0]
+                is_speech = vad(audio_data) >= VAD_ENERGY_THRESHOLD
 
                 if is_speech:
-                    if not is_bot_speaking:
-                        is_speech_started = True
-                        audio_buffer.write(audio_data)
-                    else:
-                        audio_buffer.clear()
+                    print("Speech: ", vad(audio_data))
                 else:
-                    if is_speech_started:
-                        is_speech_started = False
+                    print("Not Speech: ", vad(audio_data))
 
-                        print("Processing buffered audio...")
-                        transcription_result = transcribe_stream(audio_buffer)
-                        print(f"Transcription: {transcription_result}")
-                        audio_buffer.clear()
+                # if is_speech:
+                #     if not is_bot_speaking:
+                #         is_speech_started = True
+                #         audio_buffer.write(audio_data)
+                #     else:
+                #         audio_buffer.clear()
+                # else:
+                #     if is_speech_started:
+                #         is_speech_started = False
 
-                        if transcription_result is not None:
-                            llm_response = llm_chat.get_response(transcription_result)
-                            print(f"LLM Response: {llm_response}")
+                #         print("Processing buffered audio...")
+                #         transcription_result = transcribe_stream(audio_buffer)
+                #         print(f"Transcription: {transcription_result}")
+                #         audio_buffer.clear()
 
-                            delay = speech_delay(llm_response)
-                            print(f"Speech Delay: {delay}s")
+                #         if transcription_result is not None:
+                #             llm_response = llm_chat.get_response(transcription_result)
+                #             print(f"LLM Response: {llm_response}")
 
-                            await voice_response(llm_response, call_sid, twilio_client)
-                            print("Audio Buffer Size: ", audio_buffer.size())
-                            is_bot_speaking = True
-                            await asyncio.sleep(delay)
-                            is_bot_speaking = False
-                            print("Bot response completed")
-                            print("Audio Buffer Size: ", audio_buffer.size())
-                        else:
-                            print("Audio Buffer Size (No Transcription): ", audio_buffer.size())
-                            await asyncio.sleep(0.2)
+                #             delay = speech_delay(llm_response)
+                #             print(f"Speech Delay: {delay}s")
+
+                #             await voice_response(llm_response, call_sid, twilio_client)
+                #             print("Audio Buffer Size: ", audio_buffer.size())
+                #             is_bot_speaking = True
+                #             await asyncio.sleep(delay)
+                #             is_bot_speaking = False
+                #             print("Bot response completed")
+                #             print("Audio Buffer Size: ", audio_buffer.size())
+                #         else:
+                #             print("Audio Buffer Size (No Transcription): ", audio_buffer.size())
+                #             await asyncio.sleep(0.2)
 
     except WebSocketDisconnect:
         logging.info("WebSocket disconnected")
