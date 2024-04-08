@@ -27,7 +27,7 @@ def get_model():
         torch_dtype=torch.bfloat16,
         device="cuda:0", # or mps for Mac devices
         model_kwargs={"attn_implementation": "flash_attention_2"} if is_flash_attn_2_available() else {"attn_implementation": "sdpa"},
-    )   
+    )
     return pipe
 
 # Initialize whisper model
@@ -84,6 +84,7 @@ def transcribe_stream(audio_stream: AudioBuffer) -> str:
                     chunk_length_s=30,
                     batch_size=24,
                     return_timestamps=False,
+                    language="en"
                 )
 
                 transcription = outputs["text"]
