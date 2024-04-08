@@ -241,6 +241,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 else:
                     print("Not Speech: ", vad(audio_data))
 
+                await asyncio.sleep(0.1)
+
                 # if is_speech:
                 #     if not is_bot_speaking:
                 #         is_speech_started = True
