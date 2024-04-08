@@ -84,7 +84,6 @@ def transcribe_stream(audio_stream: AudioBuffer) -> str:
                     chunk_length_s=30,
                     batch_size=24,
                     return_timestamps=False,
-                    language="en"
                 )
 
                 transcription = outputs["text"]
