@@ -43,7 +43,7 @@ class CallChatSession:
         orders = shopify.Order.find()
         recent_order = None
 
-        for order in reversed(orders):
+        for order in orders:
             if order.customer and order.customer.phone == customer_phone_no:
                 recent_order = order
                 break
@@ -51,7 +51,6 @@ class CallChatSession:
         if recent_order is None:
             return " You seem to be a new customer based on my records. How can I help you today?"
         
-        print("Recent Order:", recent_order.order_number)
         self.order = recent_order
 
         items = recent_order.line_items
@@ -73,7 +72,7 @@ class CallChatSession:
             Returns:
             str -- The status of the order.
         """
-        if self.order is None:
+        if self.order_status is None:
             return "none"
         
         return self.order_status
