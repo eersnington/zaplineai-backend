@@ -273,9 +273,9 @@ class CallChatSession:
         """
         call_type = "automated"
         if call_intent == "Sales":
-            call_type = "transfer"
+            call_type = "transferred"
         elif call_intent == "Transfer":
-            call_type = "transfer"
+            call_type = "transferred"
         
         return call_type
     
