@@ -23,13 +23,19 @@ if __name__ == "__main__":
     orders = client.Orders.get_orders()
 
     order_id = None
+    order_number = None
     for order in orders.json()["orders"]:
         if order["customer"] is not None:
-            if order["customer"]["phone"] == "+919952062221":
-                print(order)
-                print(order["id"])
+            if order["customer"]["phone"] == "+12512209809":
+                item_names = [item["title"] for item in order["line_items"]]
                 order_id = order["id"]
-            
+                order_number = order["order_number"]
+                print(f"Order {order_id}: ", item_names)
+                break
+
+    
+    print("Order ID:", order_id)
+    print("Order Number:", order_number)
     update = client.resource.put(f"/orders/{order_id}.json", {"order": {"note": "Return initiated by customer through call"}}) # client.Orders.update_order(order_id, {"order": {"note": "Test"}}) 
     print(update.status_code, update.text) 
 
