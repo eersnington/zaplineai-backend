@@ -232,7 +232,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
                 print("Call Intent: ", llm_chat.get_call_intent())
-                llm_chat.update_call_status(store.userId, "automated", llm_chat.get_call_intent())
+                llm_chat.update_call_status(store.userId, llm_chat.get_call_intent())
 
             elif packet['event'] == 'media':
                 chunk = base64.b64decode(packet['media']['payload'])
