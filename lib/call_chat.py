@@ -51,6 +51,7 @@ class CallChatSession:
         if recent_order is None:
             return " You seem to be a new customer based on my records. How can I help you today?"
         
+        print("Recent Order:", recent_order.order_number)
         self.order = recent_order
 
         items = recent_order.line_items
