@@ -276,7 +276,6 @@ class CallChatSession:
             call_type = "transferred"
         elif call_intent == "Transfer":
             call_type = "transferred"
-        
         return call_type
     
 
