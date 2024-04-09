@@ -43,7 +43,7 @@ class CallChatSession:
         orders = shopify.Order.find()
         recent_order = None
 
-        for order in orders:
+        for order in reversed(orders):
             if order.customer and order.customer.phone == customer_phone_no:
                 recent_order = order
                 break
