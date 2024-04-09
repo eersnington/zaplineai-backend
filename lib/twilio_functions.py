@@ -101,7 +101,7 @@ def speech_delay(transcription_text: str) -> int:
 
         Return: The estimated duration of the speech in seconds.
     """
-    return math.ceil(len(transcription_text.split(" ")) / 2.5)
+    return (len(transcription_text.split(" ")) / 2.5)
 
 
 def update_phone(public_url: str, phone_number: str) -> None:
@@ -219,7 +219,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 new_response = initial_response + additional_response
                 print(f"New Response: {new_response}")
 
-                delay = speech_delay("Hey, my name is Zappy.") - 0.3
+                delay = speech_delay("Hey, my name is Zappy.")
                 print(f"Speech Delay: {delay}s")
                 await asyncio.sleep(delay)
                 print("Bot response completed")
@@ -267,6 +267,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                             is_bot_speaking = False
                             print("Bot response completed")
                             print("Audio Buffer Size: ", audio_buffer.size())
+                    await asyncio.sleep(0.05)
 
     except WebSocketDisconnect:
         logging.info("WebSocket disconnected")
