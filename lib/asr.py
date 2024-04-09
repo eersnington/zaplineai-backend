@@ -45,6 +45,8 @@ else:
 
 recognizer = sr.Recognizer()
 recognizer.dynamic_energy_threshold = False
+recognizer.energy_threshold = 300
+recognizer.pause_threshold = 2.5
 
 vad = SileroVoiceActivityDetector()
 energy_threshold = 0.5
