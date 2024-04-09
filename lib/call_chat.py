@@ -200,6 +200,12 @@ class CallChatSession:
                 self.call_intent = "Refund"
                 self.refund_process(None) # This is a dummy call to set the refund_order flag to True (Refund Step 1)
 
+            elif "sales representative" in cached_response:
+                self.call_intent = "Sales"
+            
+            elif "live representative" in cached_response:
+                self.call_intent = "Transfer"
+
             print(f"Call Intent: {self.call_intent}")
 
             self.llm_chat.add_message(f"AI Assistant: {cached_response}")
@@ -274,7 +280,7 @@ class CallChatSession:
         return call_type
     
 
-    def update_call_status(self, user_id: str, call_type: str, call_intent: str) -> str:
+    def update_call_status(self, user_id: str, call_intent: str) -> str:
         """
             Updates the status of the call.
 
@@ -284,7 +290,7 @@ class CallChatSession:
             call_intent -- The intent of the call.
         """
         try:
-            track_metrics(user_id, call_type, call_intent)
+            track_metrics(user_id, self.get_call_type(call_intent), call_intent)
         except Exception as e:
             return f"Error occurred: {str(e)}"
         return "Call status updated successfully."
