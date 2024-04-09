@@ -8,7 +8,6 @@ import audioop
 import base64
 import json
 import logging
-import math
 import webrtcvad
 
 from lib.audio_buffer import AudioBuffer
