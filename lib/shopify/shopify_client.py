@@ -31,7 +31,7 @@ if __name__ == "__main__":
                 order_id = order["id"]
                 order_number = order["order_number"]
                 print(f"Order {order_id}: ", item_names)
-                break
+                print(order["fulfillment_status"])
 
     
     print("Order ID:", order_id)

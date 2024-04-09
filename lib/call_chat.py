@@ -73,7 +73,7 @@ class CallChatSession:
             Returns:
             str -- The status of the order.
         """
-        if self.order_status is None:
+        if self.order is None:
             return "none"
         
         return self.order_status
