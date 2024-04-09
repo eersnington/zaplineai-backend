@@ -267,7 +267,6 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                             is_bot_speaking = False
                             print("Bot response completed")
                             print("Audio Buffer Size: ", audio_buffer.size())
-                    await asyncio.sleep(0.05)
 
     except WebSocketDisconnect:
         logging.info("WebSocket disconnected")
