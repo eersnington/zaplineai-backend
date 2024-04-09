@@ -290,6 +290,9 @@ class CallChatSession:
             call_intent -- The intent of the call.
         """
         try:
+            ci = call_intent
+            ct = self.get_call_type(call_intent)
+            print(f"UserID: {user_id} | Call Intent: {ci} | Call Type: {ct}")
             track_metrics(user_id, self.get_call_type(call_intent), call_intent)
             print("Call tracked!")
         except Exception as e:
