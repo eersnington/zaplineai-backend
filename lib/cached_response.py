@@ -101,7 +101,11 @@ class VectorDatabase:
             "I need to refund an item": "No worries! Can you tell me what's the reason for requesting a refund?",
             "Can you help me return an item?": "Sure thing! Can you tell me what's the reason for returning the order?",
             "I need to return something I purchased": "Sure thing! Can you tell me what's the reason for returning the order?",
-
+            "Start a return please": "Sure thing! Can you tell me what's the reason for returning the order?",
+            "Start a refund please": "No worries! Can you tell me what's the reason for requesting a refund?",
+            "Start a return.": "Sure thing! Can you tell me what's the reason for returning the order?",
+            "Start a refund.": "No worries! Can you tell me what's the reason for requesting a refund?",
+            
 
             "Can I talk to a sales representative?": "No worries! I can transfer your call to a live representative right away. Please hold for a moment while I connect you.",
             "Can I speak to someone in sales?": "Of course! I'll transfer you to a sales representative. Please hold for a moment.",
