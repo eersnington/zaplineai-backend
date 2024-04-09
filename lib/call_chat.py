@@ -291,6 +291,7 @@ class CallChatSession:
         """
         try:
             track_metrics(user_id, self.get_call_type(call_intent), call_intent)
+            print("Call tracked!")
         except Exception as e:
             return f"Error occurred: {str(e)}"
         return "Call status updated successfully."
