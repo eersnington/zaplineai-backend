@@ -8,7 +8,7 @@ def main():
 
     # Simulate a conversation with the chatbot
     sid = "session_id_here"
-    customer_phone_no = "+919952062221"
+    customer_phone_no = "+12512209809"
     chat_session.start(sid, customer_phone_no)
 
     call_intent = None
