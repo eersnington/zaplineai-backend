@@ -198,7 +198,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
 
     vad = webrtcvad.Vad(3) # 3 is the aggressiveness mode
 
-    initial_response = f" Thank you for contacting {brand_name}!."
+    initial_response = f" Thanks for calling {brand_name}!."
 
     llm_chat = CallChatSession(store.app_token, store.myshopify)
     call_sid = None
