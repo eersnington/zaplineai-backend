@@ -53,6 +53,8 @@ class CallChatSession:
         
         self.order = recent_order
 
+        print("Recent Order: ", recent_order.id, recent_order.order_number, recent_order.customer.phone,)
+
         items = recent_order.line_items
         item_names = [item.title for item in items]
         date = recent_order.created_at.split("T")[0]
