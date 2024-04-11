@@ -39,32 +39,35 @@ class CallChatSession:
         """
 
         print("My Shopify Link:", self.myshopify)
-        self.sid = sid
-        orders = shopify.Order.find()
-        recent_order = None
+        try:
+            self.sid = sid
+            orders = shopify.Order.find()
+            recent_order = None
 
-        for order in orders:
-            if order.customer and order.customer.phone == customer_phone_no:
-                recent_order = order
-                break
+            for order in orders:
+                if order.customer and order.customer.phone == customer_phone_no:
+                    recent_order = order
+                    break
 
-        if recent_order is None:
-            return " You seem to be a new customer based on my records. How can I help you today?"
-        
-        self.order = recent_order
+            if recent_order is None:
+                return " You seem to be a new customer based on my records. How can I help you today?"
+            
+            self.order = recent_order
 
-        print("Recent Order: ", recent_order.id, recent_order.order_number, recent_order.customer.phone,)
+            print("Recent Order: ", recent_order.id, recent_order.order_number, recent_order.customer.phone,)
 
-        items = recent_order.line_items
-        item_names = [item.title for item in items]
-        date = recent_order.created_at.split("T")[0]
+            items = recent_order.line_items
+            item_names = [item.title for item in items]
+            date = recent_order.created_at.split("T")[0]
 
-        self.order_id = recent_order.id
-        self.order_status = recent_order.fulfillment_status
-        self.order = recent_order
+            self.order_id = recent_order.id
+            self.order_status = recent_order.fulfillment_status
+            self.order = recent_order
 
-        response = f" You've a recent order of {', '.join(item_names)}. Do you wanna know the order status, start a return, or anything else?"
-        return response
+            response = f" You've a recent order of {', '.join(item_names)}. Do you wanna know the order status, start a return, or anything else?"
+            return response
+        except Exception as e:
+            return "Exception"
     
 
     def get_order_status(self) -> str:
