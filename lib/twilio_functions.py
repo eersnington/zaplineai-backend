@@ -237,8 +237,8 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
             elif packet['event'] == 'media':
                 chunk = base64.b64decode(packet['media']['payload'])
                 audio_data = audioop.ulaw2lin(chunk, 2)
-                audio_data = audioop.ratecv(audio_data, 2, 1, 8000, 16000, None)[0] # for phone calls, not browser calls
                 is_speech = vad.is_speech(audio_data, VAD_SAMPLERATE)
+                audio_data = audioop.ratecv(audio_data, 2, 1, 8000, 16000, None)[0] # for phone calls, not browser calls
 
                 if is_speech:
                     if not is_bot_speaking:
