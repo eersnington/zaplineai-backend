@@ -32,6 +32,10 @@ TWILIO_PHONE_NUMBER = twilio_client.incoming_phone_numbers.list()[0]
 active_calls = {}
 
 
+class ShopifyException(Exception):
+    pass
+
+
 def get_new_numbers() -> list:
     """
         Retrieves a list of new phone numbers in Twilio.
@@ -214,11 +218,13 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                 customer_phone_no = active_calls[call_sid]
 
                 additional_response = llm_chat.start(call_sid, customer_phone_no)
-
+                if additional_response == "Exception":
+                    raise ShopifyException("Shopify Exception")
+                
                 new_response = initial_response + additional_response
                 print(f"New Response: {new_response}")
 
-                delay = speech_delay("Hey, my name is Zap.")
+                delay = speech_delay("Hey there, my name is Zap.")
                 print(f"Speech Delay: {delay}s")
                 await asyncio.sleep(delay)
                 print("Bot response completed")
@@ -269,7 +275,9 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                             is_bot_speaking = False
                             print("Bot response completed")
                             print("Audio Buffer Size: ", audio_buffer.size())
-
+    except ShopifyException:
+        response = f"Sorry, our shopify store is down at the moment. Please call again later."
+        await voice_response(response, call_sid, twilio_client)
     except WebSocketDisconnect:
         logging.info("WebSocket disconnected")
     except HTTPException as e:
