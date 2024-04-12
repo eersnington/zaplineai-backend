@@ -23,6 +23,7 @@ class CallChatSession:
         self.vector_db = vector_db
         self.refund_order = False
         self.return_order = False
+        self.cancel_order = False
         self.return_refund_reason = None
         self.call_intent = None
         self.order = None
@@ -77,10 +78,35 @@ class CallChatSession:
             Returns:
             str -- The status of the order.
         """
-        if self.order_status is None:
+        if self.order is None:
             return "none"
+        else:
+            if self.order_status is None:
+                self.order_status = "unfulfilled"
         
         return self.order_status
+    
+
+    def initiate_cancel(self) -> str:
+        """
+        Initiates a cancel for the customer.
+
+        Returns:
+        str -- The status of the cancel.
+        """
+        if self.order is None:
+            return "I couldn't find any latest orders for this number. If you think this is a mistake, I can transfer the call for you."
+
+        note_text = f"Cancel initiated by customer through call. Reason: {self.return_refund_reason}"
+        print("Order ID:", self.order.id)
+
+        try:
+            self.order.note = note_text
+            self.order.save()
+        except Exception as e:
+            print(e)
+
+        return get_intent_response("Cancel Step2")
 
 
     def initiate_return(self) -> str:
@@ -125,6 +151,18 @@ class CallChatSession:
             print(e)
 
         return get_intent_response("Refund Step2")
+    
+
+    def cancel_process(self, reason) -> str:
+        if self.cancel_order is False:
+            self.cancel_order = True
+            return "true"
+
+        if reason:
+            self.return_refund_reason = reason
+            self.cancel_order = False
+            response = self.initiate_cancel()
+            return response
 
     
     def return_process(self, reason) -> str:
@@ -194,6 +232,10 @@ class CallChatSession:
                 if addon is None:
                     addon = "I couldn't find any recent orders for this phone number. If you think this is a mistake, I can transfer the call for you."
                 cached_response = cached_response.replace("<<explain the current status of your order>>", addon)
+
+            elif "cancellation" in cached_response:
+                self.call_intent = "Cancellation"
+                self.cancel_process(None) # This is a dummy call to set the cancel_order flag to True (Cancel Step 1)
 
             elif "return" in cached_response or "returning" in cached_response:
                 self.call_intent = "Returns"
