@@ -105,6 +105,18 @@ class VectorDatabase:
             "Start a refund please": "No worries! Can you tell me what's the reason for requesting a refund?",
             "Start a return.": "Sure thing! Can you tell me what's the reason for returning the order?",
             "Start a refund.": "No worries! Can you tell me what's the reason for requesting a refund?",
+            "I want to cancel my order": "Certainly! Can you please let me know the reason for the cancellation?",
+
+
+            "I need to cancel my order": "Of course! Can you please let me know the reason for the cancellation?",
+            "Can I cancel my order?": "Certainly! Can you please let me know the reason for the cancellation?",
+            "How do I cancel my order?": "Certainly! Can you please let me know the reason for the cancellation?",
+            "Can you help me cancel my order?": "Certainly! Can you please let me know the reason for the cancellation?",
+            "I'd like to cancel my order": "Certainly! Can you please let me know the reason for the cancellation?",
+            "Cancel my order": "Certainly! Can you please let me know the reason for the cancellation?",
+            "Please cancel my order": "Certainly! Can you please let me know the reason for the cancellation?",
+            "Start a cancellation": "Certainly! Can you please let me know the reason for the cancellation?",
+            "Begin a cancellation": "Certainly! Can you please let me know the reason for the cancellation?",
             
 
             "Can I talk to a sales representative?": "No worries! I can transfer your call to a sales representative right away. Please hold for a moment while I connect you.",
@@ -188,8 +200,9 @@ class VectorDatabase:
 
 # Cached responses for different intents
 cached_intent_responses = {
-    "Returns Step2": "Thank you for sharing the reason for your return. I've started the return process for you, and someone from our team will be in touch soon to assist you further. Is there anything else I can assist you with?",
-    "Refund Step2": "Thanks for letting us know why you're requesting a refund. I've initiated the refund process for you, and our team will reach out soon to assist you further. Is there anything else I can do for you?",
+    "Returns Step2": "Thank you for sharing the reason for your return. I've started the return process for you, and someone from our team will be in touch soon to assist you further. Do you need any other help?",
+    "Refund Step2": "Thanks for letting us know why you're requesting a refund. I've initiated the refund process for you, and our team will reach out soon to assist you further. Do you need any other help?",
+    "Cancel Step2": "Thanks for letting us know why you're requesting a cancellation. I've requested to cancel the order, and our team will reach out soon to assist you further. Do you need any other help?",
 }
 
 cached_order_status_responses = {
