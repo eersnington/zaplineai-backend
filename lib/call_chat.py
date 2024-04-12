@@ -294,8 +294,10 @@ class CallChatSession:
         try:
             ci = call_intent
             ct = self.get_call_type(call_intent)
+            if ci == None:
+                ci = "Other"
             print(f"UserID: {user_id} | Call Intent: {ci} | Call Type: {ct}")
-            track_metrics(user_id, self.get_call_type(call_intent), call_intent)
+            track_metrics(user_id, call_type=ct, call_intent=ci)
             print("Call tracked!")
         except Exception as e:
             return f"Error occurred: {str(e)}"
