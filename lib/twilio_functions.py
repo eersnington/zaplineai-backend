@@ -214,6 +214,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
             if packet['event'] == 'start':
                 print('Media stream started!')
                 call_sid = packet['start']['callSid']
+                print("Packet Encoding:", packet['start']['mediaFormat']['encoding'])
 
                 customer_phone_no = active_calls[call_sid]
 
