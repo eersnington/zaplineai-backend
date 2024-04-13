@@ -219,6 +219,9 @@ class CallChatSession:
         if self.return_order is True:
             return self.return_process(message)
         
+        if self.cancel_order is True:
+            return self.cancel_process(message)
+        
         self.llm_chat.add_message(f"Customer: {message}")
 
         cached_response = self.vector_db.find_similar_response(message)
