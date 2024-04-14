@@ -227,7 +227,7 @@ class CallChatSession:
         cached_response = self.vector_db.find_similar_response(message)
 
         if cached_response is not None:
-            if cached_response.endswith("<<explain the current status of your order>>"):
+            if "<<explain the current status of your order>>" in cached_response:
                 self.call_intent = "Order Status"
                 data = self.get_order_status()
                 print("Order Status: ", data)
