@@ -280,7 +280,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         else:
                             no_voice_count += 1
                             print("No voice count: ", no_voice_count)
-                            if no_voice_count == 10:
+                            if no_voice_count == 5:
                                 is_bot_speaking = True
                                 response = "Sorry, I didn't get what you said."
                                 delay = speech_delay(response)
