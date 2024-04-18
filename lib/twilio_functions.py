@@ -257,22 +257,24 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         is_speech_started = False
 
                         print("Processing buffered audio...")
-                        transcription_result = transcribe_stream(audio_buffer)
+                        status, transcription_result = transcribe_stream(audio_buffer)
                         print(f"Transcription: {transcription_result}")
                         audio_buffer.clear()
 
-                        if transcription_result is "VAD Triggered. Please speak louder.":
-                            response = "Sorry I didn't catch that. Can you please speak louder?"
-                            delay = speech_delay(response)
-                            print(f"Speech Delay: {delay}s")
-                            is_bot_speaking = True
-                            await voice_response(response, call_sid, twilio_client)
-                            await asyncio.sleep(delay)
-                            is_bot_speaking = False
-                            print("Bot response completed")
-                            print("Audio Buffer Size: ", audio_buffer.size())
-                            continue
-                        elif transcription_result is not None:
+                        if status is None:
+                            if transcription_result == "Model not loaded":
+                                raise NameError("Model not loaded")
+                            elif transcription_result == "VAD Triggered. Please speak louder.":
+                                response = "Sorry I didn't catch that. Can you please speak louder?"
+                                delay = speech_delay(response)
+                                print(f"Speech Delay: {delay}s")
+                                is_bot_speaking = True
+                                await voice_response(response, call_sid, twilio_client)
+                                await asyncio.sleep(delay)
+                                is_bot_speaking = False
+                                print("Bot response completed")
+                                print("Audio Buffer Size: ", audio_buffer.size())
+                        else:
                             llm_response = llm_chat.get_response(transcription_result)
                             print(f"LLM Response: {llm_response}")
                             
