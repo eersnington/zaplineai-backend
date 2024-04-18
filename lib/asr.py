@@ -68,9 +68,11 @@ def transcribe_stream(audio_stream: AudioBuffer) -> str:
                 vad_output = vad(audio.frame_data)
 
                 print("VAD: ", vad_output)
-
+                if vad_output > 0.2 and vad_output < energy_threshold:
+                    return "VAD Triggered. Please speak louder."
                 if vad_output < energy_threshold:
                     return None
+                
 
                 #logging.info("Audio received from twilio caller.")
                 data = io.BytesIO(audio.get_wav_data())
