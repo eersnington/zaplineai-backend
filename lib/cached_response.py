@@ -8,6 +8,7 @@ class VectorDatabase:
         self.dim = self.model.encode(["dummy"]).shape[1]  # Get the dimension of the embeddings
         self.index = faiss.IndexFlatL2(self.dim)
         self.cached_responses = {
+            "I want to check on it's status": "Of course! Based on our records, <<explain the current status of your order>> Do you need any other help?",
             "I wanna know the status": "Of course! Based on our records, <<explain the current status of your order>> Do you need any other help?",
             "Can you tell me the status of my order?": "Of course! I can do that for you. Based on our records, <<explain the current status of your order>> Do you need any other help?",
             "Where is my order?": "Of course! Based on our records, <<explain the current status of your order>> Do you need any other help?",
