@@ -68,7 +68,7 @@ def transcribe_stream(audio_stream: AudioBuffer) -> str:
                 vad_output = vad(audio.frame_data)
 
                 print("VAD: ", vad_output)
-                if vad_output > 0.2 and vad_output < energy_threshold:
+                if vad_output > 0.5*energy_threshold and vad_output < energy_threshold:
                     return None, "VAD Triggered. Please speak louder."
                 if vad_output < energy_threshold:
                     return None, ""
@@ -89,6 +89,8 @@ def transcribe_stream(audio_stream: AudioBuffer) -> str:
                 )
 
                 transcription = outputs["text"]
+                if transcription == " you" or transcription == " Thank you." or len(transcription) < 2:
+                    return None, ""
 
                 return True, transcription
             except Exception as e:
