@@ -193,6 +193,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     """
     is_bot_speaking = False
     is_speech_started = False
+    no_voice_count = 0
 
     audio_buffer = AudioBuffer() # _QueueStream() makes ASR unresponsive (bug)
 
@@ -275,6 +276,13 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                             is_bot_speaking = False
                             print("Bot response completed")
                             print("Audio Buffer Size: ", audio_buffer.size())
+                        else:
+                            no_voice_count += 1
+                            print("No voice count: ", no_voice_count)
+                            if no_voice_count == 5:
+                                await voice_response("Sorry, I didn't get what you said.", call_sid, twilio_client)
+                                no_voice_count = 0
+                        
     except ShopifyException:
         response = f"Sorry, our shopify store is down at the moment. Please call again later."
         await voice_response(response, call_sid, twilio_client)
