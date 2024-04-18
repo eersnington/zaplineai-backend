@@ -69,9 +69,9 @@ def transcribe_stream(audio_stream: AudioBuffer) -> str:
 
                 print("VAD: ", vad_output)
                 if vad_output > 0.2 and vad_output < energy_threshold:
-                    return "VAD Triggered. Please speak louder."
+                    return None, "VAD Triggered. Please speak louder."
                 if vad_output < energy_threshold:
-                    return None
+                    return None, ""
                 
                 #logging.info("Audio received from twilio caller.")
                 data = io.BytesIO(audio.get_wav_data())
@@ -79,7 +79,7 @@ def transcribe_stream(audio_stream: AudioBuffer) -> str:
                 audio_clip.export(tmp_path, format="wav")
 
                 if STTmodel is None:
-                    return "Model not loaded"
+                    return None, "Model not loaded"
 
                 outputs = STTmodel(
                     tmp_path,
@@ -89,10 +89,8 @@ def transcribe_stream(audio_stream: AudioBuffer) -> str:
                 )
 
                 transcription = outputs["text"]
-                if transcription == " you" or transcription == " Thank you." or len(transcription) < 2:
-                    return None
 
-                return transcription
+                return True, transcription
             except Exception as e:
                 logging.error(f"Error in transcribing audio: {e}")
                 return None
