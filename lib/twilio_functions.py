@@ -263,6 +263,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         audio_buffer.clear()
 
                         if transcription_result is not None:
+                            no_voice_count = 0
                             llm_response = llm_chat.get_response(transcription_result)
                             print(f"LLM Response: {llm_response}")
 
@@ -279,7 +280,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         else:
                             no_voice_count += 1
                             print("No voice count: ", no_voice_count)
-                            if no_voice_count == 5:
+                            if no_voice_count == 10:
                                 await voice_response("Sorry, I didn't get what you said.", call_sid, twilio_client)
                                 no_voice_count = 0
                         
