@@ -73,7 +73,6 @@ def transcribe_stream(audio_stream: AudioBuffer) -> str:
                 if vad_output < energy_threshold:
                     return None
                 
-
                 #logging.info("Audio received from twilio caller.")
                 data = io.BytesIO(audio.get_wav_data())
                 audio_clip = AudioSegment.from_file(data)
