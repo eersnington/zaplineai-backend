@@ -269,6 +269,7 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                             await voice_response(response, call_sid, twilio_client)
                             await asyncio.sleep(delay)
                             is_bot_speaking = False
+                            continue
                         elif transcription_result is not None:
                             llm_response = llm_chat.get_response(transcription_result)
                             print(f"LLM Response: {llm_response}")
