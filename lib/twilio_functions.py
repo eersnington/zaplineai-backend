@@ -280,8 +280,13 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
                         else:
                             no_voice_count += 1
                             print("No voice count: ", no_voice_count)
-                            if no_voice_count == 10:
-                                await voice_response("Sorry, I didn't get what you said.", call_sid, twilio_client)
+                            if no_voice_count == 15:
+                                is_bot_speaking = True
+                                response = "Sorry, I didn't get what you said."
+                                delay = speech_delay(response)
+                                await voice_response(response, call_sid, twilio_client)
+                                await asyncio.sleep(2.1)
+                                is_bot_speaking = False
                                 no_voice_count = 0
                         
     except ShopifyException:
