@@ -17,8 +17,8 @@ def get_vllm_model(model: str, quantization: Union[str, None] = None) -> Optiona
     Retrieve the vLLM model for text generation.
 
     Args:
-        model (str): The model name.
-        quantization (Union[str, None], optional): The quantization method. Defaults to None.
+    - model (str): The model name.
+    - quantization (Union[str, None], optional): The quantization method. Defaults to None.
 
     Returns:
         Optional[LLM]: The vLLM model.
@@ -41,7 +41,7 @@ def get_bert_model(model_path: str) -> Tuple[BertForSequenceClassification, Bert
     Retrieve the BERT model for sequence classification.
 
     Args:
-        model_path (str): The path to the BERT model.
+    - model_path (str): The path to the BERT model.
 
     Returns:
         Tuple[BertForSequenceClassification, BertTokenizer]: The BERT model and tokenizer.
@@ -78,9 +78,9 @@ class LLMModel:
         Generate text using the vLLM model.
 
         Args:
-            prompt (str): The input prompt for text generation.
-            temperature (float, optional): The temperature for text generation. Defaults to 0.8.
-            max_tokens (int, optional): The maximum number of tokens to generate. Defaults to 100.
+        - prompt (str): The input prompt for text generation.
+        - temperature (float, optional): The temperature for text generation. Defaults to 0.8.
+        - max_tokens (int, optional): The maximum number of tokens to generate. Defaults to 100.
 
         Returns:
             str: The generated text.
@@ -110,10 +110,10 @@ class LLMChat:
         Generate a response to a message using the vLLM model.
 
         Args:
-            message (str): The incoming message.
-            prompt (str): The prompt for text generation.
-            temperature (float, optional): The temperature for text generation. Defaults to 0.8.
-            max_tokens (int, optional): The maximum number of tokens to generate. Defaults to 100.
+        - message (str): The incoming message.
+        - prompt (str): The prompt for text generation.
+        - temperature (float, optional): The temperature for text generation. Defaults to 0.8.
+        - max_tokens (int, optional): The maximum number of tokens to generate. Defaults to 100.
 
         Returns:
             str: The generated response.
@@ -132,7 +132,7 @@ class LLMChat:
         Get the call type classification output for a message.
 
         Args:
-            message (str): The message to classify.
+        - message (str): The message to classify.
 
         Returns:
             list: The classification output.
