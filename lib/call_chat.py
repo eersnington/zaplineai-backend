@@ -32,11 +32,14 @@ class CallChatSession:
 
     def start(self, sid: str, customer_phone_no: str) -> str:
         """
-            Handles first interaction with the call session.
+        Handles first interaction with the call session.
 
-            Keyword arguments:
-            sid -- The call session ID.
-            customer_phone_no -- The phone number of the customer.
+        Args:
+            sid (str): The call session ID.
+            customer_phone_no (str): The phone number of the customer.
+
+        Returns:
+            str: The response to the customer's call initiation.
         """
 
         print("My Shopify Link:", self.myshopify)
@@ -73,10 +76,10 @@ class CallChatSession:
 
     def get_order_status(self) -> str:
         """
-            Gets the Fulfillment status of recent order.
+        Gets the Fulfillment status of recent order.
 
-            Returns:
-            str -- The status of the order.
+        Returns:
+            str: The status of the order.
         """
         if self.order is None:
             return "none"
@@ -89,10 +92,10 @@ class CallChatSession:
 
     def initiate_cancel(self) -> str:
         """
-        Initiates a cancel for the customer.
+        Cancels the order of the customer through Shopify.
 
         Returns:
-        str -- The status of the cancel.
+        str -- The response message of the bot indicating the status of the cancel.
         """
         if self.order is None:
             return "I couldn't find any latest orders for this number. If you think this is a mistake, I can transfer the call for you."
@@ -111,10 +114,10 @@ class CallChatSession:
 
     def initiate_return(self) -> str:
         """
-        Initiates a return for the customer.
+        Returns the order of the customer through Shopify.
 
         Returns:
-        str -- The status of the return.
+        str -- The response message of the bot indicating the status of the return.
         """
         if self.order is None:
             return "I couldn't find any latest order for this number. If you think this is a mistake, I can transfer the call for you."
@@ -133,10 +136,10 @@ class CallChatSession:
 
     def initiate_refund(self) -> str:
         """
-        Initiates a refund for the customer.
+        Refunds the order of the customer through Shopify.
 
         Returns:
-        str -- The status of the refund.
+        str -- The response message of the bot indicating the status of the refund.
         """
         if self.order is None:
             return "I couldn't find any latest orders for this number. If you think this is a mistake, I can transfer the call for you."
@@ -188,15 +191,15 @@ class CallChatSession:
             return self.initiate_refund()
 
 
-    def check_call_intent(self, message: str) -> str:
+    def classify_call_intent(self, message: str) -> str:
         """
-            Checks the intent of the call.
+        Classifies the intent of the message using the BERT Classifier.
 
-            Keyword arguments:
-            message -- The message to be processed.
+        Args:
+            message (str): The message to be classified.
 
-            Returns:
-            str -- The intent of the call.
+        Returns:
+            str. The intent of the call.
         """
         self.call_intent = self.llm_chat.get_call_type(message)[0]["label"]
         return self.call_intent
@@ -204,13 +207,17 @@ class CallChatSession:
 
     def get_response(self, message: str) -> str:
         """
-            Check the call intent, search the cache for a response and return if found, else call the LLM model.
+        Response workflow of the bot for various intents.
 
-            Keyword arguments:
-            message -- The message to be processed by the LLM model.
+        1. Check if in a refund, return, or cancel process, and handle message accordingly.
+        2. Check cached responses. If found, process it.
+        3. If no cached response, classify call intent, get relevant data, and generate a response using LLM model.
 
-            Returns:
-            str -- The response from the LLM model.
+        Args:
+            message (str): The message to be processed by the LLM model.
+
+        Returns:
+            str: The response from the LLM model.
         """
 
         if self.refund_order is True:
@@ -259,7 +266,7 @@ class CallChatSession:
             self.llm_chat.add_message(f"AI Assistant: {cached_response}")
             return cached_response
         
-        call_intent = self.check_call_intent(message)
+        call_intent = self.classify_call_intent(message)
         self.call_intent = call_intent
         print(f"Call Intent: {call_intent}")
 
@@ -283,10 +290,10 @@ class CallChatSession:
     
     def get_shopify_status(self) -> int:
         """
-            Gets the status of the Shopify API.
+        Gets the status of the Shopify API.
 
-            Returns:
-            Bool -- The status of the Shopify API.
+        Returns:
+            Bool. The status of the Shopify API.
         """
         try:
             shop = shopify.Shop.current()
@@ -299,25 +306,22 @@ class CallChatSession:
 
     def get_call_intent(self) -> str:
         """
-            Gets the classified call intent
+        Gets the classified call intent of the call.
 
-            Keyword arguments:
-            message -- The message to be processed.
-
-            Returns:
-            str -- The intent of the call.
+        Returns:
+            str. The intent of the call.
         """
         return self.call_intent
         
     def get_call_type(self, call_intent: str) -> str:
         """
-            Gets the type of the call.
+        Gets the type of the call based on the intent provided.
 
-            Keyword arguments:
-            call_intent -- The intent of the call.
+        Args:
+            call_intent (str): The intent of the call.
 
-            Returns:
-            str -- The type of the call.
+        Returns:
+            str. The type of the call.
         """
         call_type = "automated"
         if call_intent == "Sales":
@@ -327,14 +331,16 @@ class CallChatSession:
         return call_type
     
 
-    def update_call_status(self, user_id: str, call_intent: str) -> str:
+    def track_call(self, user_id: str, call_intent: str) -> str:
         """
-            Updates the status of the call.
+        Tracks the call metrics for the user.
 
-            Keyword arguments:
-            user_id -- The user's ID.
-            call_type -- The type of call to be tracked.
-            call_intent -- The intent of the call.
+        Args:
+            user_id (str): The user's ID.
+            call_intent (str): The intent of the call.
+
+        Returns:
+            str: The status of the call update.
         """
         try:
             ci = call_intent
