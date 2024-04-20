@@ -38,18 +38,23 @@ class ShopifyException(Exception):
 
 def get_new_numbers() -> list:
     """
-        Retrieves a list of new phone numbers in Twilio.
+    Retrieves a list of new phone numbers in Twilio.
 
-        Return: A list of phone numbers in Twilio.
+    Returns:
+        list: A list of phone numbers in Twilio.
     """
     return [phone.phone_number for phone in twilio_client.available_phone_numbers('US').local.list()]
 
 
 async def get_available_numbers(get_first: bool) -> list:
     """
-        Retrieves a list of all available (previously purchased but not used) phone numbers in Twilio Account.
+    Retrieves a list of all available (previously purchased but not used) phone numbers in Twilio Account.
 
-        Return: A list of available phone numbers in Twilio.
+    Args:
+        get_first (bool): Flag to indicate if only the first available number should be retrieved.
+
+    Returns:
+        list: A list of available phone numbers in Twilio.
     """
     twilio_phone_numbers = twilio_client.incoming_phone_numbers.list()
 
@@ -70,21 +75,20 @@ async def get_available_numbers(get_first: bool) -> list:
 
 def buy_phone_number(phone_number: str) -> None:
     """
-        Purchases a specific phone number in Twilio.
+    Purchases a specific phone number in Twilio.
 
-        Keyword arguments:
-        phone_number -- The specific phone number to be purchased.
-
-        Return: None. The function performs a purchase operation and does not return anything.
+    Args:
+        phone_number (str): The specific phone number to be purchased.
     """
     twilio_client.incoming_phone_numbers.create(phone_number=phone_number)
 
 
 async def get_unused_phone_number() -> str:
     """
-        Retrieves a list of all unused phone numbers by users in Twilio.
+    Retrieves a list of all unused phone numbers by users in Twilio.
 
-        Return: A new or unused phone number in Twilio.
+    Returns:
+        str: A new or unused phone number in Twilio.
     """
     available_numbers = await get_available_numbers(get_first=True)
     if available_numbers[0] is not None:
@@ -97,25 +101,24 @@ async def get_unused_phone_number() -> str:
 
 def speech_delay(transcription_text: str) -> int:
     """
-        Estimates the duration of a speech based on the number of words in the transcription.
+    Estimates the duration of a speech based on the number of words in the transcription.
 
-        Keyword arguments:
-        transcription_text -- The transcribed text to be spoken in the call.
+    Args:
+        transcription_text (str): The transcribed text to be spoken in the call.
 
-        Return: The estimated duration of the speech in seconds.
+    Returns:
+        int: The estimated duration of the speech in seconds.
     """
     return (len(transcription_text.split(" ")) / 2.5)
 
 
 def update_phone(public_url: str, phone_number: str) -> None:
     """
-        Updates the voice URL of a specific phone number in Twilio.
+    Updates the voice URL of a specific phone number in Twilio.
 
-        Keyword arguments:
-        public_url -- The public URL where Twilio will send a request when the phone number receives a call.
-        phone_number -- The specific phone number to be updated.
-
-        Return: None. The function performs an update operation and does not return anything.
+    Args:
+        public_url (str): The public URL where Twilio will send a request when the phone number receives a call.
+        phone_number (str): The specific phone number to be updated.
     """
     phone = list(
         twilio_client.incoming_phone_numbers.list(phone_number=phone_number))
@@ -129,14 +132,15 @@ def update_phone(public_url: str, phone_number: str) -> None:
 
 async def voice_response(transcription_text: str, call_sid: str, twilio_client: Client) -> None:
     """
-        Updates a call session with a transcribed text.
+    Adds a voice response into the call instance. This is an async operation.
 
-        Keyword arguments:
-        transcription_text -- The transcribed text to be spoken in the call.
-        call_sid -- The unique identifier of the call session to be updated.
-        twilio_client -- The client instance used to interact with the Twilio API.
+    Args:
+        transcription_text (str): The transcribed text to be spoken in the call.
+        call_sid (str): The unique identifier of the call session to be updated.
+        twilio_client (Client): The client instance used to interact with the Twilio API.
 
-        Return: None. The function performs an update operation and does not return anything.
+    Returns: 
+        None: The function performs an update operation and does not return anything.
     """
     try:
         call_session = twilio_client.calls(call_sid)
@@ -153,14 +157,14 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
 
 async def call_accept(request:Request, public_url: str, phone_number: str) -> VoiceResponse:
     """
-        Handles the initial call session.
+    Handles the call accept event and returns the TwiML instructions for the call session.
 
-        Keyword arguments:
-        public_url -- The public URL where Twilio will send a request when the phone number receives a call.
-        phone_number -- The specific phone number to be updated.
-        brand_name -- The name of the brand for the call session.
+    Args:
+        public_url (str): The public URL where Twilio will send a request when the phone number receives a call.
+        phone_number (str): The specific phone number to be updated.
 
-        Return: A VoiceResponse instance containing the TwiML instructions for the call session.
+    Returns: 
+        VoiceResponse: A VoiceResponse instance containing the TwiML instructions for the call session.
     """
     form_data = await request.form()
     try:
@@ -186,10 +190,13 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     """
     Handles the audio stream of a call session.
 
-    Keyword arguments:
-    websocket -- The websocket instance used to receive the audio stream from Twilio.
-    phone_no -- The phone number of the incoming caller.
-    brand_name -- The name of the brand for the call session.
+    Args:
+        websocket (WebSocket): The websocket instance used to receive the audio stream from Twilio.
+        phone_no (str): The phone number of the incoming caller.
+        brand_name (str): The name of the brand for the call session.
+
+    Returns:
+        None: The function handles the audio stream and does not return anything.
     """
     is_bot_speaking = False
     is_speech_started = False
