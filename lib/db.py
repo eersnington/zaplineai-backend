@@ -22,13 +22,15 @@ with conn:
 
 def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
     """
-        Tracks the metrics of a user's call.
+    Tracks the metrics of a user's call.
 
-        Keyword arguments:
-        user_id -- The user's ID.
-        call_type -- The type of call to be tracked.
+    Args:
+        user_id (str): The user's ID.
+        call_type (str): The type of call to be tracked.
+        call_intent (str): The intent of the call.
 
-        Return: None. The function performs an insert operation and does not return anything.
+    Returns:
+        None. The function performs an insert operation and does not return anything.
     """
     sql = '''INSERT INTO user_metrics (user_id, calls, automated_calls, transferred_calls, abandoned_calls, call_type, call_intent)
                 VALUES (?, ?, ?, ?, ?, ?, ?)'''
