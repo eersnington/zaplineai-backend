@@ -51,7 +51,7 @@ async def get_available_numbers(get_first: bool) -> list:
     Retrieves a list of all available (previously purchased but not used) phone numbers in Twilio Account.
 
     Args:
-        get_first (bool): Flag to indicate if only the first available number should be retrieved.
+    - get_first (bool): Flag to indicate if only the first available number should be retrieved.
 
     Returns:
         list: A list of available phone numbers in Twilio.
@@ -78,7 +78,7 @@ def buy_phone_number(phone_number: str) -> None:
     Purchases a specific phone number in Twilio.
 
     Args:
-        phone_number (str): The specific phone number to be purchased.
+    - phone_number (str): The specific phone number to be purchased.
     """
     twilio_client.incoming_phone_numbers.create(phone_number=phone_number)
 
@@ -104,7 +104,7 @@ def speech_delay(transcription_text: str) -> int:
     Estimates the duration of a speech based on the number of words in the transcription.
 
     Args:
-        transcription_text (str): The transcribed text to be spoken in the call.
+    - transcription_text (str): The transcribed text to be spoken in the call.
 
     Returns:
         int: The estimated duration of the speech in seconds.
@@ -117,8 +117,8 @@ def update_phone(public_url: str, phone_number: str) -> None:
     Updates the voice URL of a specific phone number in Twilio.
 
     Args:
-        public_url (str): The public URL where Twilio will send a request when the phone number receives a call.
-        phone_number (str): The specific phone number to be updated.
+    - public_url (str): The public URL where Twilio will send a request when the phone number receives a call.
+    - phone_number (str): The specific phone number to be updated.
     """
     phone = list(
         twilio_client.incoming_phone_numbers.list(phone_number=phone_number))
@@ -135,9 +135,9 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
     Adds a voice response into the call instance. This is an async operation.
 
     Args:
-        transcription_text (str): The transcribed text to be spoken in the call.
-        call_sid (str): The unique identifier of the call session to be updated.
-        twilio_client (Client): The client instance used to interact with the Twilio API.
+    - transcription_text (str): The transcribed text to be spoken in the call.
+    - call_sid (str): The unique identifier of the call session to be updated.
+    - twilio_client (Client): The client instance used to interact with the Twilio API.
 
     Returns: 
         None: The function performs an update operation and does not return anything.
@@ -160,8 +160,8 @@ async def call_accept(request:Request, public_url: str, phone_number: str) -> Vo
     Handles the call accept event and returns the TwiML instructions for the call session.
 
     Args:
-        public_url (str): The public URL where Twilio will send a request when the phone number receives a call.
-        phone_number (str): The specific phone number to be updated.
+    - public_url (str): The public URL where Twilio will send a request when the phone number receives a call.
+    - phone_number (str): The specific phone number to be updated.
 
     Returns: 
         VoiceResponse: A VoiceResponse instance containing the TwiML instructions for the call session.
@@ -191,9 +191,9 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     Handles the audio stream of a call session.
 
     Args:
-        websocket (WebSocket): The websocket instance used to receive the audio stream from Twilio.
-        phone_no (str): The phone number of the incoming caller.
-        brand_name (str): The name of the brand for the call session.
+    - websocket (WebSocket): The websocket instance used to receive the audio stream from Twilio.
+    - phone_no (str): The phone number of the incoming caller.
+    - brand_name (str): The name of the brand for the call session.
 
     Returns:
         None: The function handles the audio stream and does not return anything.
