@@ -2,10 +2,16 @@ import json
 import os
 from datetime import datetime
 from typing import Optional
+import concurrent.futures
+
+
+def read_log_file(file_path):
+    with open(file_path, "r") as file:
+        return json.load(file)
 
 def get_call_logs(user_id: str) -> Optional[list]:
     """
-    Retrieve call logs for a given user ID.
+    Retrieve call logs for a given user ID using parallel processing with ThreadPoolExecutor.
 
     Args:
     - user_id (str): The user ID for which to retrieve call logs.
@@ -15,13 +21,11 @@ def get_call_logs(user_id: str) -> Optional[list]:
     """
     logs_folder = f"./call_logs/{user_id}"
     if os.path.exists(logs_folder):
-        logs = []
-        for filename in os.listdir(logs_folder):
-            file_path = os.path.join(logs_folder, filename)
-            with open(file_path, "r") as file:
-                log = json.load(file)
-            logs.append(log)
-        return logs
+        log_files = [os.path.join(logs_folder, filename) for filename in os.listdir(logs_folder)]
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # Process files concurrently
+            results = list(executor.map(read_log_file, log_files))
+        return results
     else:
         return None
 
@@ -52,7 +56,7 @@ if __name__ == "__main__":
     user_id = "123456"
     call_id = "789"
     transcript = ["Test", "Test2"]
-    store_call_log(user_id, call_id, transcript)
+    # store_call_log(user_id, call_id, transcript)
     fetched = get_call_logs(user_id=user_id)
     if fetched:
         print(fetched)
