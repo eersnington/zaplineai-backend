@@ -35,8 +35,8 @@ class CallChatSession:
         Handles first interaction with the call session.
 
         Args:
-            sid (str): The call session ID.
-            customer_phone_no (str): The phone number of the customer.
+        - sid (str): The call session ID.
+        - customer_phone_no (str): The phone number of the customer.
 
         Returns:
             str: The response to the customer's call initiation.
@@ -196,7 +196,7 @@ class CallChatSession:
         Classifies the intent of the message using the BERT Classifier.
 
         Args:
-            message (str): The message to be classified.
+        - message (str): The message to be classified.
 
         Returns:
             str. The intent of the call.
@@ -214,7 +214,7 @@ class CallChatSession:
         3. If no cached response, classify call intent, get relevant data, and generate a response using LLM model.
 
         Args:
-            message (str): The message to be processed by the LLM model.
+        - message (str): The message to be processed by the LLM model.
 
         Returns:
             str: The response from the LLM model.
@@ -318,7 +318,7 @@ class CallChatSession:
         Gets the type of the call based on the intent provided.
 
         Args:
-            call_intent (str): The intent of the call.
+        - call_intent (str): The intent of the call.
 
         Returns:
             str. The type of the call.
@@ -336,8 +336,8 @@ class CallChatSession:
         Tracks the call metrics for the user.
 
         Args:
-            user_id (str): The user's ID.
-            call_intent (str): The intent of the call.
+        - user_id (str): The user's ID.
+        - call_intent (str): The intent of the call.
 
         Returns:
             str: The status of the call update.
