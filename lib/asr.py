@@ -1,6 +1,7 @@
 import io
 import os
 import tempfile
+from typing import Optional, Tuple
 import wave
 import logging
 from lib.audio_buffer import AudioBuffer, _QueueStream, _TwilioSource
@@ -21,6 +22,12 @@ model_name = "openai/whisper-large-v3" #"openai/whisper-large-v3"
 
 @functools.cache
 def get_model():
+    """
+    Retrieve the ASR pipeline model for automatic speech recognition.
+
+    Returns:
+        pipeline: ASR pipeline model
+    """
     pipe = pipeline(
         "automatic-speech-recognition",
         model=model_name, # select checkpoint from https://huggingface.co/openai/whisper-large-v3#model-details
@@ -52,12 +59,15 @@ vad = SileroVoiceActivityDetector()
 energy_threshold = 0.6
 
 
-def transcribe_stream(audio_stream: AudioBuffer) -> str:
+def transcribe_stream(audio_stream: AudioBuffer) -> Tuple[Optional[bool], Optional[str]]:
     """
-        Transcribes audio from a byte stream into text.
+    Transcribes audio from a byte stream into text.
 
-        Keyword arguments:
-        audio_stream -- The byte stream containing audio data to be transcribed.
+    Args:
+        audio_stream (AudioBuffer): The byte stream containing audio data to be transcribed.
+
+    Returns:
+        str: The transcribed text.
     """
     with _TwilioSource(audio_stream) as source:
         with tempfile.TemporaryDirectory() as tmp:
