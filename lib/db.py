@@ -25,9 +25,9 @@ def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
     Tracks the metrics of a user's call.
 
     Args:
-        user_id (str): The user's ID.
-        call_type (str): The type of call to be tracked.
-        call_intent (str): The intent of the call.
+    - user_id (str): The user's ID.
+    - call_type (str): The type of call to be tracked.
+    - call_intent (str): The intent of the call.
 
     Returns:
         None. The function performs an insert operation and does not return anything.
