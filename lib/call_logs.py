@@ -9,7 +9,7 @@ def read_log_file(file_path):
     with open(file_path, "r") as file:
         return json.load(file)
 
-def get_call_logs(user_id: str) -> Optional[list]:
+def get_call_logs(user_id: str) -> Optional[list[dict]]:
     """
     Retrieve call logs for a given user ID using parallel processing with ThreadPoolExecutor.
 
