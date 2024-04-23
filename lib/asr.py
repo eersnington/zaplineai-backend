@@ -56,7 +56,7 @@ recognizer.energy_threshold = 300
 recognizer.pause_threshold = 2.5
 
 vad = SileroVoiceActivityDetector()
-energy_threshold = 0.6
+energy_threshold = 0.45
 
 
 def transcribe_stream(audio_stream: AudioBuffer) -> Tuple[Optional[bool], Optional[str]]:
