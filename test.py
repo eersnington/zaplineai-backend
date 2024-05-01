@@ -1,45 +1,40 @@
-from lib.call_chat import CallChatSession
+from huggingface_hub import login
+from optimum.gptq import GPTQQuantizer
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
-def main():
-    # Initialize the chat session with your Shopify app token and store name
-    app_token = "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"
-    myshopify = "b59bb6-2.myshopify.com"
-    chat_session = CallChatSession(app_token, myshopify)
+login()
 
-    # Simulate a conversation with the chatbot
-    sid = "session_id_here"
-    customer_phone_no = "+12512209809"
-    chat_session.start(sid, customer_phone_no)
-
-    call_intent = None
-
-    awaited_response, order_id = chat_session.start(sid, customer_phone_no)
-    print("Bot:", awaited_response)
+dataset_id = "wikitext2"
 
 
-    while True:
-        # Get user input
-        message = input("You: ")
+quantizer = GPTQQuantizer(bits=4, dataset=dataset_id, model_seqlen=2048)
+quantizer.quant_method = "gptq"
 
-        # Break the loop if the user enters "exit"
-        if message.lower() == "exit":
-            break
 
-        if order_id is not None:
-            bot_response = "Would you like to know the status of the order, process a return, or something else?"
-            print("Bot:", bot_response)
-            order_id = None
-            continue
 
-        if call_intent is None:
-            call_intent = chat_session.check_call_intent(message)
-            call_type = chat_session.get_call_type(call_intent=call_intent)
+model_id = "meta-llama/Meta-Llama-3-8B"
 
-            print(f"Call Intent: {call_intent} | Call Type: {call_type}")
+model = AutoModelForCausalLM.from_pretrained(model_id, config=quantizer, torch_dtype=torch.float16, max_memory = {0: "15GIB", 1: "15GIB"})
+tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=False)
 
-        # Get the bot's response
-        response = chat_session.get_response(message)
-        print("Bot:", response)
 
-if __name__ == "__main__":
-    main()
+import os
+import json
+
+quantized_model = quantizer.quantize_model(model, tokenizer)
+
+# save the quantized model
+save_folder = "quantized_llama"
+quantized_model.save_pretrained(save_folder, safe_serialization=True)
+
+# load fresh, fast tokenizer and save it to disk
+tokenizer = AutoTokenizer.from_pretrained(model_id).save_pretrained(save_folder)
+
+# save quantize_config.json for TGI
+with open(os.path.join(save_folder, "quantize_config.json"), "w", encoding="utf-8") as f:
+  quantizer.disable_exllama = False
+  json.dump(quantizer.to_dict(), f, indent=2)
+
+
+quantized_model.push_to_hub("Sreenington/Meta-llama-3-8B-GPTQ")
