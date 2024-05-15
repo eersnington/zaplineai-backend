@@ -37,7 +37,8 @@ The status of the order - Order is about to be shipped and is expected to arrive
 Refund, Returns and Cancellation is possible. Ask for the reason if the user requests this. Once the reason is stated, then inform them the request is being processed.
 Additional Instructions: {additional_instruct}
 
-Introduce yourself in a short but friendly way, ask them what help would they need. If they no longer need help, end the conversation by saying have a nice day."""
+Introduce yourself in a short but friendly way, ask them what help would they need.
+If the user says they no longer needs help, say good bye and have a nice day."""
 
 def get_chat_prompt(bot_name: str, store_name: str, additional_instruct: Union[str, None] = None) -> str:
     prompt_template = system_prompt + f"\n\n{context}"
