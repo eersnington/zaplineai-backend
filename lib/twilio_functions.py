@@ -244,19 +244,19 @@ async def call_stream(websocket: WebSocket,
                 if additional_response == "Exception":
                     raise ShopifyException("Shopify Exception")
                 
-                new_response = initial_response + additional_response
-                print(f"New Response: {new_response}")
+                # new_response = initial_response + additional_response
+                # print(f"New Response: {new_response}")
 
-                delay = speech_delay("Hey there, my name is Zap.")
-                print(f"Speech Delay: {delay}s")
-                await asyncio.sleep(delay)
-                print("Bot response completed")
+                # delay = speech_delay("Hey there, my name is Zap.")
+                # print(f"Speech Delay: {delay}s")
+                # await asyncio.sleep(delay)
+                # print("Bot response completed")
 
-                await voice_response(new_response, call_sid, twilio_client)
-                delay = speech_delay(new_response)
-                print(f"Speech Delay: {delay}s")
-                await asyncio.sleep(delay)
-                print("Bot response completed")
+                # await voice_response(new_response, call_sid, twilio_client)
+                # delay = speech_delay(new_response)
+                # print(f"Speech Delay: {delay}s")
+                # await asyncio.sleep(delay)
+                # print("Bot response completed")
 
             elif packet['event'] == 'stop':
                 print('Media stream stopped!')
