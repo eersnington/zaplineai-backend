@@ -11,6 +11,7 @@ print(f"GPU Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
 
 bot_name = "Sunny"
 store_name = "Sunshine Swimsuits"
+additional_instruct = "When introducing yourself to the customer, say there's a sale of 40% ongoing inline."
 
 message_history = []
 def add_message(role, content):
@@ -40,7 +41,7 @@ while True:
     example_response = get_example_response(message_intent)
     print(f"Example response: {example_response}")
 
-    chat_prompt = get_chat_prompt(bot_name, store_name) + "\n\n" + messages_formatter(message_history)
+    chat_prompt = get_chat_prompt(bot_name, store_name, additional_instruct) + "\n\n" + messages_formatter(message_history)
     # print(chat_prompt + f"\n\n(Example response - {example_response})\n\nAssistant: ")
     start = time.time()
     llm_input = chat_prompt + f"\n\n(Example response that can help you frame your answer - {example_response})\n\nAssistant: "
