@@ -1,6 +1,6 @@
 from lib.cached_response import VectorDatabase, get_intent_response, get_order_status_response
 from lib.llm_model import LLMModel, LLMChat, BERTClassifier
-from lib.llm_prompt import llama_prompt
+from lib.llm_prompt import llama_prompt, get_classifier_prompt
 import shopify
 
 from lib.db import track_metrics
