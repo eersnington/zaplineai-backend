@@ -225,19 +225,23 @@ def get_order_status_response(status):
 
 
 def get_example_response(intent):
-    cached_intent_responses = {
-        "Order Status": "Your order is currently [explain the status].",
-        "Cancellation Step-1": "I'm sorry to hear you want to cancel your order. Could you please tell me the reason for the cancellation?",
-        "Cancellation Step-2": "Your cancellation request is being processed. Our support team will get back to you shortly.",
-        "Returns Step-1": "I'm sorry to hear you want to return your order. Could you please tell me the reason for the return?",
-        "Returns Step-2": "Your return request is being processed. Our support team will get back to you shortly.",
-        "Refund Step-1": "I'm sorry to hear you're requesting a refund. Could you please tell me the reason for the refund?",
-        "Refund Step-2": "Your refund request is being processed. Our support team will get back to you shortly.",
+    """Fetches an example response for a given intent."""
+    cached_example_responses = {
+        "Order Status": "Say this but write the explanation on your own - Your order is currently [explain the status].",
+        "Cancellation Step-1": "Say this - I'm sorry to hear you want to cancel your order. Could you please tell me the reason for the cancellation?",
+        "Cancellation Step-2": "Say this - Your cancellation request is being processed. Our support team will get back to you shortly.",
+        "Returns Step-1": "Say this - I'm sorry to hear you want to return your order. Could you please tell me the reason for the return?",
+        "Returns Step-2": "Say this - Your return request is being processed. Our support team will get back to you shortly.",
+        "Refund Step-1": "Say this - I'm sorry to hear you're requesting a refund. Could you please tell me the reason for the refund?",
+        "Refund Step-2": "Say this - Your refund request is being processed. Our support team will get back to you shortly.",
         "Product Info": "[describe the product to based on what you know about it].",
+        "Transfer": "Say this - I'll transfer your call to a sales representative right away. Please hold for a moment while I connect you.",
+        "Sales": "Say this - I can transfer your call right away. Please hold on for a moment while I connect you.",
+        "General": "[Give a general answer]."
     }
-    for item in cached_intent_responses.keys():
+    for item in cached_example_responses.keys():
         if item in intent:
-            return cached_intent_responses[item]
+            return cached_example_responses[item]
 
     return "[Give a general answer]."
 
