@@ -12,8 +12,8 @@ load_dotenv(find_dotenv(), override=True)
 
 @functools.cache
 def get_vllm_model(model: str, 
-                   quantization: Union[str, None] = None, 
-                   gpu_memory_utilization: float) -> Optional[LLM]:
+                   gpu_memory_utilization: float,
+                   quantization: Union[str, None] = None) -> Optional[LLM]:
     """
     Retrieve the vLLM model for text generation.
 
@@ -32,7 +32,7 @@ def get_vllm_model(model: str,
         llm = LLM(model=model, gpu_memory_utilization=gpu_memory_utilization)
     else:
         print("Quantization: ", quantization)
-        llm = LLM(model=model, quantization=quantization, gpu_memory_utilization=gpu_memory_utilization)
+        llm = LLM(model=model, gpu_memory_utilization=gpu_memory_utilization, quantization=quantization)
     return llm
 
 
