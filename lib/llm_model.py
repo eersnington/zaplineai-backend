@@ -45,7 +45,7 @@ class ClassifierModel:
             temperature=0.7, max_tokens=10)
 
         # tqdm is a progress bar
-        outputs = self.llm.generate(
+        outputs = self.model.generate(
             prompt, sampling_params, use_tqdm=False)
         generated_text = outputs[0].outputs[0].text
         return generated_text
