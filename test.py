@@ -1,11 +1,13 @@
 from lib.llm_model import ClassifierModel, LLMModel
 from lib.llm_prompt import get_classifier_prompt, get_chat_prompt
 from lib.cached_response import get_example_response
+import torch
 import time
 
 
 classifier = ClassifierModel()
 llm = LLMModel()
+print(f"GPU Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
 
 bot_name = "Sunny"
 store_name = "Sunshine Swimsuits"
