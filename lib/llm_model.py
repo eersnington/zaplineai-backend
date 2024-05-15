@@ -1,5 +1,6 @@
 # type: ignore
 import logging
+import torch
 from typing import Tuple, Optional, Union
 from dotenv import load_dotenv, find_dotenv
 
@@ -11,6 +12,9 @@ import functools
 import os
 
 load_dotenv(find_dotenv(), override=True)
+
+def get_vram_usage():
+    print(f"GPU Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
 
 @functools.cache
 def get_vllm_model(model: str, 
@@ -35,6 +39,8 @@ def get_vllm_model(model: str,
     else:
         print("Quantization: ", quantization)
         llm = LLM(model=model, gpu_memory_utilization=gpu_memory_utilization, quantization=quantization)
+
+    get_vram_usage()
     return llm
 
 
