@@ -28,7 +28,7 @@ class _TwilioSource(sr.AudioSource):
     def __init__(self, stream):
         self.stream = stream
         self.CHUNK = 1024
-        self.SAMPLE_RATE = 8000
+        self.SAMPLE_RATE = 16000
         self.SAMPLE_WIDTH = 2
 
     def __enter__(self):
