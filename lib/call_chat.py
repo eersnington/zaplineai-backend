@@ -244,7 +244,6 @@ class CallChatSession:
         chat_prompt = get_chat_prompt(self.bot_name, self.brand_name) + "\n\n" + self.llm_chat.messages_formatter()
         instruction = None
         llm_input = chat_prompt + "\n\n(Follow this instruction for your response - {example_response})\n\nAssistant: "
-        llm_response = self.llm_chat.llm_response(llm_input)
 
         if "Returns" in self.call_intent:
             self.return_order = True
@@ -272,11 +271,11 @@ class CallChatSession:
 
         if instruction:
             llm_input = chat_prompt + instruction
-            llm_response = self.llm_chat.llm_response(llm_input)
+            llm_response = self.llm_chat.llm_response(message=message, prompt=llm_input)
             return llm_response
         
         llm_input = chat_prompt + "\n\nAssistant: "
-        llm_response = self.llm_chat.llm_response(llm_input)
+        llm_response = self.llm_chat.llm_response(message=message, prompt=llm_input)
         return llm_response
             
         
