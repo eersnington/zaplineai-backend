@@ -1,5 +1,5 @@
 from typing import Union
-from lib.cached_response import VectorDatabase, get_intent_response, get_order_status_response, get_example_response
+from lib.cached_response import get_intent_response, get_example_response
 from lib.llm_model import LLMModel, LLMChat, ClassifierModel
 from lib.llm_prompt import get_chat_prompt
 import shopify
@@ -8,7 +8,7 @@ from lib.db import track_metrics
 
 llm_model = LLMModel()
 classifier_model = ClassifierModel()
-vector_db = VectorDatabase()
+# vector_db = VectorDatabase()
 
 class CallChatSession:
     def __init__(self, app_token: str, myshopify: str, bot_name:str, brand_name:str):
@@ -23,7 +23,6 @@ class CallChatSession:
         self.order = None # The recent order object from Shopify.
         self.order_id = None # The ID of the recent order.
         self.order_status = None # The status of the recent order.
-        self.vector_db = vector_db
         self.refund_order = False
         self.return_order = False
         self.cancel_order = False
