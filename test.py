@@ -4,6 +4,7 @@ from lib.call_chat import CallChatSession
 from lib.llm_prompt import get_chat_prompt
 from lib.cached_response import get_example_response
 import torch
+import time
 
 bot_name = "Sunny"
 store_name = "Sunshine Swimsuits"
@@ -25,5 +26,8 @@ while True:
     if user_input == "exit":
         break
     
+    start = time.time()
     response = llmchat.get_response(user_input)
+    end = time.time()
     print(f"Assistant: {response}")
+    print(f"Time taken: {end - start:.3f} seconds")
