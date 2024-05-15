@@ -227,7 +227,7 @@ def get_order_status_response(status):
 def get_example_response(intent):
     """Fetches an example response for a given intent."""
     cached_example_responses = {
-        "Order Status": "Say this but write the explanation on your own - Your order is currently [explain the status].",
+        "Order Status": "Say in this format- Your order of [mention the items and date] is currently [explain the status].",
         "Cancellation Step-1": "Say this - I'm sorry to hear you want to cancel your order. Could you please tell me the reason for the cancellation?",
         "Cancellation Step-2": "Say this - Your cancellation request is being processed. Our support team will get back to you shortly.",
         "Returns Step-1": "Say this - I'm sorry to hear you want to return your order. Could you please tell me the reason for the return?",
