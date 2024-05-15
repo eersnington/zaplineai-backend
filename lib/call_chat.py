@@ -217,7 +217,7 @@ class CallChatSession:
             if self.call_intent is None:
                 self.call_intent = "General Inquiry"
         
-        return call_intent
+        return self.call_intent
         
 
     def get_response(self, message: str) -> str:
@@ -245,14 +245,14 @@ class CallChatSession:
             return self.cancel_process(message)
         
         
-        self.call_intent = self.classify_call_intent(message=message) # Classify the call intent
-        print(f"Call Intent: {self.call_intent}")
+        call_intent = self.classify_call_intent(message=message) # Classify the call intent
+        print(f"Call Intent: {call_intent}")
 
         self.llm_chat.add_message(role="User", content=message) # Add the user message to the chat history
 
         # cached_response = self.vector_db.find_similar_response(message)
 
-        if "Order Status" in self.call_intent:
+        if "Order Status" in call_intent:
             data = self.get_order_status()
             print("Order Status: ", data)
             
