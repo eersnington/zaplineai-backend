@@ -1,3 +1,5 @@
+import logging
+logging.getLogger().setLevel(logging.INFO)
 from lib.call_chat import CallChatSession
 from lib.llm_prompt import get_chat_prompt
 from lib.cached_response import get_example_response
