@@ -83,7 +83,7 @@ class LLMModel:
 class LLMChat:
     def __init__(self, llm_model: LLMModel, classifier: ClassifierModel):
         self.llm_model = llm_model
-        self.classifier = classifier
+        self.classifier_model = classifier
         self.chat_history = []
 
     def add_message(self, role: str, content: str) -> None:
@@ -128,4 +128,4 @@ class LLMChat:
             list: The classification output.
         """
         classification_prompt = get_classifier_prompt(message)
-        return self.classifier.classify(classification_prompt)
+        return self.classifier_model.classify(classification_prompt)
