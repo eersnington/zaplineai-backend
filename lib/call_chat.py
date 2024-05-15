@@ -1,34 +1,34 @@
-from lib.cached_response import VectorDatabase, get_intent_response, get_order_status_response
-from lib.llm_model import LLMModel, LLMChat, BERTClassifier
-from lib.llm_prompt import llama_prompt, get_classifier_prompt
+from typing import Union
+from lib.cached_response import VectorDatabase, get_intent_response, get_order_status_response, get_example_response
+from lib.llm_model import LLMModel, LLMChat, ClassifierModel
+from lib.llm_prompt import get_chat_prompt
 import shopify
 
 from lib.db import track_metrics
 
-
 llm_model = LLMModel()
-bert_classifier = BERTClassifier()
+classifier_model = ClassifierModel()
 vector_db = VectorDatabase()
 
-
 class CallChatSession:
-    def __init__(self, app_token: str, myshopify: str):
+    def __init__(self, app_token: str, myshopify: str, bot_name:str, brand_name:str):
         self.sid = None
-        self.llm_chat = LLMChat(llm_model, bert_classifier)
+        self.llm_chat = LLMChat(llm_model, classifier_model)
         self.app_token = app_token
         self.myshopify = myshopify
+        self.bot_name = bot_name
+        self.brand_name = brand_name
         self.client = shopify.Session(myshopify, "2024-01", app_token)
         shopify.ShopifyResource.activate_session(self.client)
+        self.order = None # The recent order object from Shopify.
         self.order_id = None # The ID of the recent order.
+        self.order_status = None # The status of the recent order.
         self.vector_db = vector_db
         self.refund_order = False
         self.return_order = False
         self.cancel_order = False
-        self.return_refund_reason = None
+        self.cancel_reason = None
         self.call_intent = None
-        self.order = None
-        self.order_status = None
-    
 
     def start(self, sid: str, customer_phone_no: str) -> str:
         """
@@ -100,7 +100,7 @@ class CallChatSession:
         if self.order is None:
             return "I couldn't find any latest orders for this number. If you think this is a mistake, I can transfer the call for you."
 
-        note_text = f"Cancel initiated by customer through call. Reason: {self.return_refund_reason}"
+        note_text = f"Cancel initiated by customer through call. Reason: {self.cancel_reason}"
         print("Order ID:", self.order.id)
 
         try:
@@ -122,7 +122,7 @@ class CallChatSession:
         if self.order is None:
             return "I couldn't find any latest order for this number. If you think this is a mistake, I can transfer the call for you."
         
-        note_text = f"Return initiated by customer through call. Reason: {self.return_refund_reason}"
+        note_text = f"Return initiated by customer through call. Reason: {self.cancel_reason}"
         print("Order ID:", self.order.id)
         
         try: # can crash if the correct myshopify link is not provided
@@ -144,7 +144,7 @@ class CallChatSession:
         if self.order is None:
             return "I couldn't find any latest orders for this number. If you think this is a mistake, I can transfer the call for you."
 
-        note_text = f"Refund initiated by customer through call. Reason: {self.return_refund_reason}"
+        note_text = f"Refund initiated by customer through call. Reason: {self.cancel_reason}"
         print("Order ID:", self.order.id)
 
         try:
@@ -154,7 +154,7 @@ class CallChatSession:
             print(e)
 
         return get_intent_response("Refund Step2")
-    
+           
 
     def cancel_process(self, reason) -> str:
         if self.cancel_order is False:
@@ -162,7 +162,7 @@ class CallChatSession:
             return "true"
 
         if reason:
-            self.return_refund_reason = reason
+            self.cancel_reason = reason
             self.cancel_order = False
             response = self.initiate_cancel()
             return response
@@ -174,7 +174,7 @@ class CallChatSession:
             return "true"
 
         if reason:
-            self.return_refund_reason = reason
+            self.cancel_reason = reason
             self.return_order = False
             response = self.initiate_return()
             return response
@@ -186,7 +186,7 @@ class CallChatSession:
             return "true"
 
         if reason:
-            self.return_refund_reason = reason
+            self.cancel_reason = reason
             self.refund_order = False
             return self.initiate_refund()
 
@@ -201,7 +201,7 @@ class CallChatSession:
         Returns:
             str. The intent of the call.
         """
-        self.call_intent = self.llm_chat.get_call_type(message)[0]["label"]
+        self.call_intent = self.llm_chat.classifier_response(message)
         return self.call_intent
         
 
@@ -221,7 +221,7 @@ class CallChatSession:
         """
 
         if self.refund_order is True:
-            return self.refund_process(message)
+            return self.refund_process(message) 
         
         if self.return_order is True:
             return self.return_process(message)
@@ -229,64 +229,112 @@ class CallChatSession:
         if self.cancel_order is True:
             return self.cancel_process(message)
         
-        self.llm_chat.add_message(f"Customer: {message}")
-
-        cached_response = self.vector_db.find_similar_response(message)
-
-        if cached_response is not None:
-            if "<<explain the current status of your order>>" in cached_response:
-                self.call_intent = "Order Status"
-                data = self.get_order_status()
-                print("Order Status: ", data)
-                addon = get_order_status_response(data)
-                if addon is None:
-                    addon = "I couldn't find any recent orders for this phone number. If you think this is a mistake, I can transfer the call for you."
-                cached_response = cached_response.replace("<<explain the current status of your order>>", addon)
-
-            elif "cancellation" in cached_response:
-                self.call_intent = "Cancellation"
-                self.cancel_process(None) # This is a dummy call to set the cancel_order flag to True (Cancel Step 1)
-
-            elif "return" in cached_response or "returning" in cached_response:
-                self.call_intent = "Returns"
-                self.return_process(None) # This is a dummy call to set the return_order flag to True (Returns Step 1)
-
-            elif "refund" in cached_response or "refunding" in cached_response:
-                self.call_intent = "Refund"
-                self.refund_process(None) # This is a dummy call to set the refund_order flag to True (Refund Step 1)
-
-            elif "sales representative" in cached_response:
-                self.call_intent = "Sales"
-            
-            elif "live representative" in cached_response:
-                self.call_intent = "Transfer"
-
-            print(f"Call Intent: {self.call_intent}")
-
-            self.llm_chat.add_message(f"AI Assistant: {cached_response}")
-            return cached_response
         
-        call_intent = self.classify_call_intent(message)
-        self.call_intent = call_intent
-        print(f"Call Intent: {call_intent}")
+        self.call_intent = self.classify_call_intent(message=message) # Classify the call intent
+        print(f"Call Intent: {self.call_intent}")
 
-        data = None
-        if call_intent == "Order Status":
-            status = self.get_order_status()
-            data = get_order_status_response(status)
-            if data is None:
-                data = "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again."
-        elif call_intent == "Returns":
-            self.return_process(None)
-        elif call_intent == "Refund":
-            self.refund_process(None)
+        self.llm_chat.add_message(role="User", content=message) # Add the user message to the chat history
 
-        prompt = llama_prompt(message, call_intent, data, self.llm_chat.chat_history)       
-        response = self.llm_chat.generate_response(message, prompt)
+        # cached_response = self.vector_db.find_similar_response(message)
 
-        # self.vector_db.add_response(message, response) # WORK IN PROGRESS
-        self.llm_chat.add_message(f"AI Assistant: {response}")
-        return response
+        if "Order Status" in self.call_intent:
+            data = self.get_order_status()
+            print("Order Status: ", data)
+            
+        chat_prompt = get_chat_prompt(self.bot_name, self.brand_name) + "\n\n" + self.llm_chat.messages_formatter()
+        instruction = None
+        llm_input = chat_prompt + "\n\n(Follow this instruction for your response - {example_response})\n\nAssistant: "
+        llm_response = self.llm_chat.llm_response(llm_input)
+
+        if "Returns" in self.call_intent:
+            self.return_order = True
+            instruction = f"\n\n(Follow this instruction for your response - {get_example_response('Returns Step-1')})\n\nAssistant: "
+
+        elif "Refund" in self.call_intent:
+            self.refund_order = True
+            instruction = f"\n\n(Follow this instruction for your response - {get_example_response('Refund Step-1')})\n\nAssistant: "
+
+        elif "Cancellation" in self.call_intent:
+            self.cancel_order = True
+            instruction = f"\n\n(Follow this instruction for your response - {get_example_response('Cancellation Step-1')})\n\nAssistant: "
+
+        elif "Order Status" in self.call_intent:
+            instruction = f"\n\n(Follow this instruction for your response - {get_example_response('Order Status')})\n\nAssistant: "
+        
+        elif "Sales" in self.call_intent:
+            instruction = f"\n\n(Follow this instruction for your response - {get_example_response('Sales')})\n\nAssistant: "
+        
+        elif "Transfer" in self.call_intent:
+            instruction = f"\n\n(Follow this instruction for your response - {get_example_response('Transfer')})\n\nAssistant: "
+
+        elif "General" in self.call_intent:
+            instruction = f"\n\n(Follow this instruction for your response - {get_example_response('General')})\n\nAssistant: "
+
+        if instruction:
+            llm_input = chat_prompt + instruction
+            llm_response = self.llm_chat.llm_response(llm_input)
+            return llm_response
+        
+        llm_input = chat_prompt + "\n\nAssistant: "
+        llm_response = self.llm_chat.llm_response(llm_input)
+        return llm_response
+            
+        
+
+        # if cached_response is not None:
+        #     if "<<explain the current status of your order>>" in cached_response:
+        #         self.call_intent = "Order Status"
+        #         data = self.get_order_status()
+        #         print("Order Status: ", data)
+        #         addon = get_order_status_response(data)
+        #         if addon is None:
+        #             addon = "I couldn't find any recent orders for this phone number. If you think this is a mistake, I can transfer the call for you."
+        #         cached_response = cached_response.replace("<<explain the current status of your order>>", addon)
+
+        #     elif "cancellation" in cached_response:
+        #         self.call_intent = "Cancellation"
+        #         self.cancel_process(None) # This is a dummy call to set the cancel_order flag to True (Cancel Step 1)
+
+        #     elif "return" in cached_response or "returning" in cached_response:
+        #         self.call_intent = "Returns"
+        #         self.return_process(None) # This is a dummy call to set the return_order flag to True (Returns Step 1)
+
+        #     elif "refund" in cached_response or "refunding" in cached_response:
+        #         self.call_intent = "Refund"
+        #         self.refund_process(None) # This is a dummy call to set the refund_order flag to True (Refund Step 1)
+
+        #     elif "sales representative" in cached_response:
+        #         self.call_intent = "Sales"
+            
+        #     elif "live representative" in cached_response:
+        #         self.call_intent = "Transfer"
+
+        #     print(f"Call Intent: {self.call_intent}")
+
+        #     self.llm_chat.add_message(f"AI Assistant: {cached_response}")
+        #     return cached_response
+        
+        # call_intent = self.classify_call_intent(message)
+        # self.call_intent = call_intent
+        # print(f"Call Intent: {call_intent}")
+
+        # data = None
+        # if call_intent == "Order Status":
+        #     status = self.get_order_status()
+        #     data = get_order_status_response(status)
+        #     if data is None:
+        #         data = "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again."
+        # elif call_intent == "Returns":
+        #     self.return_process(None)
+        # elif call_intent == "Refund":
+        #     self.refund_process(None)
+
+        # prompt = llama_prompt(message, call_intent, data, self.llm_chat.chat_history)       
+        # response = self.llm_chat.generate_response(message, prompt)
+
+        # # self.vector_db.add_response(message, response) # WORK IN PROGRESS
+        # self.llm_chat.add_message(f"AI Assistant: {response}")
+        # return response
     
     def get_shopify_status(self) -> int:
         """
