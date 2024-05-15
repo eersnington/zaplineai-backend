@@ -2,6 +2,31 @@
     This file contains the prompt for the LLM model in different prompt formats.
 """
 
+classifier_prompt = """<|user|>
+Classify a customer query from an e-commerce Shopify Store chat into the defined categories below.
+I have defined each class.
+
+Classes:
+1. Order Status - Asking about the status of their order
+2. Returns - Wanting to return an order
+3. Refund - Wanting to refund an order
+4. Cancellation - Wanting to cancel an order
+5. Product Info - Asking about a product
+6. Sales - Wanting to buy something
+7. Transfer - Wanting to Transfer their call
+8. General - A general message that doesn't fall into other categories
+
+Customer Query to Classify: {user_query}
+
+Only tell the name of the class the query falls under.
+<|end|>
+<|assistant|>
+"""
+
+def get_classifier_prompt(user_query: str) -> str:
+    return classifier_prompt.format(user_query=user_query)
+
+
 return_guidelines = """
 
 (If a customer wants to return a purchased item or an order, then say the following)
