@@ -43,7 +43,7 @@ while True:
     chat_prompt = get_chat_prompt(bot_name, store_name) + "\n\n" + messages_formatter(message_history)
     # print(chat_prompt + f"\n\n(Example response - {example_response})\n\nAssistant: ")
     start = time.time()
-    llm_input = chat_prompt + f"\n\n(Example response - {example_response})\n\nAssistant: "
+    llm_input = chat_prompt + f"\n\n(Example response that can help you frame your answer - {example_response})\n\nAssistant: "
     llm_response = llm.generate_text(llm_input)
     add_message("Assistant", llm_response)
     end = time.time()
