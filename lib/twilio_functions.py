@@ -112,7 +112,8 @@ def speech_delay(transcription_text: str) -> int:
     return (len(transcription_text.split(" ")) / 2.5)
 
 
-def update_phone(public_url: str, phone_number: str) -> None:
+def update_phone(public_url: str, 
+                 phone_number: str) -> None:
     """
     Updates the voice URL of a specific phone number in Twilio.
 
@@ -130,7 +131,9 @@ def update_phone(public_url: str, phone_number: str) -> None:
     )
 
 
-async def voice_response(transcription_text: str, call_sid: str, twilio_client: Client) -> None:
+async def voice_response(transcription_text: str, 
+                         call_sid: str, 
+                         twilio_client: Client) -> None:
     """
     Adds a voice response into the call instance. This is an async operation.
 
@@ -155,13 +158,19 @@ async def voice_response(transcription_text: str, call_sid: str, twilio_client: 
         logging.info(f"Exception: {e}")
 
 
-async def call_accept(request:Request, public_url: str, phone_number: str) -> VoiceResponse:
+async def call_accept(request:Request, 
+                      public_url: str, 
+                      phone_number: str, 
+                      bot_name: str, 
+                      brand_name: str) -> VoiceResponse:
     """
     Handles the call accept event and returns the TwiML instructions for the call session.
 
     Args:
     - public_url (str): The public URL where Twilio will send a request when the phone number receives a call.
     - phone_number (str): The specific phone number to be updated.
+    - bot_name (str): The name of the AI assistant.
+    - brand_name (str): The name of the brand for the call session.
 
     Returns: 
         VoiceResponse: A VoiceResponse instance containing the TwiML instructions for the call session.
@@ -175,7 +184,7 @@ async def call_accept(request:Request, public_url: str, phone_number: str) -> Vo
     
     active_calls[call_sid] = call_from
 
-    response_text = f"Hey, my name is Zappy."
+    response_text = f"Hey, I'm {bot_name}, an AI assistant for {brand_name}. What can I help you with?"
     response = VoiceResponse()
     start = Start()
     start.stream(
@@ -186,7 +195,9 @@ async def call_accept(request:Request, public_url: str, phone_number: str) -> Vo
     return response
 
 
-async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> None:
+async def call_stream(websocket: WebSocket, 
+                      phone_no: str,
+                      brand_name: str) -> None:
     """
     Handles the audio stream of a call session.
 
@@ -202,11 +213,12 @@ async def call_stream(websocket: WebSocket, phone_no: str, brand_name: str) -> N
     is_speech_started = False
 
     audio_buffer = AudioBuffer() # _QueueStream() makes ASR unresponsive (bug)
+    vad = webrtcvad.Vad(2) # 0-3 | 3 is the aggressiveness mode
 
     await websocket.accept()
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
-    vad = webrtcvad.Vad(3) # 3 is the aggressiveness mode
+    bot_name = store.bot_name
 
     initial_response = f" Thanks for calling {brand_name}!."
 
