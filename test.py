@@ -1,5 +1,5 @@
-from lib.llm_model import ClassifierModel, LLMModel
-from lib.llm_prompt import get_classifier_prompt, get_chat_prompt
+from lib.llm_model import ClassifierModel, LLMModel, LLMChat
+from lib.llm_prompt import get_chat_prompt
 from lib.cached_response import get_example_response
 import torch
 import time
@@ -7,6 +7,8 @@ import time
 
 classifier = ClassifierModel()
 llm = LLMModel()
+llmchat = LLMChat(llm, classifier)
+
 print(f"GPU Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
 
 bot_name = "Sunny"
@@ -30,10 +32,9 @@ while True:
         break
     
     add_message("User", user_input)
-    
-    classifier_prompt = get_classifier_prompt(user_input)
+  
     start = time.time()
-    message_intent = classifier.classify(classifier_prompt)
+    message_intent = llmchat.classifier_response(user_input)
     end = time.time()
     print(f"Message intent: {message_intent}")
     print(f"Time taken for classification: {end - start} seconds")
@@ -45,7 +46,7 @@ while True:
     # print(chat_prompt + f"\n\n(Example response - {example_response})\n\nAssistant: ")
     start = time.time()
     llm_input = chat_prompt + f"\n\n(Example response that can help you frame your answer - {example_response})\n\nAssistant: "
-    llm_response = llm.generate_text(llm_input)
+    llm_response = llmchat.llm_response(llm_input)
     add_message("Assistant", llm_response)
     end = time.time()
     print(f"Generated response: {llm_response}")
