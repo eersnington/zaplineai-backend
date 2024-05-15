@@ -219,6 +219,7 @@ async def call_stream(websocket: WebSocket,
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
     bot_name = "Sunny"
+    brand_name = "Sunshine Swimsuits"
 
     llm_chat = CallChatSession(app_token=store.app_token, 
                                myshopify=store.myshopify,
@@ -242,7 +243,7 @@ async def call_stream(websocket: WebSocket,
                 if additional_response == "Exception":
                     raise ShopifyException("Shopify Exception")
                 
-                delay = speech_delay("Hey, I'm Sunny, an AI assistant for Zapline AI. What can I help you with?")
+                delay = speech_delay("Hey, I'm Sunny, an AI assistant for Zapline. What can I help you with?")
                 print(f"Speech Delay: {delay}s")
                 await asyncio.sleep(delay)
                 print("Bot response completed")
