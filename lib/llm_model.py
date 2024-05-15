@@ -38,7 +38,7 @@ def get_vllm_model(model: str,
 
 class ClassifierModel:
     def __init__(self):
-        self.model = get_vllm_model("Sreenington/Phi-3-mini-4k-instruct-AWQ", "awq", 0.3)
+        self.model = get_vllm_model("Sreenington/Phi-3-mini-4k-instruct-AWQ", 0.3, "awq")
 
     def classify(self, prompt: str) -> str:
         sampling_params = SamplingParams(
@@ -53,7 +53,7 @@ class ClassifierModel:
 
 class LLMModel:
     def __init__(self):
-        self.llm = get_vllm_model("Sreenington/Llama-3-8B-ChatQA-AWQ", "awq", 0.6)
+        self.llm = get_vllm_model("Sreenington/Llama-3-8B-ChatQA-AWQ", 0.6, "awq")
 
     def generate_text(self, prompt: str, temperature=0.7, max_tokens=100) -> str:
         """
