@@ -200,8 +200,24 @@ class CallChatSession:
         Returns:
             str. The intent of the call.
         """
-        self.call_intent = self.llm_chat.classifier_response(message)
-        return self.call_intent
+        call_intent = self.llm_chat.classifier_response(message)
+        if "Order Status" in call_intent:
+            self.call_intent = "Order Status"
+        elif "Returns" in call_intent:
+            self.call_intent = "Returns"
+        elif "Refund" in call_intent:
+            self.call_intent = "Refund"
+        elif "Cancellation" in call_intent:
+            self.call_intent = "Cancellation"
+        elif "Sales" in call_intent:
+            self.call_intent = "Sales"
+        elif "Transfer" in call_intent:
+            self.call_intent = "Transfer"
+        elif "General" in call_intent:
+            if self.call_intent is None:
+                self.call_intent = "General Inquiry"
+        
+        return call_intent
         
 
     def get_response(self, message: str) -> str:
