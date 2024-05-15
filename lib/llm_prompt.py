@@ -32,12 +32,13 @@ Context of {store_name}: Is a an e-commerce brand that sells swimsuits.
 Context of the user - This user placed an Order on 8th March with the items [Short Sleeve, Baggy Jeans].
 The status of the order - Order is in shipment and is expected to arrive in 2-3 days.
 Refund, Returns and Cancellation is possible. Ask for the reason if the user requests this. Once the reason is stated, then inform them the request is being processed.
+Additional Instructions: {additional_instruct}
 
-Remember to introduce yourself in a short but friendly way and ask them what help would they need."""
+Introduce yourself in a short but friendly way, ask them what help would they need."""
 
-def get_chat_prompt(bot_name: str, store_name: str) -> str:
+def get_chat_prompt(bot_name: str, store_name: str, additional_instruct: str) -> str:
     prompt_template = system_prompt + f"\n\n{context}"
-    return prompt_template.format(bot_name=bot_name, store_name=store_name)
+    return prompt_template.format(bot_name=bot_name, store_name=store_name, additional_instruct=additional_instruct)
 
 
 return_guidelines = """
