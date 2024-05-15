@@ -239,7 +239,7 @@ def get_example_response(intent):
         if item in intent:
             return cached_intent_responses[item]
 
-    return "[There is no response available for this intent.]"
+    return "[There is no response available for this query.]"
 
 
 # Example usage
