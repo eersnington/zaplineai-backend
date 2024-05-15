@@ -89,13 +89,13 @@ class LLMChat:
     def add_message(self, role: str, content: str) -> None:
         self.chat_history.append({"role": role, "content": content})
 
-    def messages_formatter(self, messages: list) -> str:
+    def messages_formatter(self) -> str:
         formatted_messages = []
-        for message in messages:
+        for message in self.chat_history:
             formatted_messages.append(f"{message['role']}: {message['content']}")
         return '\n\n'.join(formatted_messages)
 
-    def generate_response(self, message: str, prompt: str, temperature=0.7, max_tokens=100) -> str:
+    def llm_response(self, message: str, prompt: str, temperature=0.7, max_tokens=100) -> str:
         """
         Generate a response to a message using the vLLM model.
 
@@ -117,7 +117,7 @@ class LLMChat:
 
         return response
     
-    def classify_message_intent(self, message: str) -> str:
+    def classifier_response(self, message: str) -> str:
         """
         Get the call type classification output for a message.
 
