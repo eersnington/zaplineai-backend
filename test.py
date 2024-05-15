@@ -41,9 +41,9 @@ while True:
     print(f"Example response: {example_response}")
 
     chat_prompt = get_chat_prompt(bot_name, store_name) + "\n" + messages_formatter(message_history)
-    print(chat_prompt)
+    print(chat_prompt + "Assistant: ")
     # start = time.time()
-    # llm_response = llm.generate_text(chat_prompt)
+    # llm_response = llm.generate_text(chat_prompt + "Assistant: ")
     # add_message("Assistant", llm_response)
     # end = time.time()
     # print(f"Generated response: {llm_response}")
