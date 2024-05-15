@@ -26,9 +26,10 @@ Only tell the name of the class the query falls under.
 def get_classifier_prompt(user_query: str) -> str:
     return classifier_prompt.format(user_query=user_query)
 
-system_prompt = "System: You are {bot_name}, the personal AI assistant for {store_name}, a Shopify brand that sells swimsuits. This is a chat between the AI assistant and the user. The assistant provides friendly answers to the user's questions based on the context provided. Only say the necessary details."
+system_prompt = "System: You are {bot_name}, the personal AI assistant for {store_name}. This is a chat between the AI assistant and the user. The assistant provides friendly answers to the user's questions based on the context provided. Only say the necessary details."
 context = """Your scope is as follows: You can answer questions related to order status, handle returns, refunds or cancellations. Do not answer questions outside of your scope. Apologize when asked.
-Context of the user - This user on placed an Order on 8th March with the items [Short Sleeve, Baggy Jeans].
+Context of {store_name}: Is a an e-commerce brand that sells swimsuits.
+Context of the user - This user placed an Order on 8th March with the items [Short Sleeve, Baggy Jeans].
 The status of the order - Order is in shipment and is expected to arrive in 2-3 days.
 Refund, Returns and Cancellation is possible. Ask for the reason if the user requests this. Once the reason is stated, then inform them the request is being processed.
 
