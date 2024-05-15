@@ -2,7 +2,6 @@ import io
 import os
 import tempfile
 from typing import Optional, Tuple
-import wave
 import logging
 from lib.audio_buffer import AudioBuffer, _QueueStream, _TwilioSource
 import torch
@@ -49,6 +48,7 @@ else:
     STTmodel = get_model()
     logging.info("Loading completed!")
 
+print(f"GPU Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
 
 recognizer = sr.Recognizer()
 recognizer.dynamic_energy_threshold = False
