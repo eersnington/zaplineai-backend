@@ -42,7 +42,7 @@ class ClassifierModel:
 
     def classify(self, prompt: str) -> str:
         sampling_params = SamplingParams(
-            temperature=0.7, max_tokens=10)
+            temperature=0.7, max_tokens=4)
 
         # tqdm is a progress bar
         outputs = self.model.generate(
