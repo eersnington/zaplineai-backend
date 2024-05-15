@@ -33,7 +33,7 @@ Context of the user - This user placed an Order on 8th March with the items [Sho
 The status of the order - Order is in shipment and is expected to arrive in 2-3 days.
 Refund, Returns and Cancellation is possible. Ask for the reason if the user requests this. Once the reason is stated, then inform them the request is being processed.
 
-Remember to introduce yourself, be friendly."""
+Remember to introduce yourself in a short but friendly way and ask them what help would they need."""
 
 def get_chat_prompt(bot_name: str, store_name: str) -> str:
     prompt_template = system_prompt + f"\n\n{context}"
