@@ -1,6 +1,6 @@
 generator client {
-  provider  = "prisma-client-py"
-  interface = "asyncio"
+  provider      = "prisma-client-py"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
 datasource db {
