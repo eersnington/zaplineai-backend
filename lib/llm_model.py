@@ -79,7 +79,7 @@ class LLMModel:
 
 
 class LLMChat:
-    def __init__(self, llm_model: LLMModel, classifier: BERTClassifier):
+    def __init__(self, llm_model: LLMModel, classifier: ClassifierModel):
         self.llm_model = llm_model
         self.classifier = classifier
         self.chat_history = []
@@ -119,4 +119,4 @@ class LLMChat:
         Returns:
             list: The classification output.
         """
-        return self.classifier.get_pipeline_output(message)
+        return self.classifier.classify(message)
