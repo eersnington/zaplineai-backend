@@ -23,7 +23,7 @@ TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 
 # Constants
-VAD_SAMPLERATE = 8000 # Hz
+VAD_SAMPLERATE = 16000 # Hz
 IGNORE_DURATION = 2  # seconds to ignore customer audio after bot response
 
 twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
@@ -270,6 +270,7 @@ async def call_stream(websocket: WebSocket,
             elif packet['event'] == 'media':
                 chunk = base64.b64decode(packet['media']['payload'])
                 audio_data = audioop.ulaw2lin(chunk, 2)
+                audio_data = audioop.ratecv(audio_data, 2, 1, 8000, 16000, None)[0]
                 is_speech = vad.is_speech(audio_data, VAD_SAMPLERATE)
 
                 if is_speech:
