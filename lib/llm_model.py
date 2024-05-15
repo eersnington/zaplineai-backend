@@ -42,7 +42,7 @@ class ClassifierModel:
 
     def classify(self, prompt: str) -> str:
         sampling_params = SamplingParams(
-            temperature=temperature, max_tokens=max_tokens)
+            temperature=0.7, max_tokens=10)
 
         # tqdm is a progress bar
         outputs = self.llm.generate(
@@ -68,7 +68,7 @@ class LLMModel:
             str: The generated text.
         """
         sampling_params = SamplingParams(
-            temperature=temperature, max_tokens=0.7)
+            temperature=temperature, max_tokens=max_tokens)
 
         # tqdm is a progress bar
         outputs = self.llm.generate(
