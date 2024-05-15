@@ -2,6 +2,8 @@
 import logging
 from typing import Tuple, Optional, Union
 from dotenv import load_dotenv, find_dotenv
+
+from lib.llm_prompt import llama_prompt, get_classifier_prompt
 from vllm import LLM, SamplingParams
 from typing import Union
 import logging
@@ -84,10 +86,16 @@ class LLMChat:
         self.classifier = classifier
         self.chat_history = []
 
-    def add_message(self, message: str) -> None:
-        self.chat_history.append(message)
+    def add_message(self, role: str, content: str) -> None:
+        self.chat_history.append({"role": role, "content": content})
 
-    def generate_response(self, message: str, prompt: str, temperature=0.8, max_tokens=100) -> str:
+    def messages_formatter(self, messages: list) -> str:
+        formatted_messages = []
+        for message in messages:
+            formatted_messages.append(f"{message['role']}: {message['content']}")
+        return '\n\n'.join(formatted_messages)
+
+    def generate_response(self, message: str, prompt: str, temperature=0.7, max_tokens=100) -> str:
         """
         Generate a response to a message using the vLLM model.
 
@@ -100,16 +108,16 @@ class LLMChat:
         Returns:
             str: The generated response.
         """
-        self.add_message(f"Customer: {message}")
+        self.add_message("User", message)
 
         response = self.llm_model.generate_text(
             prompt, temperature, max_tokens)
 
-        self.add_message(f"AI Assistant: {response}")
+        self.add_message("Assistant", response)
 
         return response
     
-    def get_call_type(self, message: str) -> list:
+    def classify_message_intent(self, message: str) -> str:
         """
         Get the call type classification output for a message.
 
@@ -119,4 +127,5 @@ class LLMChat:
         Returns:
             list: The classification output.
         """
-        return self.classifier.classify(message)
+        classification_prompt = get_classifier_prompt(message)
+        return self.classifier.classify(classification_prompt)
