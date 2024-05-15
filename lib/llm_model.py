@@ -61,7 +61,7 @@ class ClassifierModel:
 
 class LLMModel:
     def __init__(self):
-        self.llm = get_vllm_model("Sreenington/Llama-3-8B-ChatQA-AWQ", 0.6, "awq")
+        self.llm = get_vllm_model("Sreenington/Llama-3-8B-ChatQA-AWQ", 0.58, "awq")
 
     def generate_text(self, prompt: str, temperature=0.7, max_tokens=100) -> str:
         """
