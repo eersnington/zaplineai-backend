@@ -1,57 +1,29 @@
-from lib.llm_model import ClassifierModel, LLMModel, LLMChat
+from lib.call_chat import CallChatSession
 from lib.llm_prompt import get_chat_prompt
 from lib.cached_response import get_example_response
 import torch
-import time
 
 
-classifier = ClassifierModel()
-llm = LLMModel()
-llmchat = LLMChat(llm, classifier)
-
-print(f"GPU Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
 
 bot_name = "Sunny"
 store_name = "Sunshine Swimsuits"
 additional_instruct = "When introducing yourself to the customer, say there's a sale of 40% ongoing inline."
 
-message_history = []
-def add_message(role, content):
-  message_history.append({"role": role, "content": content})
+llmchat = CallChatSession(app_token="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", 
+                          myshopify="b59bb6-2", 
+                          bot_name=bot_name, 
+                          brand_name=store_name)
+print(f"GPU Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
 
-def messages_formatter(messages):
-  formatted_messages = []
-  for message in messages:
-    formatted_messages.append(f"{message['role']}: {message['content']}")
-  return '\n\n'.join(formatted_messages)
+llmchat.start("1234", "+919952062221")
+
+first_response = "Hey there! I'm {bot_name}, your virtual assistant from {store_name}. What can I help you with today?"
+llmchat.llm_chat.add_message("Assistant", first_response)
 
 while True:
-    print("")
-    user_input = input("Enter your message: ")
+    user_input = input("User: ")
     if user_input == "exit":
         break
     
-    add_message("User", user_input)
-  
-    start = time.time()
-    message_intent = llmchat.classifier_response(user_input)
-    end = time.time()
-    print(f"Message intent: {message_intent}")
-    print(f"Time taken for classification: {end - start} seconds")
-
-    example_response = get_example_response(message_intent)
-    print(f"Example response: {example_response}")
-
-    chat_prompt = get_chat_prompt(bot_name, store_name, additional_instruct) + "\n\n" + messages_formatter(message_history)
-    # print(chat_prompt + f"\n\n(Example response - {example_response})\n\nAssistant: ")
-    start = time.time()
-    llm_input = chat_prompt + f"\n\n(Example response that can help you frame your answer - {example_response})\n\nAssistant: "
-    llm_response = llmchat.llm_response(llm_input)
-    add_message("Assistant", llm_response)
-    end = time.time()
-    print(f"Generated response: {llm_response}")
-    print(f"Time taken for generation: {end - start} seconds")
-
-print("Conversation ended.")
-chat_prompt = get_chat_prompt(bot_name, store_name) + "\n" + messages_formatter(message_history)
-print(chat_prompt)
+    response = llmchat.get_response(user_input)
+    print(f"Assistant: {response}")
