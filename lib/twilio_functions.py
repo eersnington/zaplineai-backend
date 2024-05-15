@@ -213,7 +213,7 @@ async def call_stream(websocket: WebSocket,
     is_speech_started = False
 
     audio_buffer = AudioBuffer() # _QueueStream() makes ASR unresponsive (bug)
-    vad = webrtcvad.Vad(2) # 0-3 | 3 is the aggressiveness mode
+    vad = webrtcvad.Vad(3) # 0-3 | 3 is the aggressiveness mode
 
     await websocket.accept()
     store = await db.bot.find_first(where={"phone_no": phone_no})
