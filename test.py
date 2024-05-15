@@ -3,8 +3,6 @@ from lib.llm_prompt import get_chat_prompt
 from lib.cached_response import get_example_response
 import torch
 
-
-
 bot_name = "Sunny"
 store_name = "Sunshine Swimsuits"
 additional_instruct = "When introducing yourself to the customer, say there's a sale of 40% ongoing inline."
