@@ -4,7 +4,7 @@ import torch
 from typing import Tuple, Optional, Union
 from dotenv import load_dotenv, find_dotenv
 
-from lib.llm_prompt import llama_prompt, get_classifier_prompt
+from lib.llm_prompt import get_classifier_prompt
 from vllm import LLM, SamplingParams
 from typing import Union
 import logging
