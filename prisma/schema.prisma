@@ -1,12 +1,12 @@
 generator client {
-  provider      = "prisma-client-py"
-  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
 }
 
 datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
