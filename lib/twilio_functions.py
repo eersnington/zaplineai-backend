@@ -218,11 +218,14 @@ async def call_stream(websocket: WebSocket,
     await websocket.accept()
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
-    bot_name = store.bot_name
+    bot_name = "Sunny"
 
     initial_response = f" Thanks for calling {brand_name}!."
 
-    llm_chat = CallChatSession(store.app_token, store.myshopify)
+    llm_chat = CallChatSession(app_token=store.app_token, 
+                               myshopify=store.myshopify,
+                               bot_name=bot_name,
+                               brand_name=brand_name)
     call_sid = None
 
     try:
