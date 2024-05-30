@@ -2,9 +2,20 @@ import sqlite3
 from random import choices, randint
 from datetime import datetime, timedelta
 
-# Connect to the database
 conn = sqlite3.connect('user_metrics.db')
 c = conn.cursor()
+
+with conn:
+    conn.execute('''CREATE TABLE IF NOT EXISTS user_metrics (
+                     user_id TEXT,
+                     calls INTEGER,
+                     automated_calls INTEGER,
+                     transferred_calls INTEGER,
+                     abandoned_calls INTEGER,
+                     call_type TEXT DEFAULT "automated",
+                     call_intent TEXT DEFAULT "Order Status",
+                     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                     )''')
 
 # Define the user ID for which calls should be added
 user_id = 'kp_1071d97754b44202a1cc766e2cc6a512'
@@ -22,7 +33,7 @@ recent_calls = c.fetchall()
 print(recent_calls)
 
 # Add 250 calls
-for _ in range(250):
+for _ in range(281):
     call_type = choices(['automated', 'transferred', 'abandoned'], ratios)[0]
     if call_type == 'automated':
         call_intent = choices(['Order Status', 'Returns', 'Product Info', 'Refund'], [25, 25, 25, 25])[0]
