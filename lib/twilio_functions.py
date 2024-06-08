@@ -184,6 +184,8 @@ async def call_accept(request:Request,
     
     active_calls[call_sid] = call_from
 
+    brand_name = "The Everything Clothing Store"
+
     response_text = f"Hey, I'm {bot_name}, an AI assistant for {brand_name}. What can I help you with?"
     response = VoiceResponse()
     start = Start()
@@ -219,7 +221,7 @@ async def call_stream(websocket: WebSocket,
     store = await db.bot.find_first(where={"phone_no": phone_no})
 
     bot_name = "Sunny"
-    brand_name = "Sunshine Swimsuits"
+    brand_name = "The Everything Clothing Store"
 
     llm_chat = CallChatSession(app_token=store.app_token, 
                                myshopify=store.myshopify,
