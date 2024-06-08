@@ -21,7 +21,7 @@ with conn:
 user_id = 'kp_1071d97754b44202a1cc766e2cc6a512'
 
 # Define the ratios for automated, transferred, and abandoned calls
-ratios = [77, 19, 4]
+ratios = [80, 18, 2]
 
 # Define the start and end dates for the calls
 end_date = datetime.now()
@@ -33,7 +33,7 @@ recent_calls = c.fetchall()
 print(recent_calls)
 
 # Add 250 calls
-for _ in range(281):
+for _ in range(342):
     call_type = choices(['automated', 'transferred', 'abandoned'], ratios)[0]
     if call_type == 'automated':
         call_intent = choices(['Order Status', 'Returns', 'Product Info', 'Refund'], [25, 25, 25, 25])[0]
