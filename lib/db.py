@@ -75,14 +75,14 @@ async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
             })
         return
     
-    call_data = json.loads(call_logs.call_data).append(call_data)
+    updated_call_data = json.loads(call_logs.call_data).append(call_data)
 
     await db.call_logs.update(
         where={
             'user_id': user_id,
         },
         data={
-            "call_data": json.dumps(call_data)
+            "call_data": json.dumps(updated_call_data)
         }
     )
 
