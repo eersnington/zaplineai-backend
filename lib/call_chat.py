@@ -1,3 +1,4 @@
+import asyncio
 from typing import Union
 from lib.cached_response import get_intent_response, get_example_response
 from lib.llm_model import LLMModel, LLMChat, ClassifierModel
@@ -393,7 +394,7 @@ class CallChatSession:
         return call_type
     
 
-    def track_call(self, user_id: str, call_intent: str) -> str:
+    async def track_call(self, user_id: str, call_intent: str) -> str:
         """
         Tracks the call metrics for the user.
 
@@ -410,7 +411,7 @@ class CallChatSession:
             if ci == None:
                 ci = "Other"
             print(f"UserID: {user_id} | Call Intent: {ci} | Call Type: {ct}")
-            track_metrics(user_id, call_type=ct, call_intent=ci)
+            asyncio.create_task(track_metrics(user_id, call_type=ct, call_intent=ci))
             print("Call tracked!")
         except Exception as e:
             return f"Error occurred: {str(e)}"
