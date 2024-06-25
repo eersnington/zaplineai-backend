@@ -73,7 +73,7 @@ async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
             "user_id": user_id,
             "call_data": Json(call_data),
         })
-        print(f"Created new call log for user - {user_id}")
+        print(f"Created new call log for user - {user_id} - dubious")
 
     else:
         new_call_data = [call_type, call_intent, datetime.datetime.now().isoformat()]
@@ -91,12 +91,3 @@ async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
                 "call_data": Json(updated_call_data)
             }
         )
-
-
-async def execute_task():
-    await db.connect()
-    await track_metrics("kp_1071d97754b44202a1cc766e2cc6a512", "automated", "Order Status")
-    await db.disconnect()
-
-if __name__ == "__main__":
-    asyncio.run(execute_task())
