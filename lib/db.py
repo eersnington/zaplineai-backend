@@ -81,3 +81,7 @@ async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
             "call_data": json.dumps(call_data)
         }
     )
+
+
+if __name__ == "__main__":
+    asyncio.run(track_metrics("kp_1071d97754b44202a1cc766e2cc6a512", "automated", "Order Status"))
