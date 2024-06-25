@@ -74,7 +74,7 @@ async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
     else:
 
         call_data = [call_type, call_intent, datetime.datetime.now().isoformat()]
-        old_call_data = json.loads(existing_call_logs.call_data)
+        old_call_data = existing_call_logs.call_data
         updated_call_data = old_call_data.append(call_data)
 
         await db.call_logs.update(
