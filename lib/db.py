@@ -62,26 +62,27 @@ async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
             }
         )
 
-    call_data = [call_type, call_intent, datetime.datetime.now().isoformat()]
-    call_logs = await db.call_logs.find_first(where={"user_id": user_id})
+    # call_data = [call_type, call_intent, datetime.datetime.now().isoformat()]
+    # call_logs = await db.call_logs.find_first(where={"user_id": user_id})
 
-    if call_logs is None:
-        await db.call_logs.create(
-            user_id=user_id,
-            call_data=json.dumps(call_data)
-        )
-        return
+    # if call_logs is None:
+    #     binary_data = json.dumps(call_data)
+    #     await db,call_logs.create(
+    #         user_id=user_id,
+    #         call_data=binary_data
+    #     )
+    #     return
     
-    call_data = json.loads(call_logs["call_data"]) + call_data
+    # call_data = json.loads(call_logs["call_data"]) + call_data
 
-    await db.call_logs.update(
-        where={
-            'user_id': user_id,
-        },
-        data={
-            "call_data": json.dumps(call_data)
-        }
-    )
+    # await db.call_logs.update(
+    #     where={
+    #         'user_id': user_id,
+    #     },
+    #     data={
+    #         "call_data": json.dumps(call_data)
+    #     }
+    # )
 
 
 async def execute_task():
