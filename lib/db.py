@@ -3,6 +3,8 @@ import datetime
 import json
 from prisma import Prisma
 
+from prisma.fields import Json
+
 db = Prisma()
 
 async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
@@ -63,26 +65,30 @@ async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
         )
 
     existing_call_logs = await db.call_logs.find_first(where={"user_id": user_id})
-    print(existing_call_logs.call_data)
 
     if existing_call_logs is None:
+        call_data = json.dumps([], separators=(',', ':'))
         await db.call_logs.create({
+            "id": 1,
             "user_id": user_id,
-            "call_data": json.dumps([]),
+            "call_data": Json(call_data),
         })
+        print(f"Created new call log for user - {user_id}")
 
     else:
+        new_call_data = [call_type, call_intent, datetime.datetime.now().isoformat()]
 
-        call_data = [call_type, call_intent, datetime.datetime.now().isoformat()]
-        old_call_data = existing_call_logs.call_data
-        updated_call_data = old_call_data.append(call_data)
+        old_call_data = json.loads(existing_call_logs.call_data)
+        old_call_data.append(new_call_data)
+        
+        updated_call_data = json.dumps(old_call_data)
 
         await db.call_logs.update(
             where={
                 'user_id': user_id,
             },
             data={
-                "call_data": updated_call_data
+                "call_data": Json(updated_call_data)
             }
         )
 
