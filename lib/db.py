@@ -81,11 +81,10 @@ async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
             "call_data": json.dumps(call_data)
         }
     )
-
 async def execute_task():
     db.connect()
-    asyncio.run(track_metrics("kp_1071d97754b44202a1cc766e2cc6a512", "automated", "Order Status"))
+    await track_metrics("kp_1071d97754b44202a1cc766e2cc6a512", "automated", "Order Status")
     db.disconnect()
 
 if __name__ == "__main__":
-    asyncio.run(execute_task())
+    execute_task()
