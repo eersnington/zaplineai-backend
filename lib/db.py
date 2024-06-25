@@ -84,4 +84,6 @@ async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
 
 
 if __name__ == "__main__":
+    db.connect()
     asyncio.run(track_metrics("kp_1071d97754b44202a1cc766e2cc6a512", "automated", "Order Status"))
+    db.disconnect()
