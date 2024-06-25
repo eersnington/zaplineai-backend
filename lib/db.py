@@ -61,7 +61,7 @@ async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
             }
         )
 
-    call_data = [call_type, call_intent, datetime.now()]
+    call_data = [call_type, call_intent, datetime.datetime.now().isoformat()]
     call_logs = await db.call_logs.find_first(where={"user_id": user_id})
 
     if call_logs is None:
