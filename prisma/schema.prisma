@@ -47,7 +47,7 @@ model Bot {
 
 model CallStats {
   id                Int    @id(map: "call_stats_pkey") @default(autoincrement())
-  user_id           String
+  user_id           String @unique
   total_calls       Int
   total_abandoned   Int
   total_transferred Int
@@ -56,6 +56,6 @@ model CallStats {
 
 model call_logs {
   id        Int    @id(map: "call_logs_pkey1") @default(autoincrement())
-  user_id   String
+  user_id   String @unique
   call_data Json
 }

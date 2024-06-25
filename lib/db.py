@@ -18,80 +18,70 @@ async def track_metrics(user_id: str, call_type: str, call_intent: str) -> None:
         None. The function performs an insert operation and does not return anything.
     """
 
-    await db.callstats.update(
+
+    if call_type == "automated":
+        await db.callstats.update(
             where={
                 'user_id': user_id,
             },
             data={
                 "total_calls": {
                     "increment": 1
+                },
+                "total_automated": {
+                    "increment": 1
+                }
+            }
+        )
+    elif call_type == "transferred":
+        await db.callstats.update(
+            where={
+                'user_id': user_id,
+            },
+            data={
+                "total_calls": {
+                    "increment": 1
+                },
+                "total_transferred": {
+                    "increment": 1
+                }
+            }
+        )
+    elif call_type == "abandoned":
+        await db.callstats.update(
+            where={
+                'user_id': user_id,
+            },
+            data={
+                "total_calls": {
+                    "increment": 1
+                },
+                "total_abandoned": {
+                    "increment": 1
                 }
             }
         )
 
-    # if call_type == "automated":
-    #     await db.callstats.update(
-    #         where={
-    #             'user_id': user_id,
-    #         },
-    #         data={
-    #             "total_calls": {
-    #                 "increment": 1
-    #             },
-    #             "total_automated": {
-    #                 "increment": 1
-    #             }
-    #         }
-    #     )
-    # elif call_type == "transferred":
-    #     await db.callstats.update(
-    #         where={
-    #             'user_id': user_id,
-    #         },
-    #         data={
-    #             "total_calls": {
-    #                 "increment": 1
-    #             },
-    #             "total_transferred": {
-    #                 "increment": 1
-    #             }
-    #         }
-    #     )
-    # elif call_type == "abandoned":
-    #     await db.callstats.update(
-    #         where={
-    #             'user_id': user_id,
-    #         },
-    #         data={
-    #             "total_calls": {
-    #                 "increment": 1
-    #             },
-    #             "total_abandoned": {
-    #                 "increment": 1
-    #             }
-    #         }
-    #     )
+    call_data = [call_type, call_intent, datetime.datetime.now().isoformat()]
+    call_logs = await db.call_logs.find_first(where={"user_id": user_id})
 
-    # call_data = [call_type, call_intent, datetime.datetime.now().isoformat()]
-    # call_logs = await db.call_logs.find_first(where={"user_id": user_id})
-
-    # if call_logs is None:
-    #     await db.call_logs.create(
-    #         user_id=user_id,
-    #         call_data=json.dumps(call_data)
-    #     )
-    #     return
+    if call_logs is None:
+        await db.call_logs.create(
+            user_id=user_id,
+            call_data=json.dumps(call_data)
+        )
+        return
     
-    # call_data = json.loads(call_logs["call_data"]) + call_data
+    call_data = json.loads(call_logs["call_data"]) + call_data
 
-    # await db.call_logs.update(
-    #     where={
-    #         'user_id': user_id,
-    #     },
-    #     data={
-    #         "call_data": json.dumps(call_data)
-    #     }
-    # )
+    await db.call_logs.update(
+        where={
+            'user_id': user_id,
+        },
+        data={
+            "call_data": json.dumps(call_data)
+        }
+    )
 
 
 async def execute_task():
