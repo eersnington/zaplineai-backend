@@ -87,4 +87,4 @@ async def execute_task():
     db.disconnect()
 
 if __name__ == "__main__":
-    execute_task()
+    asyncio.run(execute_task())
