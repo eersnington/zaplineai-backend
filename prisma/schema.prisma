@@ -1,7 +1,7 @@
 generator client {
   provider             = "prisma-client-py"
   interface            = "asyncio"
-  recursive_type_depth = 5
+  recursive_type_depth = "5"
 }
 
 datasource db {
@@ -16,9 +16,6 @@ model User {
   stripeSubscriptionId   String?   @unique @map("stripe_subscription_id")
   stripePriceId          String?   @unique @map("stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map("stripe_current_period_end")
-  profile                Profile?
-  config                 Config?
-  bot                    Bot?
 }
 
 model Profile {
@@ -28,7 +25,6 @@ model Profile {
   website   String
   email     String
   type      String
-  user      User   @relation(fields: [userId], references: [id])
 }
 
 model Config {
@@ -37,7 +33,6 @@ model Config {
   transferNumber String?
   fallbackMode   String
   fallbackEmail  String?
-  user           User    @relation(fields: [userId], references: [id])
 }
 
 model Bot {
@@ -48,5 +43,19 @@ model Bot {
   app_token     String?
   refund_accept String
   refund_window String?
-  user          User    @relation(fields: [userId], references: [id])
+}
+
+model CallStats {
+  id                Int    @id(map: "call_stats_pkey") @default(autoincrement())
+  user_id           String
+  total_calls       Int
+  total_abandoned   Int
+  total_transferred Int
+  total_automated   Int
+}
+
+model call_logs {
+  id        Int    @id(map: "call_logs_pkey1") @default(autoincrement())
+  user_id   String
+  call_data Json
 }
