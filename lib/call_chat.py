@@ -291,6 +291,7 @@ class CallChatSession:
 
         elif "Cancellation" in self.call_intent:
             self.cancel_order = True
+            print("Cancellation Process Started ----->")
             instruction = f"\n\n(Follow this instruction for your response - {get_example_response('Cancellation Step-1')})\n\nAssistant: "
 
         elif "Order Status" in self.call_intent:
