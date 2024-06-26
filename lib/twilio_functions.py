@@ -245,7 +245,7 @@ async def call_stream(websocket: WebSocket,
                 if additional_response == "Exception":
                     raise ShopifyException("Shopify Exception")
                 
-                delay = speech_delay("Hey, I'm Sunny, an AI assistant for Zapline. What can I help you with?")
+                delay = speech_delay("Hey, I'm Sunny, an AI assistant for Zapline. What can I help you with?") # Just a placeholder text to calculate the delay
                 print(f"Speech Delay: {delay}s")
                 await asyncio.sleep(delay)
                 print("Bot response completed")

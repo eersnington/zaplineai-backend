@@ -19,6 +19,8 @@ llmchat.start("1234", "+919952062221")
 first_response = "Hey there! I'm {bot_name}, your virtual assistant from {store_name}. What can I help you with today?"
 llmchat.llm_chat.add_message("Assistant", first_response)
 
+print(f"Assistant: {first_response}")
+
 while True:
     user_input = input("User: ")
     if user_input == "exit":
