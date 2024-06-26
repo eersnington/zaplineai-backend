@@ -1,5 +1,6 @@
 import asyncio
 from typing import Union
+from datetime import datetime
 from lib.cached_response import get_intent_response, get_example_response
 from lib.llm_model import LLMModel, LLMChat, ClassifierModel
 from lib.llm_prompt import get_chat_prompt
@@ -66,7 +67,9 @@ class CallChatSession:
             item_names = [item.title for item in items]
             self.order_items = item_names
             date = recent_order.created_at.split("T")[0]
-            self.order_date = date
+            date = datetime.strptime(date, "%Y-%m-%d").date()
+            formatted_date = date.strftime("%B %dth")
+            self.order_date = formatted_date
 
             self.order_id = recent_order.id
             self.order_status = recent_order.fulfillment_status
@@ -296,7 +299,7 @@ class CallChatSession:
         print("***********Instruction***********")
         print(llm_input)
         print("***********Instruction***********")
-        
+
         llm_response = self.llm_chat.llm_response(message=message, prompt=llm_input)
         return llm_response
 
