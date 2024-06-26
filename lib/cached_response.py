@@ -209,11 +209,11 @@ cached_intent_responses = {
 }
 
 cached_order_status_responses = {
-    "fulfilled": "Fulfilled - Means the order is already delivered to shipping address",
-    "unfulfilled": "Unfulfilled - Means the order being prepared for shipping",
-    "partially fulfilled": "Partial - Part of your order has been delivered, and rest is on the way",
-    "scheduled": "Scheduled - Means scheduled for delivery",
-    "on hold": "Hold - Order is on hold. Contact customer service with live transfer or email for more information",
+    "fulfilled": "The order is already delivered to shipping address",
+    "unfulfilled": "The order being prepared for shipping",
+    "partially fulfilled": "Part of your order has been delivered, and rest is on the way",
+    "scheduled": "Scheduled for delivery",
+    "on hold": "Order is on hold. Contact customer service trhough email or transfer this call for more information",
     "none": "I couldn't find any recent orders for this phone number. If you think this is a mistake, please call again later."
 }
 
