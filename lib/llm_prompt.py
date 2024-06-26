@@ -2,7 +2,7 @@
     This file contains the prompt for the LLM model in different prompt formats.
 """
 
-from typing import Union
+from typing import List, Union
 
 
 classifier_prompt = """<|user|>
@@ -32,7 +32,7 @@ def get_classifier_prompt(user_query: str) -> str:
 system_prompt = "System: You are {bot_name}, the personal AI assistant for {store_name}. This is a chat between the AI assistant and the user. The assistant provides friendly answers to the user's questions based on the context provided."
 context = """Your scope is as follows: You can answer questions related to order status, handle returns, refunds or cancellations.
 Context of {store_name}: Is a an e-commerce brand that clothes.
-Context of the user - This user placed an Order on 4th June with the item [Black Hoodie].
+Context of the user - This user placed an Order on {date} with the item {order_items}.
 The status of the order - Order has already arrived at the shipping address.
 Refund, Returns and Cancellation is possible. Ask for the reason if the user requests this. Once the reason is stated, then inform them the request is being processed.
 Additional Instructions: {additional_instruct}
@@ -40,12 +40,12 @@ Additional Instructions: {additional_instruct}
 Introduce yourself in a short but friendly way, ask them what help would they need.
 If the user says they no longer needs help, say good bye and have a nice day."""
 
-def get_chat_prompt(bot_name: str, store_name: str, additional_instruct: Union[str, None] = None) -> str:
+def get_chat_prompt(bot_name: str, store_name: str, date: str, order_items: List, additional_instruct: Union[str, None] = None) -> str:
     prompt_template = system_prompt + f"\n\n{context}"
     if additional_instruct is None:
-        return prompt_template.format(bot_name=bot_name, store_name=store_name, additional_instruct="None")
+        return prompt_template.format(bot_name=bot_name, store_name=store_name, date=date, order_items=order_items, additional_instruct="None")
     
-    return prompt_template.format(bot_name=bot_name, store_name=store_name, additional_instruct=additional_instruct)
+    return prompt_template.format(bot_name=bot_name, store_name=store_name, date=date, order_items=order_items, additional_instruct=additional_instruct)
 
 
 return_guidelines = """

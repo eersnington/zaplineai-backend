@@ -24,7 +24,8 @@ class CallChatSession:
         self.order = None # The recent order object from Shopify.
         self.order_id = None # The ID of the recent order.
         self.order_status = None # The status of the recent order.
-        self.order_items = None # The items in the recent order.
+        self.order_date = "None" # The date of the recent order.
+        self.order_items = [] # The items in the recent order.
         self.refund_order = False
         self.return_order = False
         self.cancel_order = False
@@ -65,6 +66,7 @@ class CallChatSession:
             item_names = [item.title for item in items]
             self.order_items = item_names
             date = recent_order.created_at.split("T")[0]
+            self.order_date = date
 
             self.order_id = recent_order.id
             self.order_status = recent_order.fulfillment_status
@@ -259,7 +261,7 @@ class CallChatSession:
             data = self.get_order_status()
             print("Order Status: ", data)
             
-        chat_prompt = get_chat_prompt(self.bot_name, self.brand_name) + "\n\n" + self.llm_chat.messages_formatter()
+        chat_prompt = get_chat_prompt(self.bot_name, self.brand_name, self.order_date, self.order_items) + "\n\n" + self.llm_chat.messages_formatter()
         instruction = None
         llm_input = chat_prompt + "\n\n(Follow this instruction for your response - {example_response})\n\nAssistant: "
         print(llm_input)
