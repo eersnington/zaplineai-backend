@@ -108,7 +108,7 @@ class CallChatSession:
         if self.order is None:
             return "I couldn't find any latest orders for this number. If you think this is a mistake, I can transfer the call for you."
 
-        note_text = f"Cancel initiated by customer through call. Reason: {self.cancel_reason}"
+        note_text = f"Cancel initiated by customer through call.{self.cancel_reason}"
         print("Order ID:", self.order.id)
 
         try:
@@ -172,7 +172,7 @@ class CallChatSession:
         if reason:
             if self.cancel_step == 2:
                 self.cancel_step = 0
-                self.cancel_reason = f"{self.cancel_reason}\n{reason}"
+                self.cancel_reason = f"Reason: {self.cancel_reason}\nResolution: {reason}"
                 self.cancel_order = False
                 response = self.initiate_cancel()
                 return response
