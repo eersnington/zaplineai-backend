@@ -315,61 +315,7 @@ class CallChatSession:
         llm_response = self.llm_chat.llm_response(message=message, prompt=llm_input)
         return llm_response
 
-        # if cached_response is not None:
-        #     if "<<explain the current status of your order>>" in cached_response:
-        #         self.call_intent = "Order Status"
-        #         data = self.get_order_status()
-        #         print("Order Status: ", data)
-        #         addon = get_order_status_response(data)
-        #         if addon is None:
-        #             addon = "I couldn't find any recent orders for this phone number. If you think this is a mistake, I can transfer the call for you."
-        #         cached_response = cached_response.replace("<<explain the current status of your order>>", addon)
 
-        #     elif "cancellation" in cached_response:
-        #         self.call_intent = "Cancellation"
-        #         self.cancel_process(None) # This is a dummy call to set the cancel_order flag to True (Cancel Step 1)
-
-        #     elif "return" in cached_response or "returning" in cached_response:
-        #         self.call_intent = "Returns"
-        #         self.return_process(None) # This is a dummy call to set the return_order flag to True (Returns Step 1)
-
-        #     elif "refund" in cached_response or "refunding" in cached_response:
-        #         self.call_intent = "Refund"
-        #         self.refund_process(None) # This is a dummy call to set the refund_order flag to True (Refund Step 1)
-
-        #     elif "sales representative" in cached_response:
-        #         self.call_intent = "Sales"
-            
-        #     elif "live representative" in cached_response:
-        #         self.call_intent = "Transfer"
-
-        #     print(f"Call Intent: {self.call_intent}")
-
-        #     self.llm_chat.add_message(f"AI Assistant: {cached_response}")
-        #     return cached_response
-        
-        # call_intent = self.classify_call_intent(message)
-        # self.call_intent = call_intent
-        # print(f"Call Intent: {call_intent}")
-
-        # data = None
-        # if call_intent == "Order Status":
-        #     status = self.get_order_status()
-        #     data = get_order_status_response(status)
-        #     if data is None:
-        #         data = "I couldn't find any recent orders for this phone number. If you think this is a mistake, please try calling me again."
-        # elif call_intent == "Returns":
-        #     self.return_process(None)
-        # elif call_intent == "Refund":
-        #     self.refund_process(None)
-
-        # prompt = llama_prompt(message, call_intent, data, self.llm_chat.chat_history)       
-        # response = self.llm_chat.generate_response(message, prompt)
-
-        # # self.vector_db.add_response(message, response) # WORK IN PROGRESS
-        # self.llm_chat.add_message(f"AI Assistant: {response}")
-        # return response
-    
     def get_shopify_status(self) -> int:
         """
         Gets the status of the Shopify API.
