@@ -16,7 +16,7 @@ print(f"GPU Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
 
 llmchat.start("1234", "+12512209809")
 
-first_response = "Hey there! I'm {bot_name}, your virtual assistant from {store_name}. What can I help you with today?"
+first_response = f"Hey there! I'm {bot_name}, your virtual assistant from {store_name}. What can I help you with today?"
 llmchat.llm_chat.add_message("Assistant", first_response)
 
 print(f"Assistant: {first_response}")
