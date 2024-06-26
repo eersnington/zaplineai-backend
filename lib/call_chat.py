@@ -117,7 +117,7 @@ class CallChatSession:
         except Exception as e:
             print(e)
 
-        return get_intent_response("Cancellation Step-2")
+        return get_intent_response("Cancellation Step-3")
 
 
     def initiate_return(self) -> str:
@@ -172,14 +172,18 @@ class CallChatSession:
         if reason:
             if self.cancel_step == 2:
                 self.cancel_step = 0
-                self.cancel_reason = reason
+                self.cancel_reason = f"{self.cancel_reason}\n{reason}"
                 self.cancel_order = False
                 response = self.initiate_cancel()
                 return response
             else:
                 self.cancel_reason = reason
                 self.cancel_step = 2
-                return get_intent_response("Cancellation Step-2")
+                chat_prompt = get_chat_prompt(self.bot_name, self.brand_name, self.order_date, self.order_items) + "\n\n" + self.llm_chat.messages_formatter()
+                instruction = f"\n\n(Follow this instruction for your response - {get_example_response('Cancellation Step-2')})\n\nAssistant: "
+                llm_input = chat_prompt + instruction
+                llm_response = self.llm_chat.llm_response(message=reason, prompt=llm_input)
+                return llm_response
 
     
     def return_process(self, reason) -> str:
