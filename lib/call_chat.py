@@ -116,7 +116,7 @@ class CallChatSession:
         except Exception as e:
             print(e)
 
-        return get_intent_response("Cancel Step2")
+        return get_intent_response("Cancellation Step-2")
 
 
     def initiate_return(self) -> str:
@@ -138,7 +138,7 @@ class CallChatSession:
         except Exception as e:
             print(e)
         
-        return get_intent_response("Returns Step2")
+        return get_intent_response("Returns Step-2")
     
 
     def initiate_refund(self) -> str:
@@ -160,7 +160,7 @@ class CallChatSession:
         except Exception as e:
             print(e)
 
-        return get_intent_response("Refund Step2")
+        return get_intent_response("Refund Step-2")
            
 
     def cancel_process(self, reason) -> str:
