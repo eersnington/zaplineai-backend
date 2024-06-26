@@ -229,7 +229,8 @@ def get_example_response(intent):
     cached_example_responses = {
         "Order Status": "Say in this format- Your last order of (mention the items) on (mention date) is [explain the status]. Do you need any other help?",
         "Cancellation Step-1": "Say this - I'm sorry to hear you want to cancel your order. Could you please tell me the reason for the cancellation?",
-        "Cancellation Step-2": "Say this - Your cancellation request is being processed. Our support team will get back to you shortly.",
+        "Cancellation Step-2": "Ask them if they want a full refund or order something else (tell any similar product) in stock with 50$ discount",
+        "Cancellation Step-3": "Say this - Your cancellation request is being processed. Our support team will get back to you shortly.",
         "Returns Step-1": "Say this - I'm sorry to hear you want to return your order. Could you please tell me the reason for the return?",
         "Returns Step-2": "Say this - Your return request is being processed. Our support team will get back to you shortly.",
         "Refund Step-1": "Say this - I'm sorry to hear you're requesting a refund. Could you please tell me the reason for the refund?",
