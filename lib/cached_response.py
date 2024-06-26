@@ -204,7 +204,7 @@ cached_intent_responses = {
     "Returns Step-2": "Thank you for sharing the reason for your return. I've started the return process for you, and someone from our team will be in touch soon to assist you further. Do you need any other help?",
     "Refund Step-2": "Thanks for letting us know why you're requesting a refund. I've initiated the refund process for you, and our team will reach out soon to assist you further. Do you need any other help?",
     "Cancellation Step-3": "Thanks for letting us know why you're requesting a cancellation. I've requested to cancel the order, and our team will reach out soon to assist you further. Do you need any other help?",
-    "Cancellation Step-2": "Ask them if they want a full refund or order something else in stock (tell an example of 2-3 similar products that is in stock) with 50$ discount",
+    "Cancellation Step-2": "Ask them if they want a full refund, or suggest 2 similar products (come up with it on your own) which is in stock with a 50$ discount",
 
 }
 
