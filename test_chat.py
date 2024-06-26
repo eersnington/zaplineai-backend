@@ -14,7 +14,7 @@ llmchat = CallChatSession(app_token="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",
                           brand_name=store_name)
 print(f"GPU Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
 
-llmchat.start("1234", "+919952062221")
+llmchat.start("1234", "+12512209809")
 
 first_response = "Hey there! I'm {bot_name}, your virtual assistant from {store_name}. What can I help you with today?"
 llmchat.llm_chat.add_message("Assistant", first_response)
