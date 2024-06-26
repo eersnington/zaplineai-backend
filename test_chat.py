@@ -29,5 +29,5 @@ while True:
     start = time.time()
     response = llmchat.get_response(user_input)
     end = time.time()
-    print(f"Assistant: {response}")
+    print(f"Bot: {response}")
     print(f"Time taken: {end - start:.3f} seconds")
