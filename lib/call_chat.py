@@ -1,7 +1,7 @@
 import asyncio
 from typing import Union
 from datetime import datetime
-from lib.cached_response import get_intent_response, get_example_response
+from lib.cached_response import get_intent_response, get_example_response, get_order_status_response
 from lib.llm_model import LLMModel, LLMChat, ClassifierModel
 from lib.llm_prompt import get_chat_prompt
 import shopify
@@ -108,7 +108,7 @@ class CallChatSession:
         if self.order is None:
             return "I couldn't find any latest orders for this number. If you think this is a mistake, I can transfer the call for you."
 
-        note_text = f"Cancel initiated by customer through call.{self.cancel_reason}"
+        note_text = f"Cancel initiated by customer through call.\n{self.cancel_reason}"
         print("Order ID:", self.order.id)
 
         try:
@@ -179,7 +179,9 @@ class CallChatSession:
             else:
                 self.cancel_reason = reason
                 self.cancel_step = 2
-                chat_prompt = get_chat_prompt(self.bot_name, self.brand_name, self.order_date, self.order_items) + "\n\n" + self.llm_chat.messages_formatter()
+                order_status_message = get_order_status_response(self.get_order_status())
+                print("Order Status Message: ", order_status_message)
+                chat_prompt = get_chat_prompt(self.bot_name, self.brand_name, order_status_message, self.order_date, self.order_items) + "\n\n" + self.llm_chat.messages_formatter()
                 instruction = f"\n\n(Follow this instruction for your response - {get_example_response('Cancellation Step-2')})\n\nAssistant: "
                 llm_input = chat_prompt + instruction
                 llm_response = self.llm_chat.llm_response(message=reason, prompt=llm_input)

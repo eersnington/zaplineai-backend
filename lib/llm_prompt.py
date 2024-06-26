@@ -33,14 +33,14 @@ system_prompt = "System: You are {bot_name}, the personal AI assistant for {stor
 context = """Your scope is as follows: You can answer questions related to order status, handle returns, refunds or cancellations.
 Context of {store_name}: Is a an e-commerce brand that clothes.
 Context of the user - This user placed an Order on {date} with the item {order_items}.
-The status of the order - Order has already arrived at the shipping address.
+The status of the order - {order_status}.
 Refund, Returns and Cancellation is possible. Ask for the reason if the user requests this. Once the reason is stated, then inform them the request is being processed.
 Additional Instructions: {additional_instruct}
 
 Introduce yourself in a short but friendly way, ask them what help would they need.
 If the user says they no longer needs help, say good bye and have a nice day."""
 
-def get_chat_prompt(bot_name: str, store_name: str, date: str, order_items: List, additional_instruct: Union[str, None] = None) -> str:
+def get_chat_prompt(bot_name: str, store_name: str, order_status: str, date: str, order_items: List, additional_instruct: Union[str, None] = None) -> str:
     prompt_template = system_prompt + f"\n\n{context}"
     if additional_instruct is None:
         return prompt_template.format(bot_name=bot_name, store_name=store_name, date=date, order_items=order_items, additional_instruct="None")

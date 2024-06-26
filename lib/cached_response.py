@@ -209,10 +209,10 @@ cached_intent_responses = {
 }
 
 cached_order_status_responses = {
-    "fulfilled": "Your order has been successfully delivered to your shipping address.",
-    "unfulfilled": "Our team is currently processing and preparing your order for shipping. We'll notify you once it's on its way.",
-    "partially fulfilled": "Part of your order has been delivered, and we're working diligently to ship the remaining items as soon as possible.",
-    "scheduled": "Your order is scheduled for delivery. You will receive an email with the estimated time of arrival shortly.",
+    "fulfilled": "- delivered to your shipping address",
+    "unfulfilled": "- currently processing and preparing your order for shipping",
+    "partially fulfilled": "Part of your order has been delivered, and working to ship the remaining items as soon as possible",
+    "scheduled": "scheduled for delivery",
     "on hold": "Your order is currently on hold. Please reach out to our team via email so we can assist you in resolving this matter.",
     "none": "I couldn't find any recent orders for this phone number. If you think this is a mistake, please call again later."
 }
