@@ -271,8 +271,6 @@ class CallChatSession:
         call_intent = self.classify_call_intent(message=message) # Classify the call intent
         print(f"Call Intent: {call_intent}")
 
-        self.llm_chat.add_message(role="User", content=message) # Add the user message to the chat history
-
         # cached_response = self.vector_db.find_similar_response(message)
 
         if "Order Status" in call_intent:
