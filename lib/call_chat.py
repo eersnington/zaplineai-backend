@@ -278,7 +278,6 @@ class CallChatSession:
             print("Order Status: ", data)
         
         order_status_message = get_order_status_response(self.get_order_status())
-        print("Order Status Message: ", order_status_message)
         chat_prompt = get_chat_prompt(self.bot_name, self.brand_name, order_status_message, self.order_date, self.order_items) + "\n\n" + self.llm_chat.messages_formatter()
         instruction = None
 
@@ -310,10 +309,6 @@ class CallChatSession:
             llm_input = chat_prompt + instruction
         else:
             llm_input = chat_prompt + "\n\nAssistant: "
-
-        print("***********Instruction***********")
-        print(llm_input)
-        print("***********Instruction***********")
 
         llm_response = self.llm_chat.llm_response(message=message, prompt=llm_input)
         return llm_response
