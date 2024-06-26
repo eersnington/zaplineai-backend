@@ -276,8 +276,10 @@ class CallChatSession:
         if "Order Status" in call_intent:
             data = self.get_order_status()
             print("Order Status: ", data)
-            
-        chat_prompt = get_chat_prompt(self.bot_name, self.brand_name, self.order_date, self.order_items) + "\n\n" + self.llm_chat.messages_formatter()
+        
+        order_status_message = get_order_status_response(self.get_order_status())
+        print("Order Status Message: ", order_status_message)
+        chat_prompt = get_chat_prompt(self.bot_name, self.brand_name, order_status_message, self.order_date, self.order_items) + "\n\n" + self.llm_chat.messages_formatter()
         instruction = None
 
         if "Returns" in self.call_intent:
