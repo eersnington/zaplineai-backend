@@ -5,11 +5,11 @@ import torch
 import time
 
 bot_name = "Sunny"
-store_name = "Sunshine Swimsuits"
+store_name = "Brandify"
 additional_instruct = "When introducing yourself to the customer, say there's a sale of 40% ongoing inline."
 
-llmchat = CallChatSession(app_token="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", 
-                          myshopify="b59bb6-2", 
+llmchat = CallChatSession(app_token="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", 
+                          myshopify="quickstart-eabc790f", 
                           bot_name=bot_name, 
                           brand_name=store_name)
 print(f"GPU Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
