@@ -43,9 +43,9 @@ If the user says they no longer needs help, say good bye and have a nice day."""
 def get_chat_prompt(bot_name: str, store_name: str, order_status: str, date: str, order_items: List, additional_instruct: Union[str, None] = None) -> str:
     prompt_template = system_prompt + f"\n\n{context}"
     if additional_instruct is None:
-        return prompt_template.format(bot_name=bot_name, store_name=store_name, date=date, order_items=order_items, additional_instruct="None")
+        return prompt_template.format(bot_name=bot_name, store_name=store_name, order_status=order_status, date=date, order_items=order_items, additional_instruct="None")
     
-    return prompt_template.format(bot_name=bot_name, store_name=store_name, date=date, order_items=order_items, additional_instruct=additional_instruct)
+    return prompt_template.format(bot_name=bot_name, store_name=store_name, order_status=order_status, date=date, order_items=order_items, additional_instruct=additional_instruct)
 
 
 return_guidelines = """
