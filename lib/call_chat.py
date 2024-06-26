@@ -31,6 +31,7 @@ class CallChatSession:
         self.return_order = False
         self.cancel_order = False
         self.cancel_reason = None
+        self.cancel_step = 0
         self.call_intent = None
 
     def start(self, sid: str, customer_phone_no: str) -> str:
@@ -169,10 +170,16 @@ class CallChatSession:
             return "true"
 
         if reason:
-            self.cancel_reason = reason
-            self.cancel_order = False
-            response = self.initiate_cancel()
-            return response
+            if self.cancel_step == 2:
+                self.cancel_step = 0
+                self.cancel_reason = reason
+                self.cancel_order = False
+                response = self.initiate_cancel()
+                return response
+            else:
+                self.cancel_reason = reason
+                self.cancel_step = 2
+                return get_intent_response("Cancellation Step-2")
 
     
     def return_process(self, reason) -> str:
