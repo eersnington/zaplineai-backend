@@ -201,9 +201,9 @@ from sentence_transformers import SentenceTransformer
 
 # Cached responses for different intents
 cached_intent_responses = {
-    "Returns Step2": "Thank you for sharing the reason for your return. I've started the return process for you, and someone from our team will be in touch soon to assist you further. Do you need any other help?",
-    "Refund Step2": "Thanks for letting us know why you're requesting a refund. I've initiated the refund process for you, and our team will reach out soon to assist you further. Do you need any other help?",
-    "Cancel Step2": "Thanks for letting us know why you're requesting a cancellation. I've requested to cancel the order, and our team will reach out soon to assist you further. Do you need any other help?",
+    "Returns Step-2": "Thank you for sharing the reason for your return. I've started the return process for you, and someone from our team will be in touch soon to assist you further. Do you need any other help?",
+    "Refund Step-2": "Thanks for letting us know why you're requesting a refund. I've initiated the refund process for you, and our team will reach out soon to assist you further. Do you need any other help?",
+    "Cancellation Step-2": "Thanks for letting us know why you're requesting a cancellation. I've requested to cancel the order, and our team will reach out soon to assist you further. Do you need any other help?",
 }
 
 cached_order_status_responses = {
