@@ -263,7 +263,6 @@ class CallChatSession:
             
         chat_prompt = get_chat_prompt(self.bot_name, self.brand_name, self.order_date, self.order_items) + "\n\n" + self.llm_chat.messages_formatter()
         instruction = None
-        llm_input = chat_prompt + "\n\n(Follow this instruction for your response - {example_response})\n\nAssistant: "
 
         if "Returns" in self.call_intent:
             self.return_order = True
@@ -288,20 +287,18 @@ class CallChatSession:
 
         elif "General" in self.call_intent:
             instruction = f"\n\n(Follow this instruction for your response - {get_example_response('General')})\n\nAssistant: "
-
-        print("***********Instruction***********")
-        print(instruction)
-        print("***********Instruction***********")
+        
         if instruction:
             llm_input = chat_prompt + instruction
-            llm_response = self.llm_chat.llm_response(message=message, prompt=llm_input)
-            return llm_response
+        else:
+            llm_input = chat_prompt + "\n\nAssistant: "
+
+        print("***********Instruction***********")
+        print(llm_input)
+        print("***********Instruction***********")
         
-        llm_input = chat_prompt + "\n\nAssistant: "
         llm_response = self.llm_chat.llm_response(message=message, prompt=llm_input)
         return llm_response
-            
-        
 
         # if cached_response is not None:
         #     if "<<explain the current status of your order>>" in cached_response:
