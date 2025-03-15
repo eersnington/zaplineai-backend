@@ -8,6 +8,7 @@ bot_name = "Sunny"
 store_name = "Brandify"
 additional_instruct = "When introducing yourself to the customer, say there's a sale of 40% ongoing inline."
 
+# shopify token is for dev bot
 llmchat = CallChatSession(app_token="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", 
                           myshopify="quickstart-eabc790f", 
                           bot_name=bot_name, 
